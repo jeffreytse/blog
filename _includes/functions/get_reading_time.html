@@ -11,7 +11,7 @@
 {% if include.params.speed %}
   {% assign speed = include.params.speed %}
 {% else %}
-  {% assign speed = 160 %}
+  {% assign speed = 60 %}
 {% endif %}
 
 {%- include functions.html func='get_article_words' -%}
@@ -19,7 +19,7 @@
 
 {% assign total_mins = words
   | divided_by: speed
-  | at_least: 1 %}
+  | at_least: 5 %}
 
 {% assign hours = total_mins | divided_by: 60 %}
 {% assign mins = total_mins | modulo: 60 %}

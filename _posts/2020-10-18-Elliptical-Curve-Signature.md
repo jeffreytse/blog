@@ -1,34 +1,13 @@
 ---
 layout: post
-title: Technical Foundation for Bitcoin 1 - Elliptical Curve Signature Algorithm
-tags: Cryptocurrency
-excerpt_separator: <!--more-->
-title_image: "https://markchenyutian.github.io/Markchen_Blog/Asset/Elliptical_Curve_1.png"
+title: Elliptical Curve Signature Algorithm
+tags: [ Cryptocurrency ]
+category: [ Cryptography ]
 ---
-<head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            }
-        });
-    </script>
-    <script src="https://markchenyutian.github.io/Markchen_Blog/Asset/JavaScript/LinkCard.js"></script>
-</head>
+
 在传统的金融模型中，当人们需要在银行等金融机构中创建新的账户时，人们必须提供用于证明其身份的凭证（身份证，护照，etc）。然而，在比特币的新型隐私模型中，虽然每个账户之间的交易记录是公开的，但是账户拥有者的身份确不会被公开。为了防止比特币账户被冒用，比特币交易系统中使用了椭圆曲线签名的机制来确保账户操作者就是账户拥有者。
-<!--more-->
 
-### Table Of Content
-1. 什么是椭圆曲线 - What is Elliptical Curve
-2. 椭圆曲线上定义的运算符 - Arithmetic Defined on Elliptical Curve
-3. 椭圆曲线的改进 - Modification on Elliptical Curve
-4. 椭圆曲线与身份验证 - Elliptical Curve in Identity Verification
-5. 比特币交易系统中的椭圆曲线 - Elliptical Curve Signature in Bitcoin
-
-## 1. 什么是椭圆曲线 | What is Elliptical Curve
+## 1. 什么是椭圆曲线
 
 拥有这样的解析式的一类曲线被称作椭圆曲线:
 
@@ -47,9 +26,9 @@ $$
 
 有了这两个性质，我们可以在椭圆曲线上定义“点乘”和“叉乘”这两种运算
 
-## 2. 椭圆曲线上定义的运算符 |  Arithmetic Defined on Elliptical Curve
+## 2. 椭圆曲线上定义的运算符
 
-### 2.1 椭圆曲线上的加法 | Addition on Elliptical Curve
+### 2.1 椭圆曲线上的加法
 
 假设我们有任意两点 $A,B$在椭圆曲线 $E$ 上，我们可以将两点链接起来得到一条直线，这条直线与椭圆曲线的第三个交点 $-C$ 。这时候，我们将得到的点 $-C$ 关于 $x$轴对称，得到点 $C$。 这样的一串操作可以被记录为 $A + B = C$
 
@@ -63,7 +42,7 @@ $$
 
 <img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210502162834.png" style="width:400px;"/>
 
-### 2.2 椭圆曲线上的乘法  | Product on Elliptical Curve
+### 2.2 椭圆曲线上的乘法
 
 如果一个椭圆曲线上进行了 $n$ 次$A + A$这样的加法操作，我们可以将其简写为 $A\times n$。例如：$A\times 3$的计算过程可以用这样的几何方法表现出来：
 
@@ -73,7 +52,7 @@ $$
 
 定义了这两种椭圆曲线上的运算以后，我们下面看看为了在计算机上更好的实现这个函数，我们都做了哪些改进。
 
-## 3. 椭圆曲线的改进 | Modification of Elliptical Curve
+## 3. 椭圆曲线的改进
 
 为了在计算机上更准确的处理椭圆曲线，我们对椭圆曲线做了以下这些改进：
 
@@ -89,7 +68,7 @@ $$
 y^2 \equiv x^3 + ax + b \quad (\text{mod } p)
 $$
 
-## 4. 椭圆曲线与身份验证 |  Elliptical Curve and Identity Verification
+## 4. 椭圆曲线与身份验证
 
 说了那么多，人们到底是怎么用椭圆曲线进行身份验证的呢？
 
@@ -100,6 +79,7 @@ $$
 假如Bob要使用椭圆签名函数来验证Alice的身份，在此之前，Bob已经通过公开渠道得知Alice的公钥（椭圆函数计算结果是$Z_A$），Alice也通过公开渠道知道Bob的公钥（Bob用自己的椭圆函数私钥$K_B$计算出的结果$Z_B$）。那么Alice要做的事情就是向Bob传输$K_A \times Z_B$。因为$Z_B$实际上是$A\times K_B$的结果，我们也可以将传输的信息写作$K_A\times K_B\times A$。
 
 当Bob收到Alice发来的$K_A\times Z_B$的结果后，他可以通过计算$Z_A \times K_B$ 并与Alice发出的结果相比对进行验证。如果对面确实是Alice在对账户进行操作，那么应该有$K_A\times Z_B = Z_A \times K_B$。证明如下：
+
 $$
 \begin{aligned}
 &K_A \times Z_B\\
@@ -111,7 +91,7 @@ $$
 
 通过这样的方式，就可以在双方不透露自己私钥的情况下完成身份认证了。
 
-## 5. 比特币交易系统中的椭圆曲线 | Elliptical Curve Signature in Bitcoin
+## 5. 比特币交易系统中的椭圆曲线
 
 在比特币的交易系统中，每个用户都会有一个随机生成的私钥，并且用SECP256K1算法计算出自己私钥所对应的公钥，在下面这张描述比特币交易流程的图中，最关键的部分之一就是通过上诉的身份验证算法确定确实是比特币的所有者在进行转账操作。
 

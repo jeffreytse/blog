@@ -1,24 +1,11 @@
 ---
 layout: post
-tags: Neural_Network
-excerpt_separator: <!--more-->
-title: "深度学习的梯度下降方法 | Gradient Descent Methods in Deep Learning"
+tags: [ Artificial Intelligence, Neural Network ]
+category: [ Artificial Intelligence ]
+title: "深度学习的梯度下降方法"
 ---
 
-<head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            }
-        });
-    </script>
-</head>
 神经网络的训练本质上是通过调节参数来最小化模型输出的损失函数。然而如何调节参数看似简单实际却有许多技巧和方法来优化。这篇文章会介绍最基本的随机梯度下降，采用一阶动量的SGD with momentum，和采用自适应学习率的AdaGrad, RMS Prop, 和集大成者 Adam。这些模型各自有各自的特点，并且在不同的场景中各有优劣。
-<!--more-->
 
 # 深度学习中的梯度下降方法
 

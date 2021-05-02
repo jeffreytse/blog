@@ -1,25 +1,11 @@
 ---
 layout: post
-title: 深度残差网络  |  Residual Network
-tags: Neural_Network
-excerpt_separator: <!--more-->
-title_image: "https://markchenyutian.github.io/Markchen_Blog/Asset/ResNet1.png"
+title: 深度残差网络
+tags: [ Neural Network, CNN ]
+category: [ Artificial Intelligence ]
 ---
-<head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            }
-        });
-    </script>
-    <script src="https://markchenyutian.github.io/Markchen_Blog/Asset/JavaScript/LinkCard.js"></script>
-</head>
+
 在深度学习中，两个严重影响了模型效果的问题是梯度消失问题与梯度下降问题。这两个问题的出现与深度学习的根本机制 - 反向传播损失函数梯度有关。在很长一段时间里，人们认为超过100层的网络是“不可训练”的。然而残差网络 (Residual Network, ResNet) 的出现改变了这一切。通过设计“短路”机制，残差网络可以让梯度更好的在网络的层之间传播，从而使得训练500+层的超深神经网络成为了可能。相似的机制也启发了一大批拥有shortcut connection的神经网络，例如在医学图像处理领域常见的 U-net 和 Dense Net。
-<!--more-->
 
 # 深度残差网络 ResNet 解析
 

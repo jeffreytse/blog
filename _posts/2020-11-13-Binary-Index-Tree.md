@@ -1,5 +1,9 @@
-#! https://zhuanlan.zhihu.com/p/292435620
-# Binary Index Tree (Fenwick Tree)
+---
+layout: post
+title: Binary Index Tree (Fenwick Tree)
+tags: [ Data Structure ]
+category: [ Computer Science ]
+---
 
 ## Why we Need Binary Index Tree
 
