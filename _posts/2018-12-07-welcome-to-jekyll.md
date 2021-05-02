@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: about
 title: Welcome to Jekyll!
 subheading: hello world!
 author: Jeffrey
