@@ -131,7 +131,7 @@ yat:
 #     banner: "Your image url"
 
 # Excerpt size setting
-# excerpt_size: 350
+excerpt_size: 200
 
 # Pagination setting
 # paginate: 5

@@ -3,6 +3,7 @@ layout: post
 tags: [ Artificial Intelligence, Neural Network ]
 category: [ Artificial Intelligence ]
 title: "深度学习的梯度下降方法"
+banner: "/assets/images/banners/FunctionBackground.jpg"
 ---
 
 神经网络的训练本质上是通过调节参数来最小化模型输出的损失函数。然而如何调节参数看似简单实际却有许多技巧和方法来优化。这篇文章会介绍最基本的随机梯度下降，采用一阶动量的SGD with momentum，和采用自适应学习率的AdaGrad, RMS Prop, 和集大成者 Adam。这些模型各自有各自的特点，并且在不同的场景中各有优劣。

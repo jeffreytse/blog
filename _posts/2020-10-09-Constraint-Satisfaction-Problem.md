@@ -7,8 +7,6 @@ title: Arc-consistency in Constraint Satisfaction Problem
 
 约束满足问题(Constraint Satisfaction Problem, CSP)是一类在工程上非常常见的问题，问题由值域，变量和约束构成。求解约束满足问题指的是找到一组变量的赋值，使得网络中所有约束都被满足。在求解约束满足问题的研究中，弧一致性算法是重中之重，因为问题中的一切多元约束都可以被转化为若干个二元约束。这篇文章介绍了多种弧一致性算法，包括各种版本的时间复杂度，空间复杂度和特点
 
-# CS188 CSP - 约束满足问题
-
 ## Part I What is CSP
 
 > CSP: 约束满足问题

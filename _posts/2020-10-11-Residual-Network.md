@@ -1,8 +1,9 @@
 ---
 layout: post
-title: 深度残差网络
+title: 深度残差网络 Res-net
 tags: [ Neural Network, CNN ]
 category: [ Artificial Intelligence ]
+banner: "/assets/images/banners/NeuralNetworkBackground.jpg"
 ---
 
 在深度学习中，两个严重影响了模型效果的问题是梯度消失问题与梯度下降问题。这两个问题的出现与深度学习的根本机制 - 反向传播损失函数梯度有关。在很长一段时间里，人们认为超过100层的网络是“不可训练”的。然而残差网络 (Residual Network, ResNet) 的出现改变了这一切。通过设计“短路”机制，残差网络可以让梯度更好的在网络的层之间传播，从而使得训练500+层的超深神经网络成为了可能。相似的机制也启发了一大批拥有shortcut connection的神经网络，例如在医学图像处理领域常见的 U-net 和 Dense Net。
