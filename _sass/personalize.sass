@@ -1,0 +1,117 @@
+// My Personalized Variables
+
+// Reactive Layout Breakpoints
+$screen-l: 72rem
+$screen-s: 54rem
+
+//Size Variables 
+//Part 0: Font-size Variable
+
+$font-xxl: 4rem
+$font-xl: 3rem
+$font-l: 2rem
+$font-mxl: 1.7rem
+$font-ml: 1.5rem
+$font-m: 1.3rem
+$font-ms: 1.2rem
+$font-s: 1.1rem
+$font-xs: 1rem
+$font-xxs: 0.9rem
+
+//Part 1: Padding-size Variable
+
+$padding-xxl: 6rem      // = 96px
+$padding-xl: 4rem       // = 64px
+$padding-l: 2rem        // = 32px
+$padding-ml: 1.5rem     // = 24px
+$padding-m: 1.25rem     // = 20px
+$padding-ms: 1rem       // = 16px
+$padding-s: 0.8rem      // = 12px
+$padding-xs: 0.4rem     // ~= 6px
+$padding-xxs: 0.2rem    // ~= 3px
+$padding-min: 0.0625rem // = 1px
+
+//Part 2: Color Pallet
+$light-bg-0: white
+$light-bg-1: ghostwhite
+$thin-shadow: rgba(0, 0, 0, 0.1)
+$thick-shadow: rgba(0, 0, 0, 0.4)
+$grey-0: #333c3d
+$grey-1: #abb9ba
+$grey-2: #d1e2e3
+$grey-3: #daeced
+$theme-1: #005766
+$theme-2: #00798f
+$theme-3: #3398aa
+$theme-4: #95ecf0
+$error-0: #bd0055
+$error-1: #ffd4e7
+$notification-0: #c5b100
+$notification-1: #fff7d2
+$marker-yellow: #ffe564
+
+//Part 3: SASS Mixins
+@mixin shadow($size, $color)
+    box-shadow: 0 0 $size $color
+@mixin remove-first-last-margin
+    & > :first-child 
+      margin-top: 0
+    & > :last-child 
+      margin-bottom: 0
+@mixin main-theme-responsive-gradient
+    background: no-repeat (right / 400%) linear-gradient(to left, white 0%, white 25%, $theme-3 75%, $theme-1 100%)
+    cursor: pointer
+    transition: 0.2s
+    &:hover
+        color: $grey-3
+        background-position-x: left
+        h1, h2, h3, h4, h5, blockquote
+            color: $grey-3
+
+::selection 
+    background: $thin-shadow
+
+.notification 
+    background-color: $notification-1
+    padding: 0 $padding-ms
+    margin-left: 0
+    border-left: $padding-xs solid $notification-0
+    padding: $padding-ms
+    margin: $padding-ms 0 $padding-ms 0
+    color: $grey-0
+    @include remove-first-last-margin
+.info 
+    background-color: $grey-3
+    padding: 0 $padding-ms
+    margin-left: 0
+    border-left: $padding-xs solid $theme-1
+    padding: $padding-ms
+    margin: $padding-ms 0 $padding-ms 0
+    color: $theme-1
+    @include remove-first-last-margin
+.error 
+    background-color: $error-1
+    padding: 0 $padding-ms
+    margin-left: 0
+    border-left: $padding-xs solid $error-0
+    padding: $padding-ms
+    margin: $padding-ms 0 $padding-ms 0
+    color: $error-0
+    @include remove-first-last-margin
+
+.main-button
+    @include shadow($padding-ms, $thin-shadow)
+    @include main-theme-responsive-gradient
+    color: black
+    border-radius: $padding-xs
+    padding: $padding-s $padding-ml
+    margin: $padding-ms
+    max-width: fit-content
+    border-style: none
+    outline: none
+
+    &:hover
+        @include shadow($padding-s, $thick-shadow)
+        text-decoration: none
+        -webkit-backface-visibility: hidden
+        backface-visibility: hidden
