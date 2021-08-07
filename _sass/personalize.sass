@@ -52,66 +52,65 @@ $marker-yellow: #ffe564
 
 //Part 3: SASS Mixins
 @mixin shadow($size, $color)
-    box-shadow: 0 0 $size $color
+  box-shadow: 0 0 $size $color
 @mixin remove-first-last-margin
-    & > :first-child 
-      margin-top: 0
-    & > :last-child 
-      margin-bottom: 0
+  & > :first-child 
+    margin-top: 0
+  & > :last-child 
+    margin-bottom: 0
 @mixin main-theme-responsive-gradient
-    background: no-repeat (right / 400%) linear-gradient(to left, white 0%, white 25%, $theme-3 75%, $theme-1 100%)
-    cursor: pointer
-    transition: 0.2s
-    &:hover
-        color: $grey-3
-        background-position-x: left
-        h1, h2, h3, h4, h5, blockquote
-            color: $grey-3
+  background: no-repeat (right / 400%) linear-gradient(to left, white 0%, white 25%, $theme-3 75%, $theme-1 100%)
+  cursor: pointer
+  transition: 0.2s
+  &:hover
+    color: $grey-3
+    background-position-x: left
+    h1, h2, h3, h4, h5, blockquote
+      color: $grey-3
 
 ::selection 
-    background: $thin-shadow
+  background: $thin-shadow
 
 .notification 
-    background-color: $notification-1
-    padding: 0 $padding-ms
-    margin-left: 0
-    border-left: $padding-xs solid $notification-0
-    padding: $padding-ms
-    margin: $padding-ms 0 $padding-ms 0
-    color: $grey-0
-    @include remove-first-last-margin
+  background-color: $notification-1
+  padding: 0 $padding-ms
+  margin-left: 0
+  border-left: $padding-xs solid $notification-0
+  padding: $padding-ms
+  margin: $padding-ms 0 $padding-ms 0
+  color: $grey-0
+  @include remove-first-last-margin
 .info 
-    background-color: $grey-3
-    padding: 0 $padding-ms
-    margin-left: 0
-    border-left: $padding-xs solid $theme-1
-    padding: $padding-ms
-    margin: $padding-ms 0 $padding-ms 0
-    color: $theme-1
-    @include remove-first-last-margin
+  background-color: $grey-3
+  padding: 0 $padding-ms
+  margin-left: 0
+  border-left: $padding-xs solid $theme-1
+  padding: $padding-ms
+  margin: $padding-ms 0 $padding-ms 0
+  color: $theme-1
+  @include remove-first-last-margin
 .error 
-    background-color: $error-1
-    padding: 0 $padding-ms
-    margin-left: 0
-    border-left: $padding-xs solid $error-0
-    padding: $padding-ms
-    margin: $padding-ms 0 $padding-ms 0
-    color: $error-0
-    @include remove-first-last-margin
+  background-color: $error-1
+  padding: 0 $padding-ms
+  margin-left: 0
+  border-left: $padding-xs solid $error-0
+  padding: $padding-ms
+  margin: $padding-ms 0 $padding-ms 0
+  color: $error-0
+  @include remove-first-last-margin
 
 .main-button
-    @include shadow($padding-ms, $thin-shadow)
-    @include main-theme-responsive-gradient
-    color: black
-    border-radius: $padding-xs
-    padding: $padding-s $padding-ml
-    margin: $padding-ms
-    max-width: fit-content
-    border-style: none
-    outline: none
-
-    &:hover
-        @include shadow($padding-s, $thick-shadow)
-        text-decoration: none
-        -webkit-backface-visibility: hidden
-        backface-visibility: hidden
+  @include shadow($padding-ms, $thin-shadow)
+  @include main-theme-responsive-gradient
+  color: black
+  border-radius: $padding-xs
+  padding: $padding-s $padding-ml
+  margin: $padding-ms
+  max-width: fit-content
+  border-style: none
+  outline: none
+  &:hover
+    @include shadow($padding-s, $thick-shadow)
+    text-decoration: none
+    -webkit-backface-visibility: hidden
+    backface-visibility: hidden
