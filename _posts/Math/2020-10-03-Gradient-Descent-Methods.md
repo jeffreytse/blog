@@ -1,7 +1,7 @@
 ---
 layout: post
 tags: [ Optimization, Neural Network ]
-category: [ Neural Network ]
+category: [ Cryptocurrency ]
 title: "深度学习的梯度下降方法"
 banner: "/assets/images/banners/FunctionBackground.jpg"
 ---
