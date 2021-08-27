@@ -15,4 +15,4 @@ Currently I'm interested in:
 
 * Decentralized Finance (DeFi)
 * Artificial Intelligence
-
+* Unstructured Content Extraction
