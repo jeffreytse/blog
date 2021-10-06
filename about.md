@@ -19,15 +19,24 @@ Currently I'm interested in:
 
 ## Some Other works of Mine ...
 
-### GW Computer Science Club Site
+(click to expand)
+
+<details markdown=1>
+<summary>
+<h3 style="margin-top: 1rem;">GW Computer Science Club Site</h3>
+</summary>
 
 [Link to the Site](https://gwcs.xyz)
 
 ![Screen Shot 2021-09-28 at 11.51.49 AM-min](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/Screen%20Shot%202021-09-28%20at%2011.51.49%20AM-min.png)
+</details>
 
-### Application of Computer Vision on Medical Imaging
+<details markdown=1>
+<summary><h3 style="margin-top: 1rem;">Application of Computer Vision on Medical Imaging</h3></summary>
 
 *Myocardial Segmentation of Cardiac MRI Sequence with Temporal Consistency for Coronary Artery Disease Diagnosis* [Link](https://arxiv.org/pdf/2012.14564.pdf)
 
 ![Screen Shot 2021-09-28 at 12.02.17 PM-min](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/Screen%20Shot%202021-09-28%20at%2012.02.17%20PM-min.png)
+
+</details>
 
