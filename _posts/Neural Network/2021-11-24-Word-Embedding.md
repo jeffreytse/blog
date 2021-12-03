@@ -6,11 +6,10 @@ title: "NLP 101: Word Embedding 词嵌入"
 banner: "/assets/images/banners/NeuralNetworkBackground.jpg"
 ---
 
-# NLP 101 - Word Embedding 词嵌入
-
 ## 什么是词嵌入
 
 在处理自然语言时，模型的输入是文本字符串，然而，我们并不能对字符串进行运算操作。为了解决这个问题，我们尝试将自然语言的词汇转换为一个连续向量空间中的向量。这个过程被称为“**词嵌入**“。用更加形式化的语言来描述，词嵌入的过程可以这样表达：
+
 $$
 \text{Natural Language} \rightarrow \mathbb{R}^n
 $$
@@ -18,6 +17,7 @@ $$
 ## 用 One-hot 编码进行词嵌入？
 
 一种符合直觉，也是最简单的词嵌入方法是使用 One-hot 编码。One-hot 编码指一个 $1\times n$ 向量中只有一个分量为1，其它分量都是0。比如说我们现在想将四个单词构成的词汇表转化为向量空间，我们可以这样做：
+
 $$
 \begin{aligned}
 \text{Nice} &\rightarrow [1, 0, 0, 0]\\
@@ -26,6 +26,7 @@ $$
 \text{you} &\rightarrow [0, 0, 0, 1]
 \end{aligned}
 $$
+
 但是这样有几个很明显的坏处：
 
 * 如果我们的词汇表中有 10,000 个单词，作为映射目标的向量空间会拥有 10,000 个维度。这会导致任何试图对词向量进行运算的尝试都需要极大的计算量，也就是常说的“维度灾难”问题
@@ -57,7 +58,7 @@ NNLM 是 “Neural Net Language Model” 的缩写。这是第一批用来解决
 
 3. 为了将最后输出的向量变成真正的概率分布，我们需要用 Softmax 函数处理（正则化）这个向量
 
-![image-20211125121729274](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/image-20211125121729274.png)
+    ![image-20211125121729274](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/image-20211125121729274.png)
 
 ### NNLM 构建词嵌入
 
@@ -66,9 +67,11 @@ NNLM 是 “Neural Net Language Model” 的缩写。这是第一批用来解决
 “Once upon a time **there** ...”
 
 这个词汇并不在我们的词汇表中，这种情况下，我们可以将这个词的词向量以“预测结果的词向量的加权和”来定义：
+
 $$
 C(j) \leftarrow \sum_{i\in V}{C(i)P(i \mid w_{t-n+1}^{t-1})}
 $$
+
 下面是一个描述这种构建方法的 toy demo
 
 ![image-20211125191009240](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/image-20211125191009240.png)
