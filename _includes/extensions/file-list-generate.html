@@ -2,7 +2,7 @@
     {% if file['path'] == page.file_path %}
     <!-- Auto Generated Item -->
     {% assign fileType = file['type'] %}
-    <div class="file-btn"><i class="{{site.data.types[fileType]}}" aria-hidden="true"></i></div>
+    <div class="file-btn">{{site.data.types[fileType]}}</div>
     <div class="file-name">{{file['name']}}</div>
     <div class="file-size">{{file['size']}}</div>
     {% if file['type'] == "folder" %}
