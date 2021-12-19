@@ -197,5 +197,15 @@ html[data-theme="dark"]  {
       }
     }
   }
+
+  .file-grid {
+    background-color: $dark-background-color;
+    .download-btn{
+      color: $dark-text-color;
+    }
+    .file-btn{
+      color: $dark-text-color;
+    }
+  }
 }
 

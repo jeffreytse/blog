@@ -1,0 +1,14 @@
+{% for file in site.data.files %}
+    {% if file['path'] == page.file_path %}
+    <!-- Auto Generated Item -->
+    {% assign fileType = file['type'] %}
+    <div class="file-btn"><i class="{{site.data.types[fileType]}}" aria-hidden="true"></i></div>
+    <div class="file-name">{{file['name']}}</div>
+    <div class="file-size">{{file['size']}}</div>
+    {% if file['type'] == "folder" %}
+    <a class="download-btn fa fa-external-link" href="{{file['link']}}" aria-hidden="true">&nbsp;</a>
+    {% else %}
+    <a class="download-btn fa fa-download" href="{{file['link']}}" aria-hidden="true">&nbsp;</a>
+    {% endif %}
+    {% endif %}
+{% endfor %}
