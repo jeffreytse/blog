@@ -1,7 +1,19 @@
 $dark-background-color:       #0e0e0e !default;
 $dark-text-color: #bbb !default;
 
+::selection {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+
 html[data-theme="dark"]  {
+  mark {
+    background-color: rgb(80, 80, 0);
+    color: $dark-text-color;
+  }
+  ::selection {
+    background: rgba(255, 255, 255, 0.4);
+  }
 
   &[data-scroll-status='top'] {
     .site-footer-inner {
@@ -200,9 +212,6 @@ html[data-theme="dark"]  {
 
   .file-grid {
     background-color: $dark-background-color;
-    // .download-btn{
-    //   color: $dark-text-color;
-    // }
     .file-btn{
       color: $dark-text-color;
     }
