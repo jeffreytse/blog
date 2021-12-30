@@ -8,7 +8,7 @@ banner: "/assets/images/banners/MAGCMapBanner.jpg"
 
 ## About
 
-![561633232066](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/561633232066_.pic_hd.jpg)
+![561633232066](https://markdown-img-1304853431.file.myqcloud.com/561633232066_.pic_hd.jpg)
 
 This project is one of the HackCMU 2021 projects. The MAGC Map won the **3rd prize** in HackCMU 2021. [DevPost Link](https://devpost.com/software/magc-map?ref_content=my-projects-tab&ref_feature=my_projects)
 
@@ -115,7 +115,7 @@ In the following passage, we call `node`, `edge`, `content`
 
 #### Lock System (Conflict Avoiding and Access Control)
 
-![IMG_5725](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/IMG_5725.JPG)
+![IMG_5725](https://markdown-img-1304853431.file.myqcloud.com/IMG_5725.JPG)
 
 To synchronize the changes between users and resolve conflicts in a relatively simple way, we use **Mutex Locks** on the message block.
 
@@ -137,7 +137,7 @@ This means that each block can have at most one user editing at the same time.
 
 #### Synchronize System
 
-![IMG_5731](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/IMG_5731.JPG)
+![IMG_5731](https://markdown-img-1304853431.file.myqcloud.com/IMG_5731.JPG)
 
 To synchronize the client with the server, we developed a synchronize system that allows **Incremental Update**.
 

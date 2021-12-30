@@ -50,15 +50,15 @@ NNLM 是 “Neural Net Language Model” 的缩写。这是第一批用来解决
 
 1. 使用一个参数矩阵 $C$ 将 One-hot 编码的词向量转换为 $\mathbb{R}^n$ 向量空间中的一个向量
 
-    <img src="https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/image-20211125121222905.png" alt="image-20211125121222905" style="width:500px">
+    <img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211125121222905.png" alt="image-20211125121222905" style="width:500px">
 
 2. 将上一步得到的词向量拼接起来，我们可以得到一个“上下文”向量 $x$。通过一个非线性的隐藏层 $b + Wx + \tanh{(b_2 + W_2x)}$的计算，我们会得到在 $n + k$ 位置的词汇“概率分布”。这里的“概率分布”打了引号因为这时候的向量并不满足一些概率分布的特征：比如各个分量都为非负数且相加之和为1。
 
-    ![image-20211125121235835](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/image-20211125121235835.png)
+    ![image-20211125121235835](https://markdown-img-1304853431.file.myqcloud.com/image-20211125121235835.png)
 
 3. 为了将最后输出的向量变成真正的概率分布，我们需要用 Softmax 函数处理（正则化）这个向量
 
-    ![image-20211125121729274](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/image-20211125121729274.png)
+    ![image-20211125121729274](https://markdown-img-1304853431.file.myqcloud.com/image-20211125121729274.png)
 
 ### NNLM 构建词嵌入
 
@@ -74,7 +74,7 @@ $$
 
 下面是一个描述这种构建方法的 toy demo
 
-![image-20211125191009240](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/image-20211125191009240.png)
+![image-20211125191009240](https://markdown-img-1304853431.file.myqcloud.com/image-20211125191009240.png)
 
 ## Word2Vec 模型
 
@@ -92,13 +92,13 @@ CBOW 是 “Continuous Bag of Words” 的缩写。这是一种用目标词汇�
 
 通过和 NNLM 一样的方法，我们可以从训练好的 CBOW 模型中获得自然语言与词向量空间之间的映射关系。
 
-![IMG_EAF813800A83-1](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/IMG_EAF813800A83-1.jpeg)
+![IMG_EAF813800A83-1](https://markdown-img-1304853431.file.myqcloud.com/IMG_EAF813800A83-1.jpeg)
 
 ### Word2Vec Skip Gram 模型
 
 Skip Gram 是一种和 CBOW 完全相反的模型 - 给定第 $k$ 个词，Skip gram 模型会预测这个词周边的词的概率分布。
 
-![IMG_E465C9E1EBF7-1](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/IMG_E465C9E1EBF7-1.jpeg)
+![IMG_E465C9E1EBF7-1](https://markdown-img-1304853431.file.myqcloud.com/IMG_E465C9E1EBF7-1.jpeg)
 
 ### CBOW 还是 Skip Gram?
 

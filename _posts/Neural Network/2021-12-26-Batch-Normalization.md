@@ -30,7 +30,7 @@ $$
 
 因为（我们假设）**训练集中的数据分布于生产/测试环境一致**，当使用整个训练集的结果进行梯度计算和参数更新时，网络 $f$ 能够更加准确的拟合到完整的目标函数 $D$ 上，而非目标函数 $D$ 一部分特殊的定义域上。
 
-![IMG_B72671CFC736-1](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/IMG_B72671CFC736-1.jpeg)
+![IMG_B72671CFC736-1](https://markdown-img-1304853431.file.myqcloud.com/IMG_B72671CFC736-1.jpeg)
 
 <center>Fig 1. 当训练集数据分布与测试集不同时（右图），模型拟合结果会显著降低</center>
 
@@ -38,7 +38,7 @@ $$
 
 为了解决这个问题，我们可以使用 Mini-batch 增量训练方法。每次我们从一个拥有 $N$ 个数据的训练集中随机，不重复的选择 $B$ 个数据作为一个 Batch。得到这 $B$ 个数据的损失函数和对应的梯度后，我们马上对模型进行一次参数更新。
 
-![IMG_BF395E0F0FEB-1](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/IMG_BF395E0F0FEB-1.jpeg)
+![IMG_BF395E0F0FEB-1](https://markdown-img-1304853431.file.myqcloud.com/IMG_BF395E0F0FEB-1.jpeg)
 
 <center>Fig 2. 使用 mini-batch 方法训练的模型更新参数的频率有显著提升</center>
 
@@ -62,7 +62,7 @@ $$
 
 数据分布的差异会导致模型在优化权重参数时的目标 “最优化模型在当前 mini-batch 上的表现” 这个目标与我们真正的目标 —— “最优化模型在训练集上的表现”之间的偏差。
 
-![IMG_FD5CF492EE8A-1](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/IMG_FD5CF492EE8A-1.jpeg)
+![IMG_FD5CF492EE8A-1](https://markdown-img-1304853431.file.myqcloud.com/IMG_FD5CF492EE8A-1.jpeg)
 
 <center>Fig 3. 当我们训练模型时，我们构建的逻辑链条</center>
 
@@ -74,7 +74,7 @@ $$
 
 为了解决这个问题，我们要向BN中添加两个**可训练的参数** $\gamma$ 与 $\beta$。在将mini-batch正则化后，我们通过计算 $\gamma x + \beta$ 把所有的 batch 统一移动到 $\mu = \beta$，$\sigma = \gamma$ 的位置。
 
-![image-20211227115058717](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/image-20211227115058717.png)
+![image-20211227115058717](https://markdown-img-1304853431.file.myqcloud.com/image-20211227115058717.png)
 
 <center>Fig 4. Batch Normalization 的正则化过程可以分为三步：1. Centering （$\mu=0$）2. Scaling ($\sigma = 1$) 3. Moving （$\mu = \beta$, $\sigma = \gamma$)
 </center>
@@ -83,13 +83,13 @@ $$
 
 ## 3 Batch Normalization 实现
 
-![image-20211227123210186](https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/image-20211227123210186.png)
+![image-20211227123210186](https://markdown-img-1304853431.file.myqcloud.com/image-20211227123210186.png)
 
 <center>Fig 5. 一个使用了BN的神经元，可以看到BN实际上是在每个神经元中对输入加权&amp;偏置的值进行正则化</center>
 
 可以将 BN 看作插入在神经元中的一个中间件。图5中的蓝色变量都是神经网络 $f(x, W)$ 中可训练的参数集合 $W$ 中的变量。如果我们用计算图的形式表现变量之间相互依赖的关系，我们会得到下面这样一张计算图：
 
-<img src="https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/IMG_4E0BC0496AB3-1.jpeg" alt="IMG_4E0BC0496AB3-1" style="zoom: 33%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_4E0BC0496AB3-1.jpeg" alt="IMG_4E0BC0496AB3-1" style="zoom: 33%;" />
 
 其中，我们有
 
@@ -133,7 +133,7 @@ $$
 
 重新回顾一下之前的BN计算图，我们不难发现 $z_1$ 的值计算到 $u_1$ 有三条不同的路线。我们需要计算 $\partial {u_i}/{\partial z_i}$ 时，需要计算三条路线上的微分并相加起来。
 
-<img src="https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/IMG_614F94CA4D21-1.jpeg" alt="IMG_614F94CA4D21-1" style="zoom:25%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_614F94CA4D21-1.jpeg" alt="IMG_614F94CA4D21-1" style="zoom:25%;" />
 
 $$
 \frac{\partial u_1}{\partial z_1} = \frac{\partial u_1}{\partial z_1} + \frac{\partial u_1}{\partial \mu_B}\frac{\partial \mu_B}{\partial z_1} + \frac{\partial u_1}{\partial \sigma^2_B}\frac{\partial \sigma^2_B}{\partial z_1}
@@ -230,7 +230,7 @@ $$
 
 ### 4.2 BN 中的跨越连接反向传播公式推导
 
-<img src="https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/image-20211227162304898.png" alt="image-20211227162304898" style="zoom:25%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211227162304898.png" alt="image-20211227162304898" style="zoom:25%;" />
 
 对于跨越连接（$\partial u_i/\partial z_j$, where $i\neq j$），计算图中只有蓝色与紫色两条路径，所以我们有
 
