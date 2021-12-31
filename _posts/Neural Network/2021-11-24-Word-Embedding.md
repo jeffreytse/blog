@@ -4,6 +4,7 @@ tags: [ "Machine Learning", "NLP" ]
 category: [ Neural Network ]
 title: "NLP 101: Word Embedding 词嵌入"
 banner: "/assets/images/banners/NeuralNetworkBackground.jpg"
+lang: "ch"
 ---
 
 ## 什么是词嵌入

@@ -19,7 +19,7 @@
 
 {% assign total_mins = words
   | divided_by: speed
-  | at_least: 5 %}
+  | at_least: 3 %}
 
 {% assign hours = total_mins | divided_by: 60 %}
 {% assign mins = total_mins | modulo: 60 %}

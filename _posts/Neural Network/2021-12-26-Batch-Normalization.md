@@ -4,6 +4,7 @@ tags: [ "Neural Network", "Optimization" ]
 category: [ "Neural Network" ]
 title: Batch Normalization 浅入深出
 banner: "/assets/images/banners/FunctionBackground.jpg"
+lang: "ch"
 ---
 
 ## 0 符号表
