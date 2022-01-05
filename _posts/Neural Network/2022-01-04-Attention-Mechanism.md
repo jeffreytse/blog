@@ -96,20 +96,25 @@ Fig 4. 中的模型实际上是一种简化的表示方法。在实际实现注�
 假如我们在解码器输出完第 $t-1$ 个token后有
 
 $$
-\begin{aligned}
-K &= \left\langle K_0, K_1, \cdots, K_m \right\rangle\\
-V &= \left\langle V_0, V_1, \cdots, V_m \right\rangle\\
-e^t_i &= g(K_i, q_t)
-\end{aligned}
+K = \left\langle K_0, K_1, \cdots, K_m \right\rangle
+$$
+
+$$
+V = \left\langle V_0, V_1, \cdots, V_m \right\rangle
+$$
+
+$$
+e^t_i = g(K_i, q_t)
 $$
 
 那么 $c_t$ 可以通过这样的方式计算：
 
 $$
-\begin{aligned}
-e^t &= \left\langle g(k_0, q_t), g(k_1, q_t), \cdots, g(k_m, q_t)\right\rangle\\
-w^t &= Softmax (e^t)
-\end{aligned}
+e^t = \left\langle g(k_0, q_t), g(k_1, q_t), \cdots, g(k_m, q_t)\right\rangle
+$$
+
+$$
+w^t = Softmax (e^t)
 $$
 
 $$
