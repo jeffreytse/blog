@@ -20,7 +20,7 @@ lang: "ch"
 1. 由于编码器与解码器之间只使用总结向量连接，当向编码器输入长序列时，总结向量由于维度限制可能无法包涵输入序列中的所有信息。
 2. 同时，因为我们只将编码器的最后时刻的隐藏状态作为总结向量传递给了解码器，编码器中间隐藏状态的信息不可避免的被丢失了。
 
-Attention Mechanism 最开始被提出就是为了 Seq2Seq 模型的这两个问题。
+Attention Mechanism 最开始被提出就是为了解决 Seq2Seq 模型的这两个问题。
 
 ## 使用平均隐藏状态作为总结向量？
 
@@ -141,7 +141,7 @@ end
 ```
 <figure markdown=1>
 ![IMG_536CF3684689-1](https://markdown-img-1304853431.file.myqcloud.com/IMG_536CF3684689-1.jpeg)
-<figcaption>Fig 5. 使用 q，K，V 结构实现的 Attention 结构</figcaption>
+<figcaption>Fig 5. 使用 q，K，V 结构实现的 Attention 模型</figcaption>
 </figure>
 
 现在我们离完全实现一个注意力结构只剩下一步之遥了 - 在上面的伪代码中有一个神奇的函数 `raw_attention` - 给定一个 query 张量与 Key 张量，这个函数会返回一个浮点数表示分配到这个 Key 所对应的 Value 张量上的注意力权重。
@@ -152,3 +152,11 @@ $$
 g(K, q) = \frac{K\cdot q}{\sqrt{\dim{K}}}
 $$
 
+## 注意力权重的分布：英语-法语翻译模型中的例子
+
+在下图中可以看到注意力权重的值主要分布在对角线上 —— 这是因为英语和法语句子中的语序在很大程度上是相似的。这也证明注意力权重确实可以学习到输入与输出之间的对应关系。
+
+<figure markdown=1>
+![20220105120525](https://markdown-img-1304853431.file.myqcloud.com/20220105120525.png)
+<figcaption>Fig 6. 英语-法语 机器翻译模型中的注意力权重</figcaption>
+</figure>
