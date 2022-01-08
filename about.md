@@ -21,7 +21,7 @@ Currently I'm interested in:
     <a class="fa fa-external-link" href="https://arxiv.org/pdf/2012.14564.pdf" aria-hidden="true">&nbsp;</a>
 </div>
 
-With the help from professor Shi and doctor Xu, I proposed a neural network model that automatically analyze cardiac MRI sequence and provides semantic segmentation in paper *Myocardial Segmentation of Cardiac MRI Sequence with Temporal Consistency for Coronary Artery Disease Diagnosis*.
+With the help from professor Shi and doctor Xu, I proposed a neural network model that automatically analyze cardiac MRI sequence and provides semantic segmentation in paper *Myocardial Segmentation of Cardiac MRI Sequence with Temporal Consistency for Coronary Artery Disease Diagnosis*. The paper is published on *Frontiers in Cardiovascular Medicine*.
 
 The model uses U-net with residual block (Res U-net) as encoder and bi-directional Conv-LSTM as decoder. Through the bi-directional Conv-LSTM decoder, we successfully introduce temporal consistency constraint in sementic segmentation and improve the accuaracy of cMRI segmentation.
 
@@ -47,17 +47,19 @@ A website for my high school computer science club. Contains the notes from ever
 * Python
 * JavaScript
 * C
+* Arduino
 </div>
 <div markdown=1>
-<h3 style="margin-top: 0;" hide-toc=true>Machine Learning</h3>
+<h3 style="margin-top: 0;" hide-toc=true>Machine Learning &amp; Data Science</h3>
 * PyTorch (Preferred)
 * TensorFlow
 * Open CV
+* R
 </div>
 <div markdown=1>
 <h3 style="margin-top: 0;" hide-toc=true>Front-end Web Dev</h3>
 * React
-* Jekyll
+* Three.js
 * HTML
 * CSS (Sass / Scss)
 </div>
