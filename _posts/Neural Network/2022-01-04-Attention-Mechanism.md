@@ -149,8 +149,20 @@ end
 这个函数的实现出人意料的简单：对于两个向量 $K$ 与 $q$，它会返回这两个向量的点乘结果。
 
 $$
-g(K, q) = \frac{K\cdot q}{\sqrt{\dim{K}}}
+g(K, q) = \frac{k_i\cdot q}{\sqrt{\dim{k_i}}}
 $$
+
+<div class="notification" markdown=1>
+<h4 hide-toc=true style="margin-top: 0;">2021/01/09 Update</h4>
+
+直接将 $K$ 与 $q$ 点乘是最简单的 Attention Weight 计算函数，其它函数包括
+
+$$
+g(k_i, q) = q^{\top}Wk_i
+$$
+
+其中，$W$ 是一个可学习的参数权重矩阵。
+</div>
 
 ## 注意力权重的分布：英语-法语翻译模型中的例子
 
