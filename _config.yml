@@ -52,6 +52,9 @@ yat:
 # If you want to generate website sitemap, you can set true
 sitemap: true
 
+# Higher precision related_posts (but slower build)
+# lsi: true
+
 # If you want to change site language, you can set lang option
 # lang: "en"  # default lang is en
 

@@ -1,6 +1,6 @@
 ---
 layout: post
-tags: [ "Machine Learning", "NLP" ]
+tags: [ "Machine Learning", "NLP", "Neural Network" ]
 category: [ Neural Network ]
 title: "NLP 101: Word Embedding 词嵌入"
 banner: "/assets/images/banners/NeuralNetworkBackground.jpg"

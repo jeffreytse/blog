@@ -153,6 +153,14 @@ g(K, q) = \frac{k_i\cdot q}{\sqrt{\dim{k_i}}}
 $$
 
 <div class="notification" markdown=1>
+<h4 hide-toc=true style="margin-top: 0">2021/01/11 Update</h4>
+
+这里我们在乘法运算完了以后还要对结果进行一个缩放 - i.e. 上面公式中除以 $\sqrt{\dim{k_i}}$ 的步骤。这是为了得到更加平滑的参数梯度。[Source](https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0)
+
+对 Raw Attention Score 进行 Softmax 而不是直接正则化 ($w_i = \frac{w_i}{\sum_{w}}$) 则是为了让正则化后的结果“大的值更大，小的值更小”，让模型更加稳定（输出的结果更加确定）。[Source](https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0)
+</div>
+
+<div class="notification" markdown=1>
 <h4 hide-toc=true style="margin-top: 0;">2021/01/09 Update</h4>
 
 直接将 $K$ 与 $q$ 点乘是最简单的 Attention Weight 计算函数，其它函数包括
