@@ -2,7 +2,7 @@
 layout: post
 tags: [ NLP, Neural Network ]
 category: [ Neural Network ]
-title: "NLP 101: Transformer Framework"
+title: "NLP 101: Transformer Model"
 banner: "/assets/images/banners/NeuralNetworkBackground.jpg"
 lang: "ch"
 ---
