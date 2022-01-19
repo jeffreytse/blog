@@ -1,5 +1,26 @@
 ---
-layout: files
-file_path: "/"
+layout: default
 title: Files
 ---
+
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.1058.0.min.js"></script>
+<script src="{{site.baseurl}}/apps/util.js"></script>
+<script src="{{site.baseurl}}/apps/aws_config.js"></script>
+
+<div style="display: flex; flex-direction: row; justify-content: space-between; align-content: center;">
+    <h2 id="app-path">Shared Files/</h2>
+    <div>
+        <i class="fa fa-refresh" style="font-size: 1.2rem; cursor: pointer;" onclick="refresh();"></i>&nbsp;&nbsp;
+        <i class="fa fa-home" style="font-size: 1.2rem; cursor: pointer;" onclick="goHome();"></i>
+    </div>
+</div>
+
+<div class="file-grid">
+    <div></div>
+    <div class="file-name"><b>File Name</b></div>
+    <div class="file-size"><b>File Size</b></div>
+    <!-- <div></div> -->
+    <div id="output" style="display: contents;"></div>
+</div>
+
+<script>getPublicObjects("");</script>
