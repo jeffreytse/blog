@@ -1,6 +1,0 @@
-{
-    "pdf": "<i class='fa fa-file-pdf-o' aria-hidden='true' style='color:#F40F02'></i>",
-    "folder": "<i class='fa fa-folder-open-o' aria-hidden='true' style='color:#FDB900'></i>",
-    "code": "<i class='fa fa-file-code-o' aria-hidden='true' style='color: #0078D7'></i>",
-    "other": "<i class='fa fa-file-text-o' aria-hidden='true'></i>"
-}
