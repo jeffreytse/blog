@@ -21,9 +21,9 @@ Currently I'm interested in:
     <a class="fa fa-external-link" href="https://arxiv.org/pdf/2012.14564.pdf" aria-hidden="true">&nbsp;</a>
 </div>
 
-With the help from professor Shi and doctor Xu, I proposed a neural network model that automatically analyze cardiac MRI sequence and provides semantic segmentation in paper *Myocardial Segmentation of Cardiac MRI Sequence with Temporal Consistency for Coronary Artery Disease Diagnosis*. The paper is published on *Frontiers in Cardiovascular Medicine*.
+With the help of professor Shi and doctor Xu, I proposed a neural network model that automatically analyzes cardiac MRI sequences and provides semantic segmentation in the paper *Myocardial Segmentation of Cardiac MRI Sequence with Temporal Consistency for Coronary Artery Disease Diagnosis*. The paper is published on *Frontiers in Cardiovascular Medicine*.
 
-The model uses U-net with residual block (Res U-net) as encoder and bi-directional Conv-LSTM as decoder. Through the bi-directional Conv-LSTM decoder, we successfully introduce temporal consistency constraint in sementic segmentation and improve the accuaracy of cMRI segmentation.
+The model uses U-net with residual blocks (Res U-net) as encoder and bi-directional Conv-LSTM as the decoder. Through the bi-directional Conv-LSTM decoder, we successfully introduce temporal consistency constraints in semantic segmentation and improve the accuracy of cMRI segmentation.
 
 <div style="display:flex; justify-content: space-between; align-items: baseline;">
     <h3 style="margin-top: 1rem;" hide-toc=true>GW Computer Science Club Site</h3>
