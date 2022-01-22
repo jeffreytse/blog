@@ -49,10 +49,18 @@ function reload() { getPublicObjects(currentDir); }
 function goHome() { getPublicObjects(""); }
 
 function download(objectKey) {
+    let output = document.querySelector("div#output");
+    removeAllChildNodes(output);
+    output.appendChild(document.createElement("div"))
+    let downloadWait = document.createElement("center");
+    downloadWait.style.cursor = "wait";
+    downloadWait.innerText = "Your file is downloading in the background, please wait ...";
+    output.appendChild(downloadWait);
     s3.getObject({Bucket: BucketName, Key: objectKey}, (err, data) => {
         if (err) {
             console.log(err);
             alert("Failed to retrieve file from AWS S3 Bucket\nContact Mark for further information / maintenance.");
+            reload();
         } else {
             console.log(data);
             // let buffer = new ArrayBuffer(data.ContentLength);
@@ -62,8 +70,9 @@ function download(objectKey) {
             let pathParsed = objectKey.split("/");
             link.download = pathParsed[pathParsed.length - 1];
             link.click();
+            reload();
         }
-    })
+    });
 }
 
 /////////////////////////////
@@ -112,6 +121,7 @@ function renderFolder(folderName, prefix) {
     let children = [
         getFileIconElem({Key: "dummy.folder"}),
         getFileNameElem({Key: prefix + folderName}, prefix),
+        document.createElement("div"),
         document.createElement("div")
     ];
     let rowContainer = document.createElement("div");
@@ -126,11 +136,11 @@ function renderFolder(folderName, prefix) {
     return [rowContainer];
 }
 
-
 function renderFileItem(fileObject, prefix) {
     let children = [
         getFileIconElem(fileObject),
         getFileNameElem(fileObject, prefix),
+        getFileLastModify(fileObject),
         getFileSizeElem(fileObject)
     ];
     let rowContainer = document.createElement("div");
@@ -140,6 +150,14 @@ function renderFileItem(fileObject, prefix) {
         rowContainer.appendChild(child);
     });
     return [rowContainer];
+}
+
+function getFileLastModify(fileObject) {
+    let obj = document.createElement("div");
+    obj.className = "file-name";
+    let d = new Date(fileObject.LastModified);
+    obj.innerText = d.toISOString().split('T')[0].replaceAll('-','/');;
+    return obj;
 }
 
 function getFileNameElem(fileObject, prefix) {
