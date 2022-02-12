@@ -2,7 +2,7 @@
 layout: post
 title: "CS188 Ch13. Case Study - Recognize MNIST base on Naive Bayes"
 tags: [Machine Learning, CS188]
-category: ["CS188 Artificial Intelligence"]
+category: ["Machine Learning"]
 banner: "/assets/images/banners/CS188Background.jpg"
 ---
 

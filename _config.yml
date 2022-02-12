@@ -136,10 +136,10 @@ header_pages:
 #     banner: "Your image url"
 
 # Excerpt size setting
-excerpt_size: 200
+excerpt_size: 300
 
 # Pagination setting
-paginate: 10
+paginate: 8
 
 # Disqus comments
 # disqus:
