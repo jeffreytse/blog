@@ -2,7 +2,7 @@
 layout: post
 title: 二维前缀和 2D Prefix Sum
 tags: [ "Algorithm" ]
-category: [ "Computer Science" ]
+category: [ "Algorithm" ]
 ---
 
 ### 应用场景

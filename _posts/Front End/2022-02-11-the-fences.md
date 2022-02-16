@@ -2,7 +2,7 @@
 layout: post
 title: "The Fences | AR Web Application"
 tags: ["Program Design", "Web", "Serverless"]
-category: ["Computer Science"]
+category: ["Frontend"]
 banner: "https://user-images.githubusercontent.com/47029019/152687484-e19fe892-60c9-49de-b4ae-1b0022a683be.jpg"
 ---
 

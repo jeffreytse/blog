@@ -2,7 +2,7 @@
 layout: post
 title: 线段树 Segment Tree
 tags: [ "Algorithm" ]
-category: [ "Computer Science" ]
+category: [ "Algorithm" ]
 ---
 
 ### 使用场景

@@ -2,7 +2,7 @@
 layout: post
 title: Serverless File System based on AWS S3
 tags: ["Program Design", "Web", "Serverless"]
-category: ["Computer Science"]
+category: ["Frontend"]
 ---
 
 This system is deployed on [My blog's file Sharing Page]({{site.baseurl}}/files.html) as a front-end application.

@@ -2,7 +2,7 @@
 layout: post
 title: USACO 2016 Feb Gold Analysis
 tags: [ "Algorithm" ]
-category: [ "Computer Science" ]
+category: [ "Algorithm" ]
 ---
 
 ## Problem 1 Circular Barn

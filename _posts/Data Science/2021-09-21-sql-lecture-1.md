@@ -2,7 +2,7 @@
 layout: post
 title: SQL - Basic Query, Union and Inner Join
 tags: [Data Science]
-category: ["Computer Science"]
+category: ["Data Science"]
 banner: "/assets/images/banners/SQLBackground.jpg"
 ---
 

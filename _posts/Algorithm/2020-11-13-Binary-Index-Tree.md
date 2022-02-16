@@ -2,7 +2,7 @@
 layout: post
 title: Binary Index Tree (Fenwick Tree)
 tags: [ "Algorithm" ]
-category: [ "Computer Science" ]
+category: [ "Algorithm" ]
 ---
 
 ## Why we Need Binary Index Tree

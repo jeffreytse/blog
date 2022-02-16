@@ -2,7 +2,7 @@
 layout: post
 title: 算法的时间复杂度 | Time Complexity and Asymptotic Notation
 tags: [ "Algorithm" ]
-category: [ "Computer Science" ]
+category: [ "Algorithm" ]
 ---
 
 ## Why we need Asymptotic Notation
