@@ -2,7 +2,7 @@
 ---
 [{% for post in site.posts %}{% unless post.search_ignore %}
     {
-      "title"    : "{{ post.title | escape }}",
+      "title"    : "{{ post.title | escape | replace: "\", "\\" }}",
       "url"      : "{{ site.baseurl }}{{ post.url }}",
       "tags"     : "{{ post.tags | join: ', ' }}",
       "date"     : "{{ post.date }}",

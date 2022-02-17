@@ -1,6 +1,6 @@
 ---
 layout: post
-title: How to Type $\LaTeX$ Fast & Elegant - A Guide from & for Beginner
+title: How to Type LaTeX Fast & Elegant - A Guide from & for Beginner
 tags: ["Notes", "Random"]
 category: ["Notes"]
 ---
@@ -77,24 +77,24 @@ category: ["Notes"]
     > \end{equation*}</code></pre>
     > 结果：
     > 
-    > $$ \begin{equation*}
-            \begin{aligned}
-                E[X + Y] &= \sum_{j = 1}{s_j\cdot P[X + Y = s_j]}\\
-                         &= \sum_{j = 1}{s_j\cdot \sum_{k, l \text{ s.t. } x_k + y_l = s_j}{P[X = x_k, Y = y_l]}}\\
-                         &= \sum_{j}{\sum_{k, l \text{ s.t. } x_k + y_l = s_j}{(x_k + y_l)\cdot P[X = x_k, Y = y_l]}}\\
-                         &= \sum_{k, l}{(x_k + y_l)\cdot P[X = x_k, Y = y_l]}\\
-                         &= \sum_{k, l}{x_k\cdot P[X = x_k, Y = y_l]} + \sum_{k, l}{y_l\cdot P[X = x_k, Y = y_l]}\\
-                         &= \sum_{k}x_k \cdot \sum_{l}{P[X = x_k, Y = y_l]} + \cdots \\
-                         &= E[X] + E[Y]
-            \end{aligned}
-        \end{equation*} $$
+    > ![20220217124654](https://markdown-img-1304853431.file.myqcloud.com/20220217124654.png)
     </details>
 
 3. 类似的例子还有很多…… 比如疯狂用 `\;` 来代替word里的“空格”， etc.
 
 实际上，对于排版时遇到的大部分场景，LaTeX 都有提供对应的指令或环境，如果不知道对应的指令用 `\vspace`或者`\;` 来 “蛮干”，“硬干”，相当于是在和 $\LaTeX$ 搏斗，而不是使用它。
 
-当然，也有一些情况，$\LaTeX$ 自带的排版没法满足我们的需求，这种时候，我们应该创建自己的环境/模版/样式，而不是强行拉扯 $\LaTeX$ 提供的默认模版。
+当然，也有一些情况，$\LaTeX$ 自带的排版没法满足我们的需求，这种时候，我们应该创建自己的环境/模版/样式，或者找合适的 Package与template，而不是强行拉扯 $\LaTeX$ 提供的默认排版。
+
+| 命令/环境/语法 | 解释 | 效果 |
+|--------------|-----|-----|
+|  ![20220217124421](https://markdown-img-1304853431.file.myqcloud.com/20220217124421.png)  | 多行公式     | ![20220217124434](https://markdown-img-1304853431.file.myqcloud.com/20220217124434.png)   |
+|  ![20220217124547](https://markdown-img-1304853431.file.myqcloud.com/20220217124547.png)  | 行内公式     | ![20220217124604](https://markdown-img-1304853431.file.myqcloud.com/20220217124604.png)  |
+|  ![20220217125002](https://markdown-img-1304853431.file.myqcloud.com/20220217125002.png) | 多行对齐公式 | ![Screen Shot 2022-02-17 at 12.50.19 PM](https://markdown-img-1304853431.file.myqcloud.com/Screen Shot 2022-02-17 at 12.50.19 PM.png)   |
+|  ![20220217124317](https://markdown-img-1304853431.file.myqcloud.com/20220217124317.png)  | 分页         |    |
+|  ![20220217125308](https://markdown-img-1304853431.file.myqcloud.com/20220217125308.png)  | 无序列表     | ![20220217125319](https://markdown-img-1304853431.file.myqcloud.com/20220217125319.png)   |
+|  ![20220217125340](https://markdown-img-1304853431.file.myqcloud.com/20220217125340.png)  | 有序列表     |  ![20220217125357](https://markdown-img-1304853431.file.myqcloud.com/20220217125357.png)  |
+|  ![20220217125456](https://markdown-img-1304853431.file.myqcloud.com/20220217125456.png)  | 无序列表（自定义编号） | ![20220217125511](https://markdown-img-1304853431.file.myqcloud.com/20220217125511.png)   |
 
 ## 2 创建快捷指令
 
@@ -220,4 +220,4 @@ category: ["Notes"]
 
 挖个坑，这里我自己也一知半解的，以后再填吧
 
-<div class="notification">本指南仅供参考，本人无义务也不保证帮任何人解决 LaTeX 环境配置等问题。</div>
+<!-- <div class="notification">本指南仅供参考，本人无义务也不保证帮任何人解决 LaTeX 环境配置等问题。</div> -->
