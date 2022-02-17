@@ -61,7 +61,7 @@ category: ["Notes"]
     > 
     > 结果：$$ -\frac{2a \pm \sqrt{b^2 - 4ac}}{b} $$
 
-    如果你需要对齐多行公式（比如推导/化简长式子），使用 `\begin{equation}\begin{aligned}...\end{aligned}\end{equation}`。
+    如果你需要对齐多行公式（比如推导/化简长式子），使用 `\begin{equation}\begin{aligned}`...`\end{aligned}\end{equation}`。
 
     > 带对齐的多行公式：
     > <pre><code class="tex">\begin{equation*}
@@ -157,11 +157,16 @@ category: ["Notes"]
 
 现在，我们只需要 `\pic{1.jpeg}` 就可以做到一样的事情。如果我们想指定图片宽度为`300pt`，使用定义的可选参数 `\pic[300pt]{1.jpeg}` 即可。
 
-## 3 创建代码模版 (需要 VS Code)
+## 3 使用 VS Code 插件 LaTeX Workshop 
 
 <div class="info" markdown=1>
+
+[LaTeX Workshop 插件链接](https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop)
+
 在 VS Code 上配置和使用 LaTeX 的方法详见插件 Latex Workshop 的安装说明
 </div>
+
+### 3.1 创建代码片段
 
 使用自定义的快捷指令可以大幅提高写 LaTeX 速度，但是会降低代码的可读性和灵活性（比如，在刚刚 `\pic` 的命令中，如果我想读取的照片不在 `assets` 文件夹中，就不能使用这个命令了）。同时，如果别人要读我的 `TeX` 文件，他看到 `\pic` 这个命令可能会一头雾水，因为这不是标准指令。
 
@@ -179,22 +184,6 @@ category: ["Notes"]
 
 ```json
 {
-	// Place your LaTeX_storage workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and 
-	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope 
-	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is 
-	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are: 
-	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
-	// Placeholders with the same ids are connected.
-	// Example:
-	// "Print to console": {
-	// 	"scope": "javascript,typescript",
-	// 	"prefix": "log",
-	// 	"body": [
-	// 		"console.log('$1');",
-	// 		"$2"
-	// 	],
-	// 	"description": "Log output to console"
-	// }
 	"Clean Equation Block" : {
 		"scope": "latex",
 		"prefix": "EQ*",
@@ -216,8 +205,26 @@ category: ["Notes"]
 }
 ```
 
+### 3.2 使用插件内置的快捷键/模版
+
+LaTeX workshop 插件内置了许多非常常用的快捷键和代码模版，这里提供其中一些常用的快捷键：
+
+| 模版简写 | 解释 |
+|-----|----|
+| `BEN` | 有序列表（enumerate 环境）   |
+| `BIT` | 无序列表（itemize 环境）   |
+
+| 指令 | 内容 |
+|----|----|
+| `@a` | `\alpha`   |
+| `@A`  | `\Alpha`  |
+|  ...  |  ...（大部分希腊字母都可以用 @ + 对应英文字母打出来）  |
+| `@6` | `\partial` 偏微分符号 |
+| `@/` |  `\frac{}{}` 分数 |
+
+
 ## 4 创建自己的模版/样式
 
-挖个坑，这里我自己也一知半解的，以后再填吧
+> 挖个坑，这里我自己也一知半解的，以后再填吧
 
 <!-- <div class="notification">本指南仅供参考，本人无义务也不保证帮任何人解决 LaTeX 环境配置等问题。</div> -->
