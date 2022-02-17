@@ -60,8 +60,7 @@ A website for my high school computer science club. Contains the notes from ever
 <h3 style="margin-top: 0;" hide-toc=true>Front-end Web Dev</h3>
 * React
 * Three.js
-* HTML
-* CSS (Sass / Scss)
+* HTML, CSS, JavaScript
 </div>
 <div markdown=1>
 <h3 style="margin-top: 0;" hide-toc=true>Back-end Web Dev</h3>
@@ -77,9 +76,9 @@ A website for my high school computer science club. Contains the notes from ever
 </div>
 <div markdown=1>
 <h3 style="margin-top: 0;" hide-toc=true>Other Skills</h3>
-* Amazon Web Service (AWS)
+* Amazon Web Service
 * $\LaTeX$
-* Solidwork (Assembly Models, FEA)
+* Solidwork <br/>(Assembly, Basic CAD, FEA)
 * ...
 </div>
 </div>
