@@ -221,5 +221,26 @@ html[data-theme="dark"]  {
     background-color: #463f24;
     color: $dark-text-color;
   }
+
+  #search-input {
+    padding: 0.6rem 1rem 0.6rem 0.6rem;
+    width: 100%;
+    padding-right: 30px;
+    border-radius: 0;
+    border: solid #545454 1pt;
+    outline: 0;
+    box-sizing: border-box;
+    color: $dark-text-color;
+  }
+
+  button.huge-btn {
+    color: $dark-text-color;
+    border: solid #545454 1pt;
+  }
+  button.huge-btn:hover {
+    color: $brand-color;
+    font-weight: bold;
+    border: solid $brand-color 2pt
+  }
 }
 

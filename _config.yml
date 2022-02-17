@@ -53,7 +53,7 @@ yat:
 sitemap: true
 
 # Higher precision related_posts (but slower build)
-lsi: true
+# lsi: true
 
 # If you want to change site language, you can set lang option
 # lang: "en"  # default lang is en
@@ -120,11 +120,12 @@ lsi: true
 # If you want to link only specific pages in your header, uncomment
 # this and add the path to the pages in order as they should show up
 header_pages:
-  - index.md
   - about.md
-  - tags.html
+  - posts.html
   - files.html
-  - archives.html
+  # - index.md
+  # - tags.html
+  # - archives.html
   # - categories.html
   
 

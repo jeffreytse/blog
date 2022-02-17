@@ -1,0 +1,31 @@
+---
+layout: default
+title: Posts
+---
+<script src="{{site.baseurl}}/assets/js/simple-jekyll-search.min.js"></script>
+
+<h2>See All Posts By </h2>
+<div style="display: flex; width: 100%; box-sizing: border-box; justify-content: space-between; margin-bottom: 1rem;">
+    <button class="huge-btn" onclick="window.location.href='{{site.baseurl}}/tags.html';">TAGS</button>
+    <button class="huge-btn" onclick="window.location.href='{{site.baseurl}}/categories.html';">CATEGORIES</button>
+    <button class="huge-btn" onclick="window.location.href='{{site.baseurl}}/archives.html';">YEARS</button>
+</div>
+
+<h2>Or ... Just Search!</h2>
+
+<div>
+    <input type="text" id="search-input" placeholder="Search with Title, Content...">
+    <ul style="margin-top: 1rem; min-height: 15rem;" id="results-container"><ul>
+</div>
+
+<script>
+    var sjs = SimpleJekyllSearch({
+        searchInput: document.getElementById('search-input'),
+        resultsContainer: document.getElementById('results-container'),
+        json: '{{site.baseurl}}/assets/json/search.json',
+        searchResultTemplate: '<li><a href="{{ site.url }}{url}">{title}</a></li>',
+        noResultsText: '<center><img src="{{site.baseurl}}/assets/images/icons/emptyResult.svg"><p><b>ERROR: NO RESULT FOUND<b></p></center>'
+    });
+</script>
+
+
