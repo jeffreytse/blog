@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Serverless File System based on AWS S3
-tags: ["Program Design", "Web", "Serverless"]
+tags: ["Web"]
 category: ["Frontend"]
 ---
 

@@ -53,7 +53,7 @@ yat:
 sitemap: true
 
 # Higher precision related_posts (but slower build)
-# lsi: true
+lsi: true
 
 # If you want to change site language, you can set lang option
 # lang: "en"  # default lang is en

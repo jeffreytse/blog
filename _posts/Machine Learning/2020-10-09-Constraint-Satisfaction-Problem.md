@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Arc-consistency in Constraint Satisfaction Problem
-tags: [Machine Learning, CS188]
+tags: [Machine Learning]
 category: ["Machine Learning"]
 banner: "/assets/images/banners/CS188Background.jpg"
 ---

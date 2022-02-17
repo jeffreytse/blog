@@ -1,7 +1,7 @@
 ---
 layout: post
 title: 什么是贝叶斯网络 | What is Bayes Network
-tags: [ "Machine Learning", "CS188" ]
+tags: [ "Machine Learning" ]
 category: [ "Machine Learning"]
 ---
 

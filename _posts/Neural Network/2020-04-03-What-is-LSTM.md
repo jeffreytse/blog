@@ -1,6 +1,6 @@
 ---
 layout: post
-tags: [ Neural Network ]
+tags: [ "Neural Network", "NLP" ]
 category: [ Neural Network ]
 title: 长短期记忆递归网络 LSTM
 banner: "/assets/images/banners/NeuralNetworkBackground.jpg"

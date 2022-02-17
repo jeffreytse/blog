@@ -1,7 +1,7 @@
 ---
 layout: post
 title: MAGC Map Structural Design 
-tags: ["Program Design", "Web"]
+tags: ["Web"]
 category: ["Frontend"]
 banner: "/assets/images/banners/MAGCMapBanner.jpg"
 ---

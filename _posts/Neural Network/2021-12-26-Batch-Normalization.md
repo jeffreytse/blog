@@ -1,6 +1,6 @@
 ---
 layout: post
-tags: [ "Neural Network", "Optimization" ]
+tags: [ "Neural Network" ]
 category: [ "Neural Network" ]
 title: Batch Normalization 浅入深出
 banner: "/assets/images/banners/FunctionBackground.jpg"

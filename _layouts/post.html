@@ -47,15 +47,15 @@ sidebar:
     {%- if result.size == 0 -%}
     <div class="post-related">
       <div>Related Articles</div>
-      <!-- <ul>
+      <ul>
         {% assign posts = site[page.collection] | sample:4 %}
         {% assign posts = site.related_posts | sample: 4 %}
         {%- for post in posts -%}
         <li><a class="post-link" href="{{post.url | relative_url}}" title="{{ page.next.title | escape }}">{{ post.title | escape | truncatewords: 12 }}</a></li>
         {%- endfor -%}
-      </ul> -->
-      {% assign maxRelated = 4 %}
-      {% assign minCommonTags = 2 %}
+      </ul>
+      <!-- {% assign maxRelated = 4 %}
+      {% assign minCommonTags = 1 %}
       {% assign maxRelatedCounter = 0 %}
       <ul>
         {% for post in site.posts %}
@@ -71,7 +71,7 @@ sidebar:
           {% endif %}
           {% if maxRelatedCounter >= maxRelated %}{% break %}{% endif %}
         {% endfor %}
-      </ul>
+      </ul> -->
     </div>
     {%- endif -%}
 

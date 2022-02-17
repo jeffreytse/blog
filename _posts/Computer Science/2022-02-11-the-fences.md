@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "The Fences | AR Web Application"
-tags: ["Program Design", "Web", "Serverless"]
+tags: ["Web"]
 category: ["Frontend"]
 banner: "https://user-images.githubusercontent.com/47029019/152687484-e19fe892-60c9-49de-b4ae-1b0022a683be.jpg"
 ---
@@ -18,6 +18,15 @@ By providing a synchronized, immersive AR experience across different platforms,
 | iOS Application | Web Application |
 |-----------------|-----------------|
 | <img src="https://user-images.githubusercontent.com/47029019/152687716-21fb26b1-a8f5-4d14-b952-7df44f0b2eaa.gif" style="height: 25rem"/> | ![web-demo-min](https://user-images.githubusercontent.com/47029019/152687732-d309165a-c033-444b-8bb8-8011d533efcf.gif) |
+
+You can experience the web application here: [https://the-fence-340405.web.app/frontend/viewer/](https://the-fence-340405.web.app/frontend/viewer/).
+
+<div class="notification" markdown=1>
+However, since the application requires specific QR-code to detect a board, you will not see any AR content unless you print the QR code denoting `UL-6d44ae39` and `DR-6d44ae39` and stick them on the wall.
+
+:warning: Our application relies on the QR-detector built in browser. However, it is known that **QR-detector in Chrome on MacOS has a memory leak problem**. So the webpage may use up to 7GB of memory if you leave it on for 2hrs.
+</div>
+
 
 ## How We Implement These Magical Apps? (Brief Version)
 

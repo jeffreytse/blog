@@ -1,6 +1,6 @@
 ---
 layout: post
-tags: [ Optimization, Neural Network ]
+tags: [ Neural Network ]
 category: [ Math ]
 title: "深度学习的梯度下降方法"
 banner: "/assets/images/banners/FunctionBackground.jpg"
