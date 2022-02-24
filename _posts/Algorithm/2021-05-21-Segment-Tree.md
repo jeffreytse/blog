@@ -19,7 +19,7 @@ category: [ "Algorithm" ]
 * $T$ 的每个叶子节点都代表 array $A$ 中的一个值 $A[i]$，$0\leq i\lt N$
 * $T$ 中的每一个非叶节点都代表 array $A$ 的一个子序列 $A[i:j]$，$0\leq i\lt j \lt N$
 
-<img src="http://markdown-img-1304853431.cosgz.myqcloud.com/20210524105215.jpg" alt="c8def3486964f5c15f15ac41ecacbc0" style="zoom: 33%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20210524105215.jpg" alt="c8def3486964f5c15f15ac41ecacbc0" style="zoom: 33%;" />
 
 > 在一个线段树中，所有的叶子节点**一定**代表原数组中的一个值
 >
@@ -171,7 +171,7 @@ Integer[]{1, 2, 3, 4, 5, 6}
 
 的线段树，我们执行 `queryMin(2, 3)` 时函数的递归情况如下
 
-<img src="http://markdown-img-1304853431.cosgz.myqcloud.com/20210524115756.jpg" alt="fb5b1012c2c20d4f2ab433ad800d475" style="zoom:33%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20210524115756.jpg" alt="fb5b1012c2c20d4f2ab433ad800d475" style="zoom:33%;" />
 
 ### Full Java Code
 

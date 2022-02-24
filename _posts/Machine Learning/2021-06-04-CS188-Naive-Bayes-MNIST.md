@@ -94,7 +94,7 @@ Label: 0
 
 To further simplify the model (and reduce the memory requirement of naive bayes classifier), we can **binarize** the image.
 
-![image-20210603162231955](http://markdown-img-1304853431.cosgz.myqcloud.com/20210603162239.png)
+![image-20210603162231955](https://markdown-img-1304853431.file.myqcloud.com/20210603162239.png)
 
 ```python
 def binarize_image(pixels: list, threshold=120):

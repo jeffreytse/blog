@@ -82,7 +82,7 @@ LIMIT 3;
 
 The above code will get the top 3 CS courses 
 
-![image-20210924203522620](http://markdown-img-1304853431.cosgz.myqcloud.com/20210924203529.png)
+![image-20210924203522620](https://markdown-img-1304853431.file.myqcloud.com/20210924203529.png)
 
 ### Get all Distinct values in database with `DISTINCT` keyword
 
@@ -91,14 +91,14 @@ SELECT DISTINCT Language
 FROM cs_data;
 ```
 
-<img src="http://markdown-img-1304853431.cosgz.myqcloud.com/20210924203551.png" alt="image-20210924203551834" style="zoom:50%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20210924203551.png" alt="image-20210924203551834" style="zoom:50%;" />
 
 ```sql
 SELECT DISTINCT [col1], [col2]
 FROM [table_name];
 ```
 
-<img src="http://markdown-img-1304853431.cosgz.myqcloud.com/20210924203740.png" alt="image-20210924203740595" style="zoom:50%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20210924203740.png" alt="image-20210924203740595" style="zoom:50%;" />
 
 ```sql
 SELECT DISTINCT Type, Color
@@ -166,7 +166,7 @@ SELECT Number % 1000, ROUND(Hours) FROM cs_data;
 
 Return the rows where `Number` property is mod 1000 and `Hours` property is rounded
 
-<img src="http://markdown-img-1304853431.cosgz.myqcloud.com/20210924210803.png" alt="image-20210924210803229" style="zoom:50%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20210924210803.png" alt="image-20210924210803229" style="zoom:50%;" />
 
 ### Alias in SQL using `AS` keyword
 
@@ -179,7 +179,7 @@ FROM cs_data;
 
 ### Getting Sum and Avg with `SUM`, `AVG` and `COUNT` Keyword
 
-<img src="http://markdown-img-1304853431.cosgz.myqcloud.com/20210924211130.png" alt="image-20210924211130609" style="zoom:50%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20210924211130.png" alt="image-20210924211130609" style="zoom:50%;" />
 
 ```sql
 SELECT COUNT(*), SUM(Hours), AVG(Rating)
@@ -187,7 +187,7 @@ FROM cs_data
 WHERE language = "Python";
 ```
 
-<img src="http://markdown-img-1304853431.cosgz.myqcloud.com/20210924211123.png" alt="image-20210924211123382" style="zoom:50%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20210924211123.png" alt="image-20210924211123382" style="zoom:50%;" />
 
 `COUNT(*)` - counting rows
 
@@ -199,7 +199,7 @@ FROM cs_data
 GROUP BY Language;
 ```
 
-![image-20210924211249664](http://markdown-img-1304853431.cosgz.myqcloud.com/20210924211249.png)
+![image-20210924211249664](https://markdown-img-1304853431.file.myqcloud.com/20210924211249.png)
 
 ## Use `JOIN` and `UNION`
 
@@ -219,7 +219,7 @@ If using `UNION ALL`, the repeated result will be reserved
 
 `INNER JOIN ... ON...` will combine the rows in condition
 
-<img src="http://markdown-img-1304853431.cosgz.myqcloud.com/20210924212111.png" alt="image-20210924212111512" style="zoom:50%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20210924212111.png" alt="image-20210924212111512" style="zoom:50%;" />
 
 ```sql
 SELECT NAME, SUM(CostPerPound * Pounds) AS TotalCost

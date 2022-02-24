@@ -15,11 +15,11 @@ category: [ "Algorithm" ]
 
 ### 原理
 
-二位前缀和数据结构会在内部维护两张表格 $T$ 和 $S$。$S[y][x]$ 处存储的值等于 $T$ 中所有 $(0, 0)$ 到 $(x, y)$ 的位置的值之和。<img src="http://markdown-img-1304853431.cosgz.myqcloud.com/20210527100019.jpg" alt="04eed1e3dc29fba7bb34be79cb605bb" style="zoom:50%;" />
+二位前缀和数据结构会在内部维护两张表格 $T$ 和 $S$。$S[y][x]$ 处存储的值等于 $T$ 中所有 $(0, 0)$ 到 $(x, y)$ 的位置的值之和。<img src="https://markdown-img-1304853431.file.myqcloud.com/20210527100019.jpg" alt="04eed1e3dc29fba7bb34be79cb605bb" style="zoom:50%;" />
 
 当我们想查询两个点 $(x_1, y_1)$  与 $(x_2, y_2)$ 构成的矩形内部所有数字的和时，我们可以这样计算：
 
-<img src="http://markdown-img-1304853431.cosgz.myqcloud.com/20210527101837.jpg" alt="84e8f29abc499e4d5bbd3e209144ab5" style="zoom:50%;" />
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20210527101837.jpg" alt="84e8f29abc499e4d5bbd3e209144ab5" style="zoom:50%;" />
 
 表格 $S$ 可以使用下面这个公式遍历的方法生成
 
