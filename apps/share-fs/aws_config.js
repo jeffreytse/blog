@@ -15,6 +15,10 @@ var s3 = new AWS.S3({
 var currentDir = "";
 
 function getPublicObjects(prefix) {
+    document.getElementById("head").style.display = "contents";
+    document.querySelector("#reload-btn").style.display = "inline";
+    document.querySelector("#home-btn").style.display = "inline";
+    document.querySelector("#close-preview").style.display = "none";
     let output = document.querySelector("div#output");
     removeAllChildNodes(output);
     let waitMsg = document.createElement("center");
@@ -65,12 +69,35 @@ function download(objectKey) {
             console.log(data);
             // let buffer = new ArrayBuffer(data.ContentLength);
             let blob = new Blob([data.Body.buffer], {type: data.ContentType});
+            
+            if (data.ContentType == "application/pdf"){
+                removeAllChildNodes(output);
+                document.getElementById("head").style.display = "none";
+                let iFrame = document.createElement("iframe");
+                let pathParsed = objectKey.split("/");
+                let fileName = pathParsed[pathParsed.length - 1];
+                iFrame.setAttribute("src", window.URL.createObjectURL(blob));
+                iFrame.style.gridColumnStart = "1";
+                iFrame.style.gridColumnEnd = "5";
+                iFrame.style.width = "100%";
+                iFrame.style.height = "90vh";
+                output.appendChild(iFrame);
+                let pathTitle = document.querySelector("h2#app-path");
+                pathTitle.innerText += fileName;
+
+                document.querySelector("#reload-btn").style.display = "none";
+                document.querySelector("#home-btn").style.display = "none";
+                document.querySelector("#close-preview").style.display = "inline";
+            }
             let link = document.createElement("a");
             link.href = window.URL.createObjectURL(blob);
             let pathParsed = objectKey.split("/");
             link.download = pathParsed[pathParsed.length - 1];
+            console.log(link);
             link.click();
-            reload();
+            if (! data.ContentType == "application/pdf"){
+                reload();
+            }
         }
     });
 }
@@ -94,7 +121,6 @@ function renderFiles(awsData) {
         let elems = renderFolder("..", prefix);
         elems[0].onclick = () => {
             let parsedDir = currentDir.slice(0, currentDir.length - 1).split("/");
-            // console.log(parsedDir.slice(0, parsedDir.length - 1).join("/"));    // DEBUG
             getPublicObjects(parsedDir.slice(0, parsedDir.length - 1).join("/"));
         }
         elems.forEach(elem => {output.appendChild(elem);});
@@ -114,7 +140,6 @@ function renderFiles(awsData) {
         let elems = renderFolder(folderName, prefix);
         elems.forEach(elem => { output.appendChild(elem); })
     });
-    // console.log(awsData);   // DEBUG
 }
 
 function renderFolder(folderName, prefix) {
@@ -127,7 +152,6 @@ function renderFolder(folderName, prefix) {
     let rowContainer = document.createElement("div");
     rowContainer.className = "file-row-container";
     rowContainer.onclick = () => {
-        // console.log(prefix + folderName + "/"); // DEBUG
         getPublicObjects(prefix + folderName + "/");
     };
     children.forEach(child => {

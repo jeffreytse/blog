@@ -4,22 +4,25 @@ title: Files
 ---
 
 <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1058.0.min.js"></script>
-<script src="{{site.baseurl}}/apps/share-fs/util.js"></script>
+<script src="{{site.baseurl}}/apps/util.js"></script>
 <script src="{{site.baseurl}}/apps/share-fs/aws_config.js"></script>
 
 <div style="display: flex; flex-direction: row; justify-content: space-between; align-content: center;">
     <h2 id="app-path">Shared Files/</h2>
     <div>
-        <i class="fa fa-refresh" style="font-size: 1.2rem; cursor: pointer;" onclick="reload();"></i>&nbsp;&nbsp;
-        <i class="fa fa-home" style="font-size: 1.2rem; cursor: pointer;" onclick="goHome();"></i>
+        <span style="color: #F40F02; cursor: pointer;" onclick="reload();" id="close-preview"><i class="fa fa-window-close-o" style="font-size: 1.2rem;"></i> CLOSE PREVIEW </span>&nbsp;&nbsp;
+        <i id="reload-btn" class="fa fa-refresh" style="font-size: 1.2rem; cursor: pointer;" onclick="reload();"></i>&nbsp;&nbsp;
+        <i id="home-btn" class="fa fa-home" style="font-size: 1.2rem; cursor: pointer;" onclick="goHome();"></i>
     </div>
 </div>
 
 <div class="file-grid">
-    <div></div>
-    <div class="file-name"><b>File Name</b></div>
-    <div class="file-name"><b>Last Modify</b></div>
-    <div class="file-size"><b>File Size</b></div>
+    <div id="head" style="display: contents;">
+        <div></div>
+        <div class="file-name"><b>File Name</b></div>
+        <div class="file-name"><b>Last Modify</b></div>
+        <div class="file-size"><b>File Size</b></div>
+    </div>
     <div id="output" style="display: contents;"></div>
 </div>
 
