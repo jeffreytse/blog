@@ -6,11 +6,14 @@ title: Files
 <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1058.0.min.js"></script>
 <script src="{{site.baseurl}}/apps/util.js"></script>
 <script src="{{site.baseurl}}/apps/share-fs/aws_config.js"></script>
-
+<div class="notification" id="no-weixin" style="display: none;">
+    <h3>Please don't use the WeChat Browser</h3>
+    Files can't be downloaded under wechat browser. Please use the default browser on your device instead.
+</div>
 <div style="display: flex; flex-direction: row; justify-content: space-between; align-content: center;">
     <h2 id="app-path">Shared Files/</h2>
     <div>
-        <span style="color: #F40F02; cursor: pointer;" onclick="reload();" id="close-preview"><i class="fa fa-window-close-o" style="font-size: 1.2rem;"></i> CLOSE PREVIEW </span>&nbsp;&nbsp;
+        <span style="color: #F40F02; cursor: pointer; display: none;" onclick="reload();" id="close-preview"><i class="fa fa-window-close-o" style="font-size: 1.2rem;"></i> CLOSE PREVIEW </span>&nbsp;&nbsp;
         <i id="reload-btn" class="fa fa-refresh" style="font-size: 1.2rem; cursor: pointer;" onclick="reload();"></i>&nbsp;&nbsp;
         <i id="home-btn" class="fa fa-home" style="font-size: 1.2rem; cursor: pointer;" onclick="goHome();"></i>
     </div>
@@ -26,4 +29,9 @@ title: Files
     <div id="output" style="display: contents;"></div>
 </div>
 
-<script>getPublicObjects("");</script>
+<script>
+    if(is_weixin()){
+       document.getElementById("no-weixin").style.display = "block";
+    }
+    getPublicObjects("");
+</script>
