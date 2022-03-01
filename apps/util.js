@@ -4,7 +4,19 @@ function removeAllChildNodes(parent) {
     }
 }
 
-function is_weixin() {
-    var ua = navigator.userAgent.toLowerCase();
-    return ua.match(/MicroMessenger/i) == "micromessenger" ? true : false 
+if (typeof WeixinJSBridge == "object" && typeof WeixinJSBridge.invoke == "function") {
+    document.getElementById("no-weixin").style.display = "block";
+} else {
+    if (document.addEventListener) {
+        document.addEventListener("WeixinJSBridgeReady", function() {
+            document.getElementById("no-weixin").style.display = "block";
+        }, false);
+    } else if (document.attachEvent) {
+        document.attachEvent("WeixinJSBridgeReady", function() {
+            document.getElementById("no-weixin").style.display = "block";
+        });
+        document.attachEvent("onWeixinJSBridgeReady", function() {
+            document.getElementById("no-weixin").style.display = "block";
+        });
+    }
 }
