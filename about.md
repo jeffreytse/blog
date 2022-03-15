@@ -83,8 +83,13 @@ A website for my high school computer science club. Contains the notes from ever
 </div>
 </div>
 
+## My Schedule
+
+<iframe src="https://calendar.google.com/calendar/embed?wkst=1&bgcolor=%23ffffff&ctz=America%2FNew_York&mode=WEEK&showTitle=0&showNav=0&showPrint=0&showTabs=0&showCalendars=0&src=eXV0aWFuY2hAYW5kcmV3LmNtdS5lZHU&color=%23039BE5" style="border-width:0" width="100%" height="600" frameborder="0" scrolling="no"></iframe>
+
 ## You can also Find Me at ...
 
 GitHub - [https://github.com/MarkChenYutian](https://github.com/MarkChenYutian)
 
 ZhiHu - [https://www.zhihu.com/people/mark-chenyutian](https://www.zhihu.com/people/mark-chenyutian)
+
