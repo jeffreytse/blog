@@ -2,8 +2,30 @@
 
 // Define defaults for each variable.
 
-//$base-font-family: "Noto Sans Light", AppleSDGothicNeo-Regular, "Malgun Gothic", "Apple Color Emoji", Helvetica, Arial, Oswald, sans-serif, !default;
-$base-font-family: 'Microsoft YaHei', '微软雅黑', 'Helvetica', 'Noto Sans Light', 'Arial';
+// $base-font-family: "Noto Sans Light", AppleSDGothicNeo-Regular, "Malgun Gothic", "Apple Color Emoji", Helvetica, Arial, Oswald, sans-serif, !default;
+// $base-font-family: 'Microsoft YaHei', '微软雅黑', 'Helvetica', 'Noto Sans Light', 'Arial';
+@font-face {
+  font-family: "霞鹜文楷";
+  src: url('/blog/assets/font/LXGWWenKaiLite-Regular.ttf') format('truetype');
+  unicode-range: U+A5, U+4E00-9FFF, U+3000-U+30FF, U+FF00-FF9F;
+  font-weight: normal 400;
+}
+
+@font-face {
+  font-family: "霞鹜文楷B";
+  src: url('/blog/assets/font/LXGWWenKaiLite-Bold.ttf') format('truetype');
+  unicode-range: U+A5, U+4E00-9FFF, U+3000-U+30FF, U+FF00-FF9F;
+  font-weight: bold bolder 600;
+}
+
+@font-face {
+  font-family: "latin-fonts";
+  src: local(Arial), local(Helvetica), local(sans-serif);
+  unicode-range:U+00-FF;
+  font-weight: normal;
+}
+// 
+$base-font-family: "latin-fonts", "霞鹜文楷", "霞鹜文楷B";
 $base-font-size: 15px !default;
 $base-font-weight: 400 !default;
 $small-font-size:  $base-font-size * 0.875 !default;
