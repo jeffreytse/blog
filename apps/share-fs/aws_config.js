@@ -46,6 +46,23 @@ function getPublicObjects(prefix) {
     });
 }
 
+//////////////// Auto-focus Functions
+
+function get_anchor() {
+    let urlParts = window.location.href.split("#");
+    return (urlParts.length > 1) ? urlParts[1] : null;
+}
+
+function auto_direct() {
+    const anchor = get_anchor();
+    if (anchor != null) {
+        getPublicObjects(decodeURI(anchor) + "/");
+    } else {
+        getPublicObjects("");
+    }
+}
+
+
 //////////////// UI Functions 
 
 function reload() { getPublicObjects(currentDir); }
