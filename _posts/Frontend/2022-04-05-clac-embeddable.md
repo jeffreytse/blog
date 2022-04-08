@@ -19,11 +19,11 @@ This is an attempt to build interactive web-based runtimes of a toy language use
 
 ## So Cool! How Can I deploy it on my site?
 
-Download the `index.js` file from [Here]({{ site.baseurl }}/apps/clac/index.js), link it to your webpage with
+Download the `index.min.js` file from [Here]({{ site.baseurl }}/apps/clac/index.min.js), link it to your webpage with
 
 ```html
 <!-- Place this line at the end of your page -->
-<script src="{{ site.baseurl }}/apps/clac/index.js"></script>
+<script src="<your-installation-dir>/index.min.js"></script>
 ```
 
 Then, at where you want to insert the widget, insert this line:
@@ -47,4 +47,4 @@ Notes\*:
 **\* Notes of Notes: Since we are implementing its core with `JavaScript`, some specific numerical calculation may not match the original, `C0` version's result.**
 
 
-<script src="{{ site.baseurl }}/apps/clac/index.js"></script>
+<script src="{{ site.baseurl }}/apps/clac/index.min.js"></script>
