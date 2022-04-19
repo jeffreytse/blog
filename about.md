@@ -7,15 +7,13 @@ title: About
 
 Hi, Welcome to my Blog!
 
-I'm Yutian (Mark) Chen, currently freshman in CMU and majoring in Statistics & Machine Learning. [Here's my resume]({{site.baseurl}}/files.html)
+I'm Yutian (Mark) Chen, currently freshman in CMU and majoring in Statistics & Machine Learning with additional major Robotics. [Here's my resume]({{site.baseurl}}/files.html)
 
 I'm interested in:
 
 * Frontend Technology (Web Application, Serverless, WebGL) [View Related Posts]({{site.baseurl}}/tags.html#h-Web)
 * Computer Vision [View Related Posts]({{site.baseurl}}/tags.html#Computer%20Vision)
 * Natural Language Processing [View Related Posts]({{site.baseurl}}/tags.html#NLP)
-
----
 
 ## Research
 <div style="display:flex; justify-content: space-between; align-items: baseline;">
@@ -26,8 +24,6 @@ I'm interested in:
 With the help of professor Shi and doctor Xu, I proposed a neural network model that automatically analyzes cardiac MRI sequences and provides semantic segmentation in the paper *Myocardial Segmentation of Cardiac MRI Sequence with Temporal Consistency for Coronary Artery Disease Diagnosis*. The paper is published on *Frontiers in Cardiovascular Medicine*.
 
 The model uses U-net with residual blocks (Res U-net) as encoder and bidirectional Conv-LSTM as the decoder. Through the bidirectional Conv-LSTM decoder, we successfully introduce temporal consistency constraints in semantic segmentation and improve the accuracy of cMRI segmentation.
-
----
 
 ## Projects
 
@@ -52,16 +48,12 @@ A collaborative non-linear online document. **Won the 3rd place in Hack CMU 2021
 
 A website for my high school computer science club. Contains the notes from every year's student instructors and some Q&A for beginners in CS. Deployed through AWS CDN and GitHub Action, the site contains 200+ posts and more than 20 contributors.
 
----
-
 ## My Awards
 
 * CMU Hack 2021 3rd Place
 * USACO Platinum Contestant *(2021)*
 * British Physics Olympiad Top Gold *(2019)*
 * High School Mathematic Contest in Modeling (HiMCM) Meritorious *(2019, 2020)*
-
----
 
 ## Skill Set
 

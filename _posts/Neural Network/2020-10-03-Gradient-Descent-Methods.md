@@ -1,7 +1,7 @@
 ---
 layout: post
-tags: [ Neural Network ]
-category: [ Math ]
+tags: [ Neural Network, Notes ]
+category: [ "Neural Network" ]
 title: "深度学习的梯度下降方法"
 banner: "/assets/images/banners/FunctionBackground.jpg"
 ---

@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Elliptical Curve Signature Algorithm
-category: [ Math ]
+category: [ "Cryptocurrency & DeFi" ]
 tags: [ Cryptocurrency ]
 ---
 

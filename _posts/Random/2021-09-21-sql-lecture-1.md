@@ -1,8 +1,8 @@
 ---
 layout: post
 title: SQL - Basic Query, Union and Inner Join
-tags: [Data Science]
-category: ["Data Science"]
+tags: [Notes]
+category: ["Notes"]
 banner: "/assets/images/banners/SQLBackground.jpg"
 ---
 
