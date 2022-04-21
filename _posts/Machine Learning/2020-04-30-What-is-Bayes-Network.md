@@ -5,26 +5,7 @@ tags: [ "Machine Learning" ]
 category: [ "Machine Learning"]
 ---
 
-<head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type="text/javascript"></script>
-    <script type="text/x-mathjax-config">
-        MathJax.Hub.Config({
-            tex2jax: {
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
-            inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-            displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-            }
-        });
-    </script>
-</head>
 贝叶斯网络是人们在探索机器学习时的一个重要里程碑，通过贝叶斯网络，机器学习摆脱了以往基于形式逻辑推理和庞大知识库的限制，开始了“统计学习”的新纪元。那么什么是贝叶斯网络呢？贝叶斯网络和贝叶斯统计学派又有什么关系呢?
-<!--more-->
-
-
-
-# CS188 课堂笔记 - 贝叶斯网络 Bayesian Network
-
-Update Test
 
 **目录**
 
@@ -203,7 +184,7 @@ def train():
 
 ### 5.4 模型准确率
 
-虽然这个模型看上去非常的不靠谱（假设所有feature相互独立），但是竟然可以达到高达84.4%的分类准确率！(当然，比起其他像神经网络一样的fancy方法，这个结果也很**朴素**）
+虽然这个模型看上去非常的不靠谱（假设所有feature相互独立），但是竟然可以达到高达84.4%的分类准确率！（当然，比起其他像神经网络一样的fancy方法，这个结果也很**朴素**）
 
 ```
 NO.9999

@@ -1,0 +1,6 @@
+Percept
+percept
+Optimality
+iff
+exceptionless
+pointwise

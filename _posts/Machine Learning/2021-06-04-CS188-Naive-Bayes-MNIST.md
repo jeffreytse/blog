@@ -92,7 +92,7 @@ Label: 0
 
 ### Simplification on image: Binarization
 
-To further simplify the model (and reduce the memory requirement of naive bayes classifier), we can **binarize** the image.
+To further simplify the model (and reduce the memory requirement of naive Bayes classifier), we can **binarize** the image.
 
 ![image-20210603162231955](https://markdown-img-1304853431.file.myqcloud.com/20210603162239.png)
 
