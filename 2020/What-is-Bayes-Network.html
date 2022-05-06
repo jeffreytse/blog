@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>什么是贝叶斯网络 What is Bayes Network | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="什么是贝叶斯网络 What is Bayes Network">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="en_US">
+<meta name="description" content='贝叶斯网络是人们在探索机器学习时的一个重要里程碑，通过贝叶斯网络，机器学习摆脱了以往基于形式逻辑推理和庞大知识库的限制，开始了“统计学习”的新纪元。那么什么是贝叶斯网络呢？贝叶斯网络和贝叶斯统计学派又有什么关系呢? 目录 统计贝叶斯学派与贝叶斯公式 什么是贝叶斯网络 为什么我们需要贝叶斯网络 贝叶斯网络“加速”的原理 用朴素的贝叶斯网络识别手写数字 参考资料 1 统计贝叶斯学派与贝叶斯公式 根据对统计的理解，数理统计存在概率学派与贝叶斯学派两种学派，他们之间的主要区别在于对于概率的理解方法不同 概率学派认为世界存在一个固定的先验概率，例如一枚公平的硬币抛出正反面的概率一定分别是1/2。换句话说，古典学派认为任何事件都存在一个固定的概率模型，虽然我们可能不知道这个概率分布中的一些参数，但是只要我们进行了足够多次的取样，我们可以通过取样的结果来推断事件的概率分布。 贝叶斯学派则认为世界没有一个确定的先验概率，假设我们只得到了事件A的样本X，那么我们就只能依靠样本X对事件A的概率分布做出推断，而不必考虑“可能出现但未出现（在样本X中）”的情况。在这种理解的背景下，我们每次对事件A进行采样就会更新我们对事件A各个情况概率分布的认知（Belief）。1 两个学派都各有优势，在一些简单并可以做出大量模拟的情况（例如预测抛硬币正反的概率分布）下，概率学派可以较为精确的获得某一事件的发生概率；在一些难以分析，很难模拟/大量采样的情况（例如地震概率的预测）下，贝叶斯学派则有极大的优势，可以使用有限的信息帮助我们做出合理的推断 贝叶斯公式是贝叶斯学派的重要理论之一，这个公式告诉了我们如何通过我们对事件A已有的认知和新的采样（evidence）B来更新事件A的后验概率（在事件B发生后我们对事件A概率分布的新认知） \(P(A \mid B) = \frac{P(B\mid A)P(A)}{P(B)}\) 概率学派也有关于这个公式的另一套解释方法：概率学派将概率看为“结果的比例（结果A在所有结果中的概率记为P(A) ）。这个公式在这种解释下成为了描述“具有B的所有结果中有A性质的结果所占的比例 = 具有A性质的所有结果中具有B性质的结果所占的比例 $\times$ 所有结果中A的比例 / 所有结果中B的比例” 2 2 什么是贝叶斯网络 贝叶斯网络是一种描述随机变量之间互相条件独立关系的有向无环图。在这个有向无环图中，每个节点代表一个随机变量对其父节点的条件概率分布 $P(X_i \mid parents(X_i))$，每一条边可以理解成变量之间的联系。 注意：虽然一般来讲这种“联系”可以被解释为“因果关系”，但是实际上 这种关系并不一定是因果关系，只要两个变量之间互相不条件独立就应该被连在一起 在贝叶斯网络中，已知$X$的父节点$parents(X)$时$X$的条件概率分布$P(X\mid parents(X))$ 与已知$X$的父节点时网络中$X$的“祖先节点”的概率分布$P(ancestor(X)\mid parents(X))$互相条件独立。3 例子： 在这样一给贝叶斯网络图中，E的父节点$parent(E) = {D}$，E不包括父节点的祖先节点$ancestor(E) = {B, C, A}$ 通过贝叶斯网络的定义，我们可以知道随机变量C, D, E之间存在这样的关系： [P(E\mid D) \perp P(C\mid D)] 也就是说 [P(E\mid D, B, C, A) = P(E\mid D)] 贝叶斯网络本质上只是一种维持子节点与其祖先节点（不包括父节点）在给定父节点的条件下互相条件独立的存储随机变量之间互相关系的数据结构。 3. 为什么我们需要贝叶斯网络 在生产生活中，我们经常需要对具有随机性的状态的出现概率进行推断。假设我们想用随机变量$X_0$到$X_n$来表示一个事件的“状态”，其中每一个随机变量都只有2个可能的取值：1（发生）或0（不发生） 我们这时候想要得知$P(x_1, x_2, \cdots, x_n)$这的概率分布。 如果使用直接列出一张全联合分布的概率分布表（如下）的话，整张概率分布表会有$2^n$行，每次计算一行都要计算随机变量的所有情况，这使得求解概率分布的时间复杂度极高（时间复杂度$O(n2^n)$）。 如果我把这n个随机变量用贝叶斯网络表示出来，因为贝叶斯网络可以很好的表达随机变量之间的相互条件独立关系，我们的计算量可以大大减小 \(P(x_1, x_2, \cdots, x_n) = \prod^n_{i = 1}{P(x_i | x_{i+1}, x_{i + 2}, \cdots x_n)}\) 上面的式子中连乘号中的概率分布也可以表示为： \(P(x_i \mid parents(x_i), ancestor(x_i))\) 因为我们知道 $P(ancestor(x_i)\mid parents(x_i))\perp P(x_i \mid parents(x_i))$，我们可以消去上式中给定条件里的$ancestor(x_i)$这一项 这时候，我们可以得知： \(P(x_1, x_2, \cdots, x_n) = \prod^n_{i = 1}P(x_i \mid parents(x_i))\) 看到这里，你可能会觉得这个式子有些似曾相识…… 是的，这里被连乘的每一项就是贝叶斯网络中每一个节点所存储的条件概率表所存储的概率分布！ 这时候，在一个最多有$k$个父节点的贝叶斯网络中，求解状态的概率分布所需要的时间复杂度就被缩小到了$O(n2^k)$。虽然求解问题依然是一个非多项式时间问题（NP）， 但是在大多数情况中贝叶斯网络的使用可以有效的降低时间复杂度的幂。3 4. 贝叶斯网络“加速”的原理 为什么贝叶斯网络处理同样的问题比直接计算所有随机变量的全联合分布要快呢？这个问题其实可以在贝叶斯网络的时间复杂度表达式中看出端倪：对于一个每个节点最多有$k$个父节点的贝叶斯网络，求解概率分布的时间复杂度是$O(n2^k)$。这意味着如果有一个贝叶斯网络是一个完全图（每个节点之间都有连线）的话，它的求解时间复杂度会达到$O(n2^n)$，和全联合分布一样。 实际上，贝叶斯网络可以计算的比全联合分布快是因为贝叶斯网络可以有效的表示变量之间的条件独立关系，基于这种条件独立的假设来简化计算，从而降低算法时间复杂度。 5. 朴素的贝叶斯网络识别手写数字 上面简单的介绍了什么是贝叶斯网络和贝叶斯网络的存在意义，接下来我们要看一个朴素的贝叶斯网络用来识别MNIST数据集中的手写数字的一个实践案例 5.0 什么是MNIST数据集 MNIST数据集是美国国家标准与技术研究所收集整理标注的一个手写数字数据集，其中包括了60000张28*28的8bit灰度手写数字图片作为训练集，还有10000张28*28的8bit灰度图片作为测试集。每张图片由$28^2 = 784$个像素构成，每个像素取值（从白到黑）在$[0, 255]$的范围内。 每一张图像都有一个“标签”，这个标签代表着这个图片上写的数字。 5.1 为什么说是“朴素的”贝叶斯网络 因为在这个例子里面，我们假定每一个像素是一个单独的feature（特性），并且我们认为所有的像素之间都是互相独立的（显然不是，一个高亮的像素周边的像素大概率也比较亮）。这样一个略微脱离实际的假设使得我们可以大大简化模型的贝叶斯网络并且可以极快的求解概率分布（因为每个像素都只有一个父节点——图像的标签）。 5.2 如何运用模型预测 对于一张给定的图片，我们把里面的784个像素看成784个随机变量，同时，我们记这个模型的标签为$label$，在这种设定下，一张图片的标签可以这样表示： \(label = {\underset {label\in [0, 9]}{\operatorname {arg\,max} }}\,(P(label, f_1, f_2, \cdots, f_{784}))\) 对于一幅图片（给定$f_1, f_2, \cdots f_{784}$），我们希望找到一个0 - 9之间的label，使得$P(label, f_1, f_2, \cdots, f_{784})$的值最大 使用贝叶斯网络，我们可以发现这个概率$P(label, f_1, f_2, \cdots, f_{784})$可以这么计算： \(P(label, f_1, f_2, \cdots, f_{784}) = P(label) \cdot P(f_1 \mid label) \cdot P(f_2\mid label)\cdots P(f_{784}\mid label)\) 我们只用完成这样的一个简单运算就可以得到一张照片是label = A的概率了： def predict(data): global LabelDistribution, PixelDistribution, THRESHOLD labelProbTable = [1] * 10 for i in range(10): labelProbTable[i] *= LabelDistribution[i] for pixel in range(len(data)): if data[pixel] &gt;= THRESHOLD: labelProbTable[i] *= PixelDistribution[i][pixel] else: labelProbTable[i] *= (1 - PixelDistribution[i][pixel]) MAX_PROB, MAX_LABEL = -1, -1 for i in range(10): if labelProbTable[i] &gt; MAX_PROB: MAX_PROB = labelProbTable[i] MAX_LABEL = i return MAX_LABEL 5.3 如何训练模型 通过上面的公式，我们知道可以很方便的使用$P(label)$和$P(f_i\mid label)$来预测一张图片的标签，那么我们怎么获得这两种数据呢?答案是： 数数 是的，这个”天真烂漫的朴素贝叶斯网络“的整个训练过程只在做一件事情：数数 我们通过统计训练数据里60000个标签的概率分布来得到$P(label)$，同时我们对每一张图片的每一个像素进行统计，如果像素亮度超过阈值就记+1上去，最后得到每一个标签下所有像素超过阈值的概率，也就是$P(f_i = 1\mid label)$。 Data = [list(map(int, line.strip().split(","))) for line in open("mnist_train.csv").read().strip().split("\n")] LabelDistribution = {i: 0 for i in range(10)} PixelDistribution = [{i: 0 for i in range(784)} for _ in range(10)] THRESHOLD = 100 # Calculate the P(F_i | y) def train(): global LabelDistribution, PixelDistribution, Data, THRESHOLD for line in Data: label = line[0] pixels = line[1:] LabelDistribution[label] += 1 for pixel in range(len(pixels)): if pixels[pixel] &gt;= THRESHOLD: PixelDistribution[label][pixel] += 1 for i in range(10): normalize(PixelDistribution[i], label=i) normalize(LabelDistribution) 5.4 模型准确率 虽然这个模型看上去非常的不靠谱（假设所有feature相互独立），但是竟然可以达到高达84.4%的分类准确率！（当然，比起其他像神经网络一样的fancy方法，这个结果也很朴素） NO.9999 predict: 6 actual: 6 accumulative precision: 0.844 6. 参考资料 [4]:'>
+<meta property="og:description" content='贝叶斯网络是人们在探索机器学习时的一个重要里程碑，通过贝叶斯网络，机器学习摆脱了以往基于形式逻辑推理和庞大知识库的限制，开始了“统计学习”的新纪元。那么什么是贝叶斯网络呢？贝叶斯网络和贝叶斯统计学派又有什么关系呢? 目录 统计贝叶斯学派与贝叶斯公式 什么是贝叶斯网络 为什么我们需要贝叶斯网络 贝叶斯网络“加速”的原理 用朴素的贝叶斯网络识别手写数字 参考资料 1 统计贝叶斯学派与贝叶斯公式 根据对统计的理解，数理统计存在概率学派与贝叶斯学派两种学派，他们之间的主要区别在于对于概率的理解方法不同 概率学派认为世界存在一个固定的先验概率，例如一枚公平的硬币抛出正反面的概率一定分别是1/2。换句话说，古典学派认为任何事件都存在一个固定的概率模型，虽然我们可能不知道这个概率分布中的一些参数，但是只要我们进行了足够多次的取样，我们可以通过取样的结果来推断事件的概率分布。 贝叶斯学派则认为世界没有一个确定的先验概率，假设我们只得到了事件A的样本X，那么我们就只能依靠样本X对事件A的概率分布做出推断，而不必考虑“可能出现但未出现（在样本X中）”的情况。在这种理解的背景下，我们每次对事件A进行采样就会更新我们对事件A各个情况概率分布的认知（Belief）。1 两个学派都各有优势，在一些简单并可以做出大量模拟的情况（例如预测抛硬币正反的概率分布）下，概率学派可以较为精确的获得某一事件的发生概率；在一些难以分析，很难模拟/大量采样的情况（例如地震概率的预测）下，贝叶斯学派则有极大的优势，可以使用有限的信息帮助我们做出合理的推断 贝叶斯公式是贝叶斯学派的重要理论之一，这个公式告诉了我们如何通过我们对事件A已有的认知和新的采样（evidence）B来更新事件A的后验概率（在事件B发生后我们对事件A概率分布的新认知） \(P(A \mid B) = \frac{P(B\mid A)P(A)}{P(B)}\) 概率学派也有关于这个公式的另一套解释方法：概率学派将概率看为“结果的比例（结果A在所有结果中的概率记为P(A) ）。这个公式在这种解释下成为了描述“具有B的所有结果中有A性质的结果所占的比例 = 具有A性质的所有结果中具有B性质的结果所占的比例 $\times$ 所有结果中A的比例 / 所有结果中B的比例” 2 2 什么是贝叶斯网络 贝叶斯网络是一种描述随机变量之间互相条件独立关系的有向无环图。在这个有向无环图中，每个节点代表一个随机变量对其父节点的条件概率分布 $P(X_i \mid parents(X_i))$，每一条边可以理解成变量之间的联系。 注意：虽然一般来讲这种“联系”可以被解释为“因果关系”，但是实际上 这种关系并不一定是因果关系，只要两个变量之间互相不条件独立就应该被连在一起 在贝叶斯网络中，已知$X$的父节点$parents(X)$时$X$的条件概率分布$P(X\mid parents(X))$ 与已知$X$的父节点时网络中$X$的“祖先节点”的概率分布$P(ancestor(X)\mid parents(X))$互相条件独立。3 例子： 在这样一给贝叶斯网络图中，E的父节点$parent(E) = {D}$，E不包括父节点的祖先节点$ancestor(E) = {B, C, A}$ 通过贝叶斯网络的定义，我们可以知道随机变量C, D, E之间存在这样的关系： [P(E\mid D) \perp P(C\mid D)] 也就是说 [P(E\mid D, B, C, A) = P(E\mid D)] 贝叶斯网络本质上只是一种维持子节点与其祖先节点（不包括父节点）在给定父节点的条件下互相条件独立的存储随机变量之间互相关系的数据结构。 3. 为什么我们需要贝叶斯网络 在生产生活中，我们经常需要对具有随机性的状态的出现概率进行推断。假设我们想用随机变量$X_0$到$X_n$来表示一个事件的“状态”，其中每一个随机变量都只有2个可能的取值：1（发生）或0（不发生） 我们这时候想要得知$P(x_1, x_2, \cdots, x_n)$这的概率分布。 如果使用直接列出一张全联合分布的概率分布表（如下）的话，整张概率分布表会有$2^n$行，每次计算一行都要计算随机变量的所有情况，这使得求解概率分布的时间复杂度极高（时间复杂度$O(n2^n)$）。 如果我把这n个随机变量用贝叶斯网络表示出来，因为贝叶斯网络可以很好的表达随机变量之间的相互条件独立关系，我们的计算量可以大大减小 \(P(x_1, x_2, \cdots, x_n) = \prod^n_{i = 1}{P(x_i | x_{i+1}, x_{i + 2}, \cdots x_n)}\) 上面的式子中连乘号中的概率分布也可以表示为： \(P(x_i \mid parents(x_i), ancestor(x_i))\) 因为我们知道 $P(ancestor(x_i)\mid parents(x_i))\perp P(x_i \mid parents(x_i))$，我们可以消去上式中给定条件里的$ancestor(x_i)$这一项 这时候，我们可以得知： \(P(x_1, x_2, \cdots, x_n) = \prod^n_{i = 1}P(x_i \mid parents(x_i))\) 看到这里，你可能会觉得这个式子有些似曾相识…… 是的，这里被连乘的每一项就是贝叶斯网络中每一个节点所存储的条件概率表所存储的概率分布！ 这时候，在一个最多有$k$个父节点的贝叶斯网络中，求解状态的概率分布所需要的时间复杂度就被缩小到了$O(n2^k)$。虽然求解问题依然是一个非多项式时间问题（NP）， 但是在大多数情况中贝叶斯网络的使用可以有效的降低时间复杂度的幂。3 4. 贝叶斯网络“加速”的原理 为什么贝叶斯网络处理同样的问题比直接计算所有随机变量的全联合分布要快呢？这个问题其实可以在贝叶斯网络的时间复杂度表达式中看出端倪：对于一个每个节点最多有$k$个父节点的贝叶斯网络，求解概率分布的时间复杂度是$O(n2^k)$。这意味着如果有一个贝叶斯网络是一个完全图（每个节点之间都有连线）的话，它的求解时间复杂度会达到$O(n2^n)$，和全联合分布一样。 实际上，贝叶斯网络可以计算的比全联合分布快是因为贝叶斯网络可以有效的表示变量之间的条件独立关系，基于这种条件独立的假设来简化计算，从而降低算法时间复杂度。 5. 朴素的贝叶斯网络识别手写数字 上面简单的介绍了什么是贝叶斯网络和贝叶斯网络的存在意义，接下来我们要看一个朴素的贝叶斯网络用来识别MNIST数据集中的手写数字的一个实践案例 5.0 什么是MNIST数据集 MNIST数据集是美国国家标准与技术研究所收集整理标注的一个手写数字数据集，其中包括了60000张28*28的8bit灰度手写数字图片作为训练集，还有10000张28*28的8bit灰度图片作为测试集。每张图片由$28^2 = 784$个像素构成，每个像素取值（从白到黑）在$[0, 255]$的范围内。 每一张图像都有一个“标签”，这个标签代表着这个图片上写的数字。 5.1 为什么说是“朴素的”贝叶斯网络 因为在这个例子里面，我们假定每一个像素是一个单独的feature（特性），并且我们认为所有的像素之间都是互相独立的（显然不是，一个高亮的像素周边的像素大概率也比较亮）。这样一个略微脱离实际的假设使得我们可以大大简化模型的贝叶斯网络并且可以极快的求解概率分布（因为每个像素都只有一个父节点——图像的标签）。 5.2 如何运用模型预测 对于一张给定的图片，我们把里面的784个像素看成784个随机变量，同时，我们记这个模型的标签为$label$，在这种设定下，一张图片的标签可以这样表示： \(label = {\underset {label\in [0, 9]}{\operatorname {arg\,max} }}\,(P(label, f_1, f_2, \cdots, f_{784}))\) 对于一幅图片（给定$f_1, f_2, \cdots f_{784}$），我们希望找到一个0 - 9之间的label，使得$P(label, f_1, f_2, \cdots, f_{784})$的值最大 使用贝叶斯网络，我们可以发现这个概率$P(label, f_1, f_2, \cdots, f_{784})$可以这么计算： \(P(label, f_1, f_2, \cdots, f_{784}) = P(label) \cdot P(f_1 \mid label) \cdot P(f_2\mid label)\cdots P(f_{784}\mid label)\) 我们只用完成这样的一个简单运算就可以得到一张照片是label = A的概率了： def predict(data): global LabelDistribution, PixelDistribution, THRESHOLD labelProbTable = [1] * 10 for i in range(10): labelProbTable[i] *= LabelDistribution[i] for pixel in range(len(data)): if data[pixel] &gt;= THRESHOLD: labelProbTable[i] *= PixelDistribution[i][pixel] else: labelProbTable[i] *= (1 - PixelDistribution[i][pixel]) MAX_PROB, MAX_LABEL = -1, -1 for i in range(10): if labelProbTable[i] &gt; MAX_PROB: MAX_PROB = labelProbTable[i] MAX_LABEL = i return MAX_LABEL 5.3 如何训练模型 通过上面的公式，我们知道可以很方便的使用$P(label)$和$P(f_i\mid label)$来预测一张图片的标签，那么我们怎么获得这两种数据呢?答案是： 数数 是的，这个”天真烂漫的朴素贝叶斯网络“的整个训练过程只在做一件事情：数数 我们通过统计训练数据里60000个标签的概率分布来得到$P(label)$，同时我们对每一张图片的每一个像素进行统计，如果像素亮度超过阈值就记+1上去，最后得到每一个标签下所有像素超过阈值的概率，也就是$P(f_i = 1\mid label)$。 Data = [list(map(int, line.strip().split(","))) for line in open("mnist_train.csv").read().strip().split("\n")] LabelDistribution = {i: 0 for i in range(10)} PixelDistribution = [{i: 0 for i in range(784)} for _ in range(10)] THRESHOLD = 100 # Calculate the P(F_i | y) def train(): global LabelDistribution, PixelDistribution, Data, THRESHOLD for line in Data: label = line[0] pixels = line[1:] LabelDistribution[label] += 1 for pixel in range(len(pixels)): if pixels[pixel] &gt;= THRESHOLD: PixelDistribution[label][pixel] += 1 for i in range(10): normalize(PixelDistribution[i], label=i) normalize(LabelDistribution) 5.4 模型准确率 虽然这个模型看上去非常的不靠谱（假设所有feature相互独立），但是竟然可以达到高达84.4%的分类准确率！（当然，比起其他像神经网络一样的fancy方法，这个结果也很朴素） NO.9999 predict: 6 actual: 6 accumulative precision: 0.844 6. 参考资料 [4]:'>
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2020/What-is-Bayes-Network.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2020/What-is-Bayes-Network.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-04-30T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="什么是贝叶斯网络 What is Bayes Network">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2020-04-30T00:00:00+00:00","datePublished":"2020-04-30T00:00:00+00:00","description":"贝叶斯网络是人们在探索机器学习时的一个重要里程碑，通过贝叶斯网络，机器学习摆脱了以往基于形式逻辑推理和庞大知识库的限制，开始了“统计学习”的新纪元。那么什么是贝叶斯网络呢？贝叶斯网络和贝叶斯统计学派又有什么关系呢? 目录 统计贝叶斯学派与贝叶斯公式 什么是贝叶斯网络 为什么我们需要贝叶斯网络 贝叶斯网络“加速”的原理 用朴素的贝叶斯网络识别手写数字 参考资料 1 统计贝叶斯学派与贝叶斯公式 根据对统计的理解，数理统计存在概率学派与贝叶斯学派两种学派，他们之间的主要区别在于对于概率的理解方法不同 概率学派认为世界存在一个固定的先验概率，例如一枚公平的硬币抛出正反面的概率一定分别是1/2。换句话说，古典学派认为任何事件都存在一个固定的概率模型，虽然我们可能不知道这个概率分布中的一些参数，但是只要我们进行了足够多次的取样，我们可以通过取样的结果来推断事件的概率分布。 贝叶斯学派则认为世界没有一个确定的先验概率，假设我们只得到了事件A的样本X，那么我们就只能依靠样本X对事件A的概率分布做出推断，而不必考虑“可能出现但未出现（在样本X中）”的情况。在这种理解的背景下，我们每次对事件A进行采样就会更新我们对事件A各个情况概率分布的认知（Belief）。1 两个学派都各有优势，在一些简单并可以做出大量模拟的情况（例如预测抛硬币正反的概率分布）下，概率学派可以较为精确的获得某一事件的发生概率；在一些难以分析，很难模拟/大量采样的情况（例如地震概率的预测）下，贝叶斯学派则有极大的优势，可以使用有限的信息帮助我们做出合理的推断 贝叶斯公式是贝叶斯学派的重要理论之一，这个公式告诉了我们如何通过我们对事件A已有的认知和新的采样（evidence）B来更新事件A的后验概率（在事件B发生后我们对事件A概率分布的新认知） \\(P(A \\mid B) = \\frac{P(B\\mid A)P(A)}{P(B)}\\) 概率学派也有关于这个公式的另一套解释方法：概率学派将概率看为“结果的比例（结果A在所有结果中的概率记为P(A) ）。这个公式在这种解释下成为了描述“具有B的所有结果中有A性质的结果所占的比例 = 具有A性质的所有结果中具有B性质的结果所占的比例 $\\times$ 所有结果中A的比例 / 所有结果中B的比例” 2 2 什么是贝叶斯网络 贝叶斯网络是一种描述随机变量之间互相条件独立关系的有向无环图。在这个有向无环图中，每个节点代表一个随机变量对其父节点的条件概率分布 $P(X_i \\mid parents(X_i))$，每一条边可以理解成变量之间的联系。 注意：虽然一般来讲这种“联系”可以被解释为“因果关系”，但是实际上 这种关系并不一定是因果关系，只要两个变量之间互相不条件独立就应该被连在一起 在贝叶斯网络中，已知$X$的父节点$parents(X)$时$X$的条件概率分布$P(X\\mid parents(X))$ 与已知$X$的父节点时网络中$X$的“祖先节点”的概率分布$P(ancestor(X)\\mid parents(X))$互相条件独立。3 例子： 在这样一给贝叶斯网络图中，E的父节点$parent(E) = {D}$，E不包括父节点的祖先节点$ancestor(E) = {B, C, A}$ 通过贝叶斯网络的定义，我们可以知道随机变量C, D, E之间存在这样的关系： [P(E\\mid D) \\perp P(C\\mid D)] 也就是说 [P(E\\mid D, B, C, A) = P(E\\mid D)] 贝叶斯网络本质上只是一种维持子节点与其祖先节点（不包括父节点）在给定父节点的条件下互相条件独立的存储随机变量之间互相关系的数据结构。 3. 为什么我们需要贝叶斯网络 在生产生活中，我们经常需要对具有随机性的状态的出现概率进行推断。假设我们想用随机变量$X_0$到$X_n$来表示一个事件的“状态”，其中每一个随机变量都只有2个可能的取值：1（发生）或0（不发生） 我们这时候想要得知$P(x_1, x_2, \\cdots, x_n)$这的概率分布。 如果使用直接列出一张全联合分布的概率分布表（如下）的话，整张概率分布表会有$2^n$行，每次计算一行都要计算随机变量的所有情况，这使得求解概率分布的时间复杂度极高（时间复杂度$O(n2^n)$）。 如果我把这n个随机变量用贝叶斯网络表示出来，因为贝叶斯网络可以很好的表达随机变量之间的相互条件独立关系，我们的计算量可以大大减小 \\(P(x_1, x_2, \\cdots, x_n) = \\prod^n_{i = 1}{P(x_i | x_{i+1}, x_{i + 2}, \\cdots x_n)}\\) 上面的式子中连乘号中的概率分布也可以表示为： \\(P(x_i \\mid parents(x_i), ancestor(x_i))\\) 因为我们知道 $P(ancestor(x_i)\\mid parents(x_i))\\perp P(x_i \\mid parents(x_i))$，我们可以消去上式中给定条件里的$ancestor(x_i)$这一项 这时候，我们可以得知： \\(P(x_1, x_2, \\cdots, x_n) = \\prod^n_{i = 1}P(x_i \\mid parents(x_i))\\) 看到这里，你可能会觉得这个式子有些似曾相识…… 是的，这里被连乘的每一项就是贝叶斯网络中每一个节点所存储的条件概率表所存储的概率分布！ 这时候，在一个最多有$k$个父节点的贝叶斯网络中，求解状态的概率分布所需要的时间复杂度就被缩小到了$O(n2^k)$。虽然求解问题依然是一个非多项式时间问题（NP）， 但是在大多数情况中贝叶斯网络的使用可以有效的降低时间复杂度的幂。3 4. 贝叶斯网络“加速”的原理 为什么贝叶斯网络处理同样的问题比直接计算所有随机变量的全联合分布要快呢？这个问题其实可以在贝叶斯网络的时间复杂度表达式中看出端倪：对于一个每个节点最多有$k$个父节点的贝叶斯网络，求解概率分布的时间复杂度是$O(n2^k)$。这意味着如果有一个贝叶斯网络是一个完全图（每个节点之间都有连线）的话，它的求解时间复杂度会达到$O(n2^n)$，和全联合分布一样。 实际上，贝叶斯网络可以计算的比全联合分布快是因为贝叶斯网络可以有效的表示变量之间的条件独立关系，基于这种条件独立的假设来简化计算，从而降低算法时间复杂度。 5. 朴素的贝叶斯网络识别手写数字 上面简单的介绍了什么是贝叶斯网络和贝叶斯网络的存在意义，接下来我们要看一个朴素的贝叶斯网络用来识别MNIST数据集中的手写数字的一个实践案例 5.0 什么是MNIST数据集 MNIST数据集是美国国家标准与技术研究所收集整理标注的一个手写数字数据集，其中包括了60000张28*28的8bit灰度手写数字图片作为训练集，还有10000张28*28的8bit灰度图片作为测试集。每张图片由$28^2 = 784$个像素构成，每个像素取值（从白到黑）在$[0, 255]$的范围内。 每一张图像都有一个“标签”，这个标签代表着这个图片上写的数字。 5.1 为什么说是“朴素的”贝叶斯网络 因为在这个例子里面，我们假定每一个像素是一个单独的feature（特性），并且我们认为所有的像素之间都是互相独立的（显然不是，一个高亮的像素周边的像素大概率也比较亮）。这样一个略微脱离实际的假设使得我们可以大大简化模型的贝叶斯网络并且可以极快的求解概率分布（因为每个像素都只有一个父节点——图像的标签）。 5.2 如何运用模型预测 对于一张给定的图片，我们把里面的784个像素看成784个随机变量，同时，我们记这个模型的标签为$label$，在这种设定下，一张图片的标签可以这样表示： \\(label = {\\underset {label\\in [0, 9]}{\\operatorname {arg\\,max} }}\\,(P(label, f_1, f_2, \\cdots, f_{784}))\\) 对于一幅图片（给定$f_1, f_2, \\cdots f_{784}$），我们希望找到一个0 - 9之间的label，使得$P(label, f_1, f_2, \\cdots, f_{784})$的值最大 使用贝叶斯网络，我们可以发现这个概率$P(label, f_1, f_2, \\cdots, f_{784})$可以这么计算： \\(P(label, f_1, f_2, \\cdots, f_{784}) = P(label) \\cdot P(f_1 \\mid label) \\cdot P(f_2\\mid label)\\cdots P(f_{784}\\mid label)\\) 我们只用完成这样的一个简单运算就可以得到一张照片是label = A的概率了： def predict(data): global LabelDistribution, PixelDistribution, THRESHOLD labelProbTable = [1] * 10 for i in range(10): labelProbTable[i] *= LabelDistribution[i] for pixel in range(len(data)): if data[pixel] &gt;= THRESHOLD: labelProbTable[i] *= PixelDistribution[i][pixel] else: labelProbTable[i] *= (1 - PixelDistribution[i][pixel]) MAX_PROB, MAX_LABEL = -1, -1 for i in range(10): if labelProbTable[i] &gt; MAX_PROB: MAX_PROB = labelProbTable[i] MAX_LABEL = i return MAX_LABEL 5.3 如何训练模型 通过上面的公式，我们知道可以很方便的使用$P(label)$和$P(f_i\\mid label)$来预测一张图片的标签，那么我们怎么获得这两种数据呢?答案是： 数数 是的，这个”天真烂漫的朴素贝叶斯网络“的整个训练过程只在做一件事情：数数 我们通过统计训练数据里60000个标签的概率分布来得到$P(label)$，同时我们对每一张图片的每一个像素进行统计，如果像素亮度超过阈值就记+1上去，最后得到每一个标签下所有像素超过阈值的概率，也就是$P(f_i = 1\\mid label)$。 Data = [list(map(int, line.strip().split(&quot;,&quot;))) for line in open(&quot;mnist_train.csv&quot;).read().strip().split(&quot;\\n&quot;)] LabelDistribution = {i: 0 for i in range(10)} PixelDistribution = [{i: 0 for i in range(784)} for _ in range(10)] THRESHOLD = 100 # Calculate the P(F_i | y) def train(): global LabelDistribution, PixelDistribution, Data, THRESHOLD for line in Data: label = line[0] pixels = line[1:] LabelDistribution[label] += 1 for pixel in range(len(pixels)): if pixels[pixel] &gt;= THRESHOLD: PixelDistribution[label][pixel] += 1 for i in range(10): normalize(PixelDistribution[i], label=i) normalize(LabelDistribution) 5.4 模型准确率 虽然这个模型看上去非常的不靠谱（假设所有feature相互独立），但是竟然可以达到高达84.4%的分类准确率！（当然，比起其他像神经网络一样的fancy方法，这个结果也很朴素） NO.9999 predict: 6 actual: 6 accumulative precision: 0.844 6. 参考资料 [4]:","headline":"什么是贝叶斯网络 What is Bayes Network","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2020/What-is-Bayes-Network.html"},"url":"https://markchenyutian.github.io//blog/2020/What-is-Bayes-Network.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">什么是贝叶斯网络 | What is Bayes Network</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-04-30T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Apr 30, 2020
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags"><a class="post-tag" href="/blog/tags.html#Machine%20Learning">#Machine Learning</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>贝叶斯网络是人们在探索机器学习时的一个重要里程碑，通过贝叶斯网络，机器学习摆脱了以往基于形式逻辑推理和庞大知识库的限制，开始了“统计学习”的新纪元。那么什么是贝叶斯网络呢？贝叶斯网络和贝叶斯统计学派又有什么关系呢?</p>
+
+<p><strong>目录</strong></p>
+
+<blockquote>
+  <ol>
+    <li>统计贝叶斯学派与贝叶斯公式</li>
+    <li>什么是贝叶斯网络</li>
+    <li>为什么我们需要贝叶斯网络</li>
+    <li>贝叶斯网络“加速”的原理</li>
+    <li>用朴素的贝叶斯网络识别手写数字</li>
+    <li>参考资料</li>
+  </ol>
+</blockquote>
+
+<h2 id="1-统计贝叶斯学派与贝叶斯公式">1 统计贝叶斯学派与贝叶斯公式</h2>
+
+<p>根据对统计的理解，数理统计存在<strong>概率学派</strong>与<strong>贝叶斯学派</strong>两种学派，他们之间的主要区别在于对于概率的理解方法不同</p>
+
+<p><strong>概率学派</strong>认为世界存在一个固定的<strong>先验概率</strong>，例如一枚公平的硬币抛出正反面的概率一定分别是1/2。换句话说，古典学派认为任何事件都<strong>存在一个固定的概率模型</strong>，虽然我们可能不知道这个概率分布中的一些参数，但是只要我们进行了足够多次的取样，我们可以通过取样的结果来推断事件的概率分布。</p>
+
+<p><strong>贝叶斯学派</strong>则认为世界<strong>没有一个确定的先验概率</strong>，假设我们只得到了事件A的样本X，那么我们就只能依靠样本X对事件A的概率分布做出推断，而不必考虑“可能出现但未出现（在样本X中）”的情况。在这种理解的背景下，我们每次对事件A进行采样就会更新我们对事件A各个情况概率分布的认知（Belief）。<a href="%E2%80%9Chgz_dm.%E2%80%9D%20*%E7%BB%9F%E8%AE%A1%E5%AD%A6%E4%B8%AD%E7%9A%84%E9%A2%91%E7%8E%87%E5%AD%A6%E6%B4%BE%E4%B8%8E%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%AD%A6%E6%B4%BE%20-%20hgz_dm%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD*,%20www.cnblogs.com/hgz-dm/p/10292949.html.">1</a></p>
+
+<p>两个学派都各有优势，在一些简单并可以做出大量模拟的情况（例如预测抛硬币正反的概率分布）下，概率学派可以较为精确的获得某一事件的发生概率；在一些难以分析，很难模拟/大量采样的情况（例如地震概率的预测）下，贝叶斯学派则有极大的优势，可以使用有限的信息帮助我们做出合理的推断</p>
+
+<p><strong>贝叶斯公式</strong>是贝叶斯学派的重要理论之一，这个公式告诉了我们如何通过我们对事件A已有的认知和新的采样（evidence）B来更新事件A的<strong>后验概率</strong>（在事件B发生后我们对事件A概率分布的新认知）
+$$
+P(A \mid B) = \frac{P(B\mid A)P(A)}{P(B)}
+$$
+概率学派也有关于这个公式的另一套解释方法：概率学派将概率看为“结果的比例（结果A在所有结果中的概率记为P(A) ）。这个公式在这种解释下成为了描述“具有B的所有结果中有A性质的结果所占的比例 = 具有A性质的所有结果中具有B性质的结果所占的比例 $\times$ 所有结果中A的比例 / 所有结果中B的比例” <a href="%E2%80%9CBayes'%20Theorem.%E2%80%9D%20*Wikipedia*,%20Wikimedia%20Foundation,%2027%20Apr.%202020,%20en.wikipedia.org/wiki/Bayes'_theorem.">2</a></p>
+
+<h2 id="2-什么是贝叶斯网络">2 什么是贝叶斯网络</h2>
+
+<p>贝叶斯网络是一种描述<strong>随机变量之间互相条件独立关系的有向无环图</strong>。在这个有向无环图中，每个节点代表一个<strong>随机变量对其父节点的条件概率分布</strong> $P(X_i \mid parents(X_i))$，每一条边可以理解成变量之间的联系。</p>
+
+<blockquote>
+  <p>注意：虽然一般来讲这种“联系”可以被解释为“因果关系”，但是实际上 这种关系并不一定是因果关系，只要两个变量之间互相不条件独立就应该被连在一起</p>
+</blockquote>
+
+<p>在贝叶斯网络中，已知$X$的父节点$parents(X)$时$X$的条件概率分布$P(X\mid parents(X))$ 与已知$X$的父节点时网络中$X$的“祖先节点”的概率分布$P(ancestor(X)\mid parents(X))$互相条件独立。<a href="Russell,%20Stuart%20J.%20*Artificial%20Intelligence:%20a%20Modern%20Approach*.%20Pearson,%202016.">3</a></p>
+
+<blockquote>
+  <p>例子：<img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210502163124.png" alt="image-20200430104043594" style="zoom:60%;"></p>
+
+  <p>在这样一给贝叶斯网络图中，E的父节点$parent(E) = {D}$，E不包括父节点的祖先节点$ancestor(E) = {B, C, A}$</p>
+
+  <p>通过贝叶斯网络的定义，我们可以知道随机变量C, D, E之间存在这样的关系：</p>
+</blockquote>
+
+<p>$$
+P(E\mid D) \perp P(C\mid D)
+$$</p>
+
+<blockquote>
+  <p>也就是说</p>
+</blockquote>
+
+<p>$$
+P(E\mid D, B, C, A) = P(E\mid D)
+$$</p>
+
+<p>贝叶斯网络本质上只是一种维持子节点与其祖先节点（不包括父节点）在给定父节点的条件下互相条件独立的存储随机变量之间互相关系的数据结构。</p>
+
+<h2 id="3-为什么我们需要贝叶斯网络">3. 为什么我们需要贝叶斯网络</h2>
+
+<p>在生产生活中，我们经常需要对具有随机性的状态的出现概率进行推断。假设我们想用随机变量$X_0$到$X_n$来表示一个事件的“状态”，其中每一个随机变量都只有2个可能的取值：1（发生）或0（不发生） 我们这时候想要得知$P(x_1, x_2, \cdots, x_n)$这的概率分布。</p>
+
+<p>如果使用直接列出一张全联合分布的概率分布表（如下）的话，整张概率分布表会有$2^n$行，每次计算一行都要计算随机变量的所有情况，这使得求解概率分布的时间复杂度极高（时间复杂度$O(n2^n)$）。</p>
+
+<p><img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210502163127.png" alt="image-20200430112420798" style="zoom: 80%;"></p>
+
+<p>如果我把这n个随机变量用贝叶斯网络表示出来，因为贝叶斯网络可以很好的表达随机变量之间的相互条件独立关系，我们的计算量可以大大减小
+$$
+P(x_1, x_2, \cdots, x_n) = \prod^n_{i = 1}{P(x_i | x_{i+1}, x_{i + 2}, \cdots x_n)}
+$$
+上面的式子中连乘号中的概率分布也可以表示为：
+$$
+P(x_i \mid parents(x_i), ancestor(x_i))
+$$
+因为我们知道 $P(ancestor(x_i)\mid parents(x_i))\perp P(x_i \mid parents(x_i))$，我们可以消去上式中给定条件里的$ancestor(x_i)$这一项</p>
+
+<p>这时候，我们可以得知：
+$$
+P(x_1, x_2, \cdots, x_n) = \prod^n_{i = 1}P(x_i \mid parents(x_i))
+$$
+看到这里，你可能会觉得这个式子有些似曾相识……</p>
+
+<p>是的，这里被连乘的每一项就是贝叶斯网络中每一个节点所存储的条件概率表所存储的概率分布！</p>
+
+<p>这时候，在一个最多有$k$个父节点的贝叶斯网络中，求解状态的概率分布所需要的时间复杂度就被缩小到了$O(n2^k)$。虽然求解问题依然是一个非多项式时间问题（NP）， 但是在大多数情况中贝叶斯网络的使用可以有效的降低时间复杂度的幂。<a href="Russell,%20Stuart%20J.%20*Artificial%20Intelligence:%20a%20Modern%20Approach*.%20Pearson,%202016.">3</a></p>
+
+<h2 id="4-贝叶斯网络加速的原理">4. 贝叶斯网络“加速”的原理</h2>
+
+<p>为什么贝叶斯网络处理同样的问题比直接计算所有随机变量的全联合分布要快呢？这个问题其实可以在贝叶斯网络的时间复杂度表达式中看出端倪：对于一个<strong>每个节点最多有$k$个父节点</strong>的贝叶斯网络，求解概率分布的时间复杂度是$O(n2^k)$。这意味着如果有一个贝叶斯网络是一个<strong>完全图</strong>（每个节点之间都有连线）的话，它的求解时间复杂度会达到$O(n2^n)$，和全联合分布一样。</p>
+
+<p>实际上，贝叶斯网络可以计算的比全联合分布快是因为贝叶斯网络可以有效的表示变量之间的条件独立关系，基于这种条件独立的假设来简化计算，从而降低算法时间复杂度。</p>
+
+<h2 id="5-朴素的贝叶斯网络识别手写数字">5. 朴素的贝叶斯网络识别手写数字</h2>
+
+<p>上面简单的介绍了什么是贝叶斯网络和贝叶斯网络的存在意义，接下来我们要看一个<strong>朴素的</strong>贝叶斯网络用来识别MNIST数据集中的手写数字的一个实践案例</p>
+
+<h3 id="50-什么是mnist数据集">5.0 什么是MNIST数据集</h3>
+
+<p>MNIST数据集是美国国家标准与技术研究所收集整理标注的一个手写数字数据集，其中包括了60000张28*28的8bit灰度手写数字图片作为训练集，还有10000张28*28的8bit灰度图片作为测试集。每张图片由$28^2 = 784$个像素构成，每个像素取值（从白到黑）在$[0, 255]$的范围内。</p>
+
+<p><img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210502163132.png" alt="MNIST数据集中的一张'4'的样本"></p>
+
+<p>每一张图像都有一个“标签”，这个标签代表着这个图片上写的数字。</p>
+
+<h3 id="51-为什么说是朴素的贝叶斯网络">5.1 为什么说是“朴素的”贝叶斯网络</h3>
+
+<p>因为在这个例子里面，我们假定每一个像素是一个单独的feature（特性），并且我们认为所有的像素之间都是互相独立的（显然不是，一个高亮的像素周边的像素大概率也比较亮）。这样一个略微脱离实际的假设使得我们可以大大简化模型的贝叶斯网络并且可以极快的求解概率分布（因为每个像素都只有一个父节点——图像的标签）。</p>
+
+<p><img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210502163134.png" style="zoom: 70%;"></p>
+
+<h3 id="52-如何运用模型预测">5.2 如何运用模型预测</h3>
+
+<p>对于一张给定的图片，我们把里面的784个像素看成784个随机变量，同时，我们记这个模型的标签为$label$，在这种设定下，一张图片的标签可以这样表示：
+$$
+label = {\underset {label\in [0, 9]}{\operatorname {arg\,max} }}\,(P(label, f_1, f_2, \cdots, f_{784}))
+$$</p>
+
+<blockquote>
+  <p>对于一幅图片（给定$f_1, f_2, \cdots f_{784}$），我们希望找到一个0 - 9之间的label，使得$P(label, f_1, f_2, \cdots, f_{784})$的值最大</p>
+</blockquote>
+
+<p>使用贝叶斯网络，我们可以发现这个概率$P(label, f_1, f_2, \cdots, f_{784})$可以这么计算：
+$$
+P(label, f_1, f_2, \cdots, f_{784}) = P(label) \cdot P(f_1 \mid label) \cdot P(f_2\mid label)\cdots P(f_{784}\mid label)
+$$
+我们只用完成这样的一个简单运算就可以得到一张照片是label = A的概率了：</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">LabelDistribution</span><span class="p">,</span> <span class="n">PixelDistribution</span><span class="p">,</span> <span class="n">THRESHOLD</span>
+    <span class="n">labelProbTable</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="n">labelProbTable</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="n">LabelDistribution</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">pixel</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="n">pixel</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">THRESHOLD</span><span class="p">:</span> <span class="n">labelProbTable</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="n">PixelDistribution</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">pixel</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span> <span class="n">labelProbTable</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">PixelDistribution</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">pixel</span><span class="p">])</span>
+
+    <span class="n">MAX_PROB</span><span class="p">,</span> <span class="n">MAX_LABEL</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">labelProbTable</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">MAX_PROB</span><span class="p">:</span>
+            <span class="n">MAX_PROB</span> <span class="o">=</span> <span class="n">labelProbTable</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">MAX_LABEL</span> <span class="o">=</span> <span class="n">i</span>
+    <span class="k">return</span> <span class="n">MAX_LABEL</span>
+</code></pre></div></div>
+
+<h3 id="53-如何训练模型">5.3 如何训练模型</h3>
+
+<p>通过上面的公式，我们知道可以很方便的使用$P(label)$和$P(f_i\mid label)$来预测一张图片的标签，那么我们怎么获得这两种数据呢?答案是：</p>
+
+<p><strong>数数</strong></p>
+
+<p>是的，这个”天真烂漫的朴素贝叶斯网络“的整个训练过程只在做一件事情：数数</p>
+
+<p>我们通过统计训练数据里60000个标签的概率分布来得到$P(label)$，同时我们对每一张图片的每一个像素进行统计，如果像素亮度超过阈值就记+1上去，最后得到每一个标签下所有像素超过阈值的概率，也就是$P(f_i = 1\mid label)$。</p>
+
+<pre><code class="language-Python">Data = [list(map(int, line.strip().split(","))) for line in open("mnist_train.csv").read().strip().split("\n")]
+LabelDistribution = {i: 0 for i in range(10)}
+PixelDistribution = [{i: 0 for i in range(784)} for _ in range(10)]
+THRESHOLD = 100
+
+# Calculate the P(F_i | y)
+def train():
+    global LabelDistribution, PixelDistribution, Data, THRESHOLD
+    for line in Data:
+        label = line[0]
+        pixels = line[1:]
+        LabelDistribution[label] += 1
+        for pixel in range(len(pixels)):
+            if pixels[pixel] &gt;= THRESHOLD:
+                PixelDistribution[label][pixel] += 1
+
+    for i in range(10): normalize(PixelDistribution[i], label=i)
+    normalize(LabelDistribution)
+</code></pre>
+
+<h3 id="54-模型准确率">5.4 模型准确率</h3>
+
+<p>虽然这个模型看上去非常的不靠谱（假设所有feature相互独立），但是竟然可以达到高达84.4%的分类准确率！（当然，比起其他像神经网络一样的fancy方法，这个结果也很<strong>朴素</strong>）</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>NO.9999
+predict: 6
+actual: 6
+accumulative precision: 0.844
+</code></pre></div></div>
+
+<h2 id="6-参考资料">6. 参考资料</h2>
+
+<p>[4]:</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2020/What-is-LSTM.html" title="长短期记忆递归网络 LSTM">长短期记忆递归网络 LSTM</a><a class="next" href="/blog/2020/How-do-Neural-Network-Work.html" title="神经网络如何工作">神经网络如何工作</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="神经网络如何工作">NLP 101: Word Embedding 词嵌入</a></li><li><a class="post-link" href="/blog/2022/clac-embeddable.html" title="神经网络如何工作">Embeddable Clac Execution Environment</a></li><li><a class="post-link" href="/blog/2021/Seq2Seq.html" title="神经网络如何工作">NLP 101: Seq2Seq 模型</a></li><li><a class="post-link" href="/blog/2022/serverless-file-system.html" title="神经网络如何工作">Serverless File System based on AWS S3</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="神经网络如何工作">A* Search and its Variants</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="神经网络如何工作">NLP 101: Word Embedding 词嵌入</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/2048-Project-1.html" title="神经网络如何工作">2048 Project (1)</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/CS188-Chapter15.html" title="神经网络如何工作">CS188 Chapter 15 Probabilistic Reasoning over Time</a></li>
+            
+          
+          
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

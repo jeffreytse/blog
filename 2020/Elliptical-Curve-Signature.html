@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Elliptical Curve Signature Algorithm | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Elliptical Curve Signature Algorithm">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="在传统的金融模型中，当人们需要在银行等金融机构中创建新的账户时，人们必须提供用于证明其身份的凭证（身份证，护照，etc）。然而，在比特币的新型隐私模型中，虽然每个账户之间的交易记录是公开的，但是账户拥有者的身份确不会被公开。为了防止比特币账户被冒用，比特币交易系统中使用了椭圆曲线签名的机制来确保账户操作者就是账户拥有者。">
+<meta property="og:description" content="在传统的金融模型中，当人们需要在银行等金融机构中创建新的账户时，人们必须提供用于证明其身份的凭证（身份证，护照，etc）。然而，在比特币的新型隐私模型中，虽然每个账户之间的交易记录是公开的，但是账户拥有者的身份确不会被公开。为了防止比特币账户被冒用，比特币交易系统中使用了椭圆曲线签名的机制来确保账户操作者就是账户拥有者。">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2020/Elliptical-Curve-Signature.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2020/Elliptical-Curve-Signature.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-10-18T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Elliptical Curve Signature Algorithm">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2020-10-18T00:00:00+00:00","datePublished":"2020-10-18T00:00:00+00:00","description":"在传统的金融模型中，当人们需要在银行等金融机构中创建新的账户时，人们必须提供用于证明其身份的凭证（身份证，护照，etc）。然而，在比特币的新型隐私模型中，虽然每个账户之间的交易记录是公开的，但是账户拥有者的身份确不会被公开。为了防止比特币账户被冒用，比特币交易系统中使用了椭圆曲线签名的机制来确保账户操作者就是账户拥有者。","headline":"Elliptical Curve Signature Algorithm","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2020/Elliptical-Curve-Signature.html"},"url":"https://markchenyutian.github.io//blog/2020/Elliptical-Curve-Signature.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Elliptical Curve Signature Algorithm</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-10-18T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Oct 18, 2020
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags"><a class="post-tag" href="/blog/tags.html#Cryptocurrency">#Cryptocurrency</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>在传统的金融模型中，当人们需要在银行等金融机构中创建新的账户时，人们必须提供用于证明其身份的凭证（身份证，护照，etc）。然而，在比特币的新型隐私模型中，虽然每个账户之间的交易记录是公开的，但是账户拥有者的身份确不会被公开。为了防止比特币账户被冒用，比特币交易系统中使用了椭圆曲线签名的机制来确保账户操作者就是账户拥有者。</p>
+
+<h2 id="1-什么是椭圆曲线">1. 什么是椭圆曲线</h2>
+
+<p>拥有这样的解析式的一类曲线被称作椭圆曲线:</p>
+
+<p>$$
+y^2 = x^3 + ax + b
+$$</p>
+
+<p>这样的曲线拥有这如下图所示的形状：</p>
+
+<p><img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210502162828.png" style="zoom:50%"></p>
+
+<p>这样的曲线有两个非常重要的性质：</p>
+
+<ol>
+  <li>椭圆曲线是关于$x$轴对称的</li>
+  <li>任意一条直线只会与椭圆曲线有不超过3个交点</li>
+</ol>
+
+<p>有了这两个性质，我们可以在椭圆曲线上定义“点乘”和“叉乘”这两种运算</p>
+
+<h2 id="2-椭圆曲线上定义的运算符">2. 椭圆曲线上定义的运算符</h2>
+
+<h3 id="21-椭圆曲线上的加法">2.1 椭圆曲线上的加法</h3>
+
+<p>假设我们有任意两点 $A,B$在椭圆曲线 $E$ 上，我们可以将两点链接起来得到一条直线，这条直线与椭圆曲线的第三个交点 $-C$ 。这时候，我们将得到的点 $-C$ 关于 $x$轴对称，得到点 $C$。 这样的一串操作可以被记录为 $A + B = C$</p>
+
+<p>如果我们把一次加法操作画在图上，那么 $A + B = C$的计算过程会是下面这样：</p>
+
+<p><img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210502162831.png" style="width:400px;"></p>
+
+<p>从上面的途中，我们可以发现椭圆曲线上的点乘是满足交换律的，因为点 $A,B$ 定义的直线与点 $B,A$ 定义的直线是同一条。</p>
+
+<p>一种特殊的情况是 $A + A$。这样的情况下，我们得到的直线会是椭圆曲线在$A$点上的切线，也就是……</p>
+
+<p><img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210502162834.png" style="width:400px;"></p>
+
+<h3 id="22-椭圆曲线上的乘法">2.2 椭圆曲线上的乘法</h3>
+
+<p>如果一个椭圆曲线上进行了 $n$ 次$A + A$这样的加法操作，我们可以将其简写为 $A\times n$。例如：$A\times 3$的计算过程可以用这样的几何方法表现出来：</p>
+
+<p><img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210502162838.jpeg" style="width:400px;"></p>
+
+<p><a href="https://andrea.corbellini.name/ecc/interactive/reals-add.html">这个网站</a>提供了椭圆曲线加法和乘法的可视化</p>
+
+<p>定义了这两种椭圆曲线上的运算以后，我们下面看看为了在计算机上更好的实现这个函数，我们都做了哪些改进。</p>
+
+<h2 id="3-椭圆曲线的改进">3. 椭圆曲线的改进</h2>
+
+<p>为了在计算机上更准确的处理椭圆曲线，我们对椭圆曲线做了以下这些改进：</p>
+
+<ol>
+  <li>因为计算机内存储的浮点数都是精度有限的，为了避免浮点数溢出造成的计算误差，我们把原先定义在实数域上的椭圆曲线离散化到了整数域上</li>
+  <li>大部分编程语言中，整型变量的大小是有上限的，这个上限由程序分配多少内存来存储一个整型变量所决定，为了避免计算过程中出现过大的值从而导致整型变量溢出，我们通过模运算（取余）的方式人为定义了椭圆曲线的上界，当椭圆曲线的计算结果超出上界时，因为模运算的存在，最终结果会被映射在整型变量能够表达的数值范围中。</li>
+</ol>
+
+<p>所以，一个椭圆曲线是由这些参数所决定的：
+$$
+E = \text{Elliptical Curve}(p, a, b)
+$$
+这样的一条椭圆曲线拥有这样的代数表达式：
+$$
+y^2 \equiv x^3 + ax + b \quad (\text{mod } p)
+$$</p>
+
+<h2 id="4-椭圆曲线与身份验证">4. 椭圆曲线与身份验证</h2>
+
+<p>说了那么多，人们到底是怎么用椭圆曲线进行身份验证的呢？</p>
+
+<p>比特币所使用的椭圆函数签名协议是SECP256K1，这个签名协议中包括了一个椭圆函数 $y^2 =x^3+7$ 和一个起始点 $A$。现在，如果有一个人拥有一个数字$K$，他可以很快的用计算机算出在椭圆函数上的$A\times K$。然而，给定$A\times K$，计算出$K$的值却是几乎不可能的。</p>
+
+<p>这样一个非对称的难度让身份验证变得十分简单，只要私钥$K$的持有者不公开自己手中的私钥，其他人就几乎不可能通过私钥的生成结果$A\times K$逆向获得私钥$K$。</p>
+
+<p>假如Bob要使用椭圆签名函数来验证Alice的身份，在此之前，Bob已经通过公开渠道得知Alice的公钥（椭圆函数计算结果是$Z_A$），Alice也通过公开渠道知道Bob的公钥（Bob用自己的椭圆函数私钥$K_B$计算出的结果$Z_B$）。那么Alice要做的事情就是向Bob传输$K_A \times Z_B$。因为$Z_B$实际上是$A\times K_B$的结果，我们也可以将传输的信息写作$K_A\times K_B\times A$。</p>
+
+<p>当Bob收到Alice发来的$K_A\times Z_B$的结果后，他可以通过计算$Z_A \times K_B$ 并与Alice发出的结果相比对进行验证。如果对面确实是Alice在对账户进行操作，那么应该有$K_A\times Z_B = Z_A \times K_B$。证明如下：</p>
+
+<p>$$
+\begin{aligned}
+&amp;K_A \times Z_B<br>
+=&amp;K_A \times A \times K_B<br>
+=&amp;(K_A\times A)\times K_B<br>
+=&amp;Z_A\times K_B
+\end{aligned}
+$$</p>
+
+<p>通过这样的方式，就可以在双方不透露自己私钥的情况下完成身份认证了。</p>
+
+<h2 id="5-比特币交易系统中的椭圆曲线">5. 比特币交易系统中的椭圆曲线</h2>
+
+<p>在比特币的交易系统中，每个用户都会有一个随机生成的私钥，并且用SECP256K1算法计算出自己私钥所对应的公钥，在下面这张描述比特币交易流程的图中，最关键的部分之一就是通过上诉的身份验证算法确定确实是比特币的所有者在进行转账操作。</p>
+
+<p><img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210502162842.png"></p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2020/Residual-Network.html" title="深度残差网络 Res-net">深度残差网络 Res-net</a><a class="next" href="/blog/2020/USACO-2016-Dec-Gold.html" title="USACO 2016 Dec Gold Analysis">USACO 2016 Dec Gold Analysis</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2021/Seq2Seq.html" title="USACO 2016 Dec Gold Analysis">NLP 101: Seq2Seq 模型</a></li><li><a class="post-link" href="/blog/2022/clac-embeddable.html" title="USACO 2016 Dec Gold Analysis">Embeddable Clac Execution Environment</a></li><li><a class="post-link" href="/blog/2022/Transformers.html" title="USACO 2016 Dec Gold Analysis">NLP 101: Transformer Model</a></li><li><a class="post-link" href="/blog/2022/the-fences.html" title="USACO 2016 Dec Gold Analysis">The Fences | AR Web Application</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/uniswap3-3.html" title="USACO 2016 Dec Gold Analysis">Uniswap 3 - Always profitable for Liquidity Provider?</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/uniswap3-2.html" title="USACO 2016 Dec Gold Analysis">Uniswap 3 - Starting from Uniswap v1</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/uniswap3-1.html" title="USACO 2016 Dec Gold Analysis">Uniswap 3 - Liquidity, Liquidity Provider and AMM</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CS188 Chapter 3 Searching Methods | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="CS188 Chapter 3 Searching Methods">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="The Relationship between Searching and AI As we have mentioned in chapter 1 and 2, an Intelligent Agent can maximize the utility in a given environment by control its behavior. Searching Algorithm is a very useful algorithm to find the sequence of actions that will maximize the utility.">
+<meta property="og:description" content="The Relationship between Searching and AI As we have mentioned in chapter 1 and 2, an Intelligent Agent can maximize the utility in a given environment by control its behavior. Searching Algorithm is a very useful algorithm to find the sequence of actions that will maximize the utility.">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2021/CS188-Chapter3.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2021/CS188-Chapter3.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-02-28T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="CS188 Chapter 3 Searching Methods">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2021-02-28T00:00:00+00:00","datePublished":"2021-02-28T00:00:00+00:00","description":"The Relationship between Searching and AI As we have mentioned in chapter 1 and 2, an Intelligent Agent can maximize the utility in a given environment by control its behavior. Searching Algorithm is a very useful algorithm to find the sequence of actions that will maximize the utility.","headline":"CS188 Chapter 3 Searching Methods","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2021/CS188-Chapter3.html"},"url":"https://markchenyutian.github.io//blog/2021/CS188-Chapter3.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="page-banner">
+    <div class="page-banner-img">
+      <div style="background-image: url(/blog/assets/images/banners/CS188Background.jpg)"></div>
+    </div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">CS188 Chapter 3 Searching Methods</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-02-28T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 28, 2021
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 39 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags"><a class="post-tag" href="/blog/tags.html#Machine%20Learning">#Machine Learning</a></div></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <div class="info">
+    <p><b>The Relationship between Searching and AI</b></p>
+    <p>
+        As we have mentioned in chapter 1 and 2, an Intelligent Agent can maximize the utility in a given environment by control its behavior. Searching Algorithm is a very useful algorithm to find the <strong>sequence of actions</strong> that will maximize the utility.
+    </p>
+</div>
+
+<h3 id="terminologies">Terminologies</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th><strong>Term</strong></th>
+      <th><strong>Explanation</strong></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>State</td>
+      <td>One status of environment, which can be represented using a series of parameters</td>
+    </tr>
+    <tr>
+      <td>State Space</td>
+      <td>All the states an environment can have. The state space can either be finite or infinite.</td>
+    </tr>
+    <tr>
+      <td>Action</td>
+      <td>The behavior of Agent. Usually Action can change the State (note: not <em>always</em>).</td>
+    </tr>
+    <tr>
+      <td>Fringe</td>
+      <td>The states in state space that is about to explore (expand) by the searching algorithm.</td>
+    </tr>
+    <tr>
+      <td>State Transition Function</td>
+      <td>The function that describe how state change between each other (how state transit).</td>
+    </tr>
+    <tr>
+      <td>Successor</td>
+      <td>The states that directly resulted from current state.<br>$\text{currState}\quad \underrightarrow{Action} \quad \text{Successors}$</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="30-how-do-we-evaluate-a-search-algorithm">3.0 How do We Evaluate a Search Algorithm</h3>
+
+<p>We can evaluate a searching method in several aspects, as shown below:</p>
+
+<blockquote>
+  <ul>
+    <li>
+<strong>Consistency</strong>, given a State Space with Goal State in it, the algorithm MUST be able to find an action sequence that leads to the goal state.</li>
+    <li>
+<strong>Optimality</strong>, Given a State Space that has Goal State in it, the searching algorithm MUST be able to find the Best Action Sequence that can lead to the Goal State</li>
+    <li>
+<strong>Time Complexity</strong>, how much computation time it takes for the algorithm to find the Best Action Sequence to the Goal State</li>
+    <li>
+<strong>Space Complexity</strong>, how many memories it uses for the algorithm to find the Best Action Sequence to the Goal State.</li>
+  </ul>
+</blockquote>
+
+<h3 id="31-breadth-first-search-bfs">3.1 Breadth First Search (BFS)</h3>
+
+<blockquote>
+  <p>BFS is both Consistent and Optimal.</p>
+</blockquote>
+
+<p>In the BFS algorithm, <strong>The shallowest state in state space is expanded first</strong>.</p>
+
+<p>Due to this feature, when there are multiple goal states in the state space, the BFS can always find the shallowest goal state. Therefore, when all the actions have same cost, the BFS can always find the action sequence to goal state that have the least cost.</p>
+
+<p>The fringe of BFS is a <strong>Stack</strong> where FIFO policy applies.</p>
+
+<p><strong>Code Example</strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">breadthFirstSearch</span><span class="p">(</span><span class="n">initialState</span><span class="p">,</span> <span class="n">getSuccessor</span><span class="p">,</span> <span class="n">getValidActions</span><span class="p">):</span>
+    <span class="s">"""
+    :param initialState: The Initial State of problem (sometimes the 'current state')
+    :param getSuccessor: The State Transition Function that return the successors given the current state and action
+    :param getValidActions: A function that takes current state and return a list of valid actions under current state
+    """</span>
+    <span class="n">fringe</span> <span class="o">=</span> <span class="n">stack</span><span class="p">()</span>
+    <span class="n">exploredStates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    
+    <span class="c1"># Add the Initial State into the Fringe before Searching Actually Start.
+</span>    <span class="n">fringe</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">initialState</span><span class="p">)</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">fringe</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">currState</span> <span class="o">=</span> <span class="n">fringe</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">currState</span> <span class="ow">in</span> <span class="n">exploredStates</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">exploredState</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">currState</span><span class="p">)</span>
+            
+        <span class="c1"># Do Something Here
+</span>        
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">getValidActions</span><span class="p">(</span><span class="n">currState</span><span class="p">):</span>
+            <span class="c1"># Add Successor States into the fringe
+</span>            <span class="n">successor</span> <span class="o">=</span> <span class="n">getSuccessor</span><span class="p">(</span><span class="n">currState</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">successor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exploredStates</span><span class="p">:</span> <span class="n">fringe</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">successor</span><span class="p">)</span>
+</code></pre></div></div>
+
+<center>Pros and Cons of BFS Algorithm</center>
+
+<table>
+  <thead>
+    <tr>
+      <th>Pros</th>
+      <th>Cons</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+<strong>The Optimality of Searching Result</strong> - the nearest goal state will always return first</td>
+      <td>
+<strong>High Space Complexity</strong> - The BFS algorithm requires much memory to maintain the fringe. Suppose each state leads to $3$ successors, when searching on a tree with height $10$, the fringe will have a size of $3^{10}\approx 60000$. (Space Complexity $O(m^n)$)</td>
+    </tr>
+    <tr>
+      <td>
+<strong>Easy to implement</strong> - no complex data structure required, the foundation of most searching algorithms</td>
+      <td>
+<strong>High Time Complexity</strong> - Suppose the goal state is at depth $n$, and on average each state has $m$ successors, the time complexity of BFS will be $O(m^{n+1})$</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="32-depth-first-search-dfs">3.2 Depth First Search (DFS)</h3>
+
+<div class="notification">
+    DFS is only Consistent, not Optimal
+</div>
+
+<p>The DFS algorithm will <strong>First expand the Deepest node in the State space</strong></p>
+
+<p>Depth First Search Algorithm need <strong>Much Less Space</strong> to search all the nodes in a specific depth comparing to BFS, but it is not a great searching algorithm since it is not <strong>Optimal</strong>. In other words, the DFS will <u>not</u> return the optimal solution first.</p>
+
+<p>In the DFS, the Fringe is a <strong>Queue</strong>, which applies the FIFO policy.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">depthFirstSearch</span><span class="p">(</span><span class="n">initialState</span><span class="p">,</span> <span class="n">getSuccessor</span><span class="p">,</span> <span class="n">getValidActions</span><span class="p">):</span>
+    <span class="s">"""
+    :param initialState: The Initial State of problem (sometimes the 'current state')
+    :param getSuccessor: The State Transition Function that return the successors given the current state and action
+    :param getValidActions: A function that takes current state and return a list of valid actions under current state
+    """</span>
+    <span class="n">fringe</span> <span class="o">=</span> <span class="n">queue</span><span class="p">()</span>    <span class="c1"># The only difference between BFS and DFS
+</span>    <span class="n">exploredStates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    
+    <span class="c1"># Add the Initial State into the Fringe before Searching Actually Start.
+</span>    <span class="n">fringe</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">initialState</span><span class="p">)</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">fringe</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">currState</span> <span class="o">=</span> <span class="n">fringe</span><span class="p">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">currState</span> <span class="ow">in</span> <span class="n">exploredStates</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">exploredState</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">currState</span><span class="p">)</span>
+            
+        <span class="c1"># Do Something Here
+</span>        
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">getValidActions</span><span class="p">(</span><span class="n">currState</span><span class="p">):</span>
+            <span class="c1"># Add Successor States into the fringe
+</span>            <span class="n">successor</span> <span class="o">=</span> <span class="n">getSuccessor</span><span class="p">(</span><span class="n">currState</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">successor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exploredStates</span><span class="p">:</span> <span class="n">fringe</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">successor</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="321-deep-limited-search">3.2.1 Deep Limited Search</h4>
+
+<h3 id="33-ucs-uniform-cost-search">3.3 UCS Uniform Cost Search</h3>
+
+<p>There is a common problem in BFS and DFS: They <strong>don’t care the ACTUAL COST of action sequence</strong> to the goal state. Though BFS will return the Shortest action sequence to goal state, the shortest action sequence may not be the action sequence with the lowest cost, like the example below shows:</p>
+
+<blockquote>
+  <p><img src="https://gitee.com/MarkYutianChen/mark-markdown-imagebed/raw/master/20210319224716.jpg" alt="6e5f63b38286cc81fc07f61886fabb9" style="zoom:33%; display: block; margin: 0 auto"></p>
+
+  <p>The number inside each grid is the <strong>cost</strong> to go through that grid, $S$ is the initial state and $G$ is the goal state. In this case, the shortest action sequence $A$ has a Much Higher cost comparing to the min-cost action sequence $A^*$.</p>
+</blockquote>
+
+<p>To solve this problem, we use the <strong>UCS</strong> to search through the state space, which will ALWAYS explore the state with minimal cumulative cost. To implement this feature, the fringe of UCS is a priority queue, where the cumulative cost is the weight to sort priority queue.</p>
+
+<p>This strategy is somehow similar to the strategy used by Min Span Tree.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">uniformCostSearch</span><span class="p">(</span><span class="n">initialState</span><span class="p">,</span> <span class="n">getSuccessor</span><span class="p">,</span> <span class="n">getValidActions</span><span class="p">,</span> <span class="n">getActionCost</span><span class="p">):</span>
+    <span class="s">"""
+    :param initialState: The Initial State of problem (sometimes the 'current state')
+    :param getSuccessor: The State Transition Function that return the successors given the current state and action
+    :param getValidActions: A function that takes current state and return a list of valid actions under current state
+    :param getActionCost: A function that will return cost of action given action and current state
+    """</span>
+    <span class="n">fringe</span> <span class="o">=</span> <span class="p">[]</span>    <span class="c1"># The only difference between BFS and DFS
+</span>    <span class="n">exploredStates</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    
+    <span class="c1"># Add the Initial State into the Fringe before Searching Actually Start.
+</span>    <span class="c1"># Instead of storing state directly in the fringe, we will use a tuple to store state, where the 
+</span>    <span class="c1"># 0th param of tuple is cumulative cost
+</span>    <span class="c1"># 1th param of tuple is the state
+</span>    
+    <span class="n">heapq</span><span class="p">.</span><span class="n">heappush</span><span class="p">(</span><span class="n">fringe</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">initialState</span><span class="p">))</span>	<span class="c1"># The initial cost is 0
+</span>    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">fringe</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="n">cost</span><span class="p">,</span> <span class="n">currState</span> <span class="o">=</span> <span class="n">heapq</span><span class="p">.</span><span class="n">heappop</span><span class="p">(</span><span class="n">fringe</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">currState</span> <span class="ow">in</span> <span class="n">exploredStates</span><span class="p">:</span> <span class="k">continue</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">exploredState</span><span class="p">.</span><span class="n">add</span><span class="p">(</span><span class="n">currState</span><span class="p">)</span>
+            
+        <span class="c1"># Do Something Here
+</span>        
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">getValidActions</span><span class="p">(</span><span class="n">currState</span><span class="p">):</span>
+            <span class="c1"># Add Successor States into the fringe
+</span>            <span class="n">successor</span> <span class="o">=</span> <span class="n">getSuccessor</span><span class="p">(</span><span class="n">currState</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">successor</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">exploredStates</span><span class="p">:</span>
+                <span class="n">deltaCost</span> <span class="o">=</span> <span class="n">getActionCost</span><span class="p">(</span><span class="n">currrState</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+                <span class="n">heapq</span><span class="p">.</span><span class="n">heappush</span><span class="p">((</span><span class="n">cost</span> <span class="o">+</span> <span class="n">deltaCost</span><span class="p">,</span> <span class="n">successor</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>In Python, the priority queue is implemented by internal library <code class="language-plaintext highlighter-rouge">heapq</code>.</p>
+
+<blockquote>
+  <p><strong>Tree Search</strong> v. <strong>Graph Search</strong></p>
+
+  <p>Tree Search and Graph Search are two types of searching algorithms. Tree search is like a tree in graph theory - there is <em>no loop</em> inside the state transition space. Therefore, any explored state node will NEVER be explored again.</p>
+
+  <p>Graph Search, on the other hand, does not record the explored nodes in the state space. Every time a Graph Search algorithm expand a node, all of its successor states will be added into the fringe. The cycle inside the graph is <strong>redundant part</strong> of a graph, which exists when there is more than one way to get from one state to another.</p>
+</blockquote>
+
+<blockquote>
+  <p>Symbols Used below</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Symbol</th>
+        <th>Meaning</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>$f(n)$</td>
+        <td>The evaluation function for node $n$</td>
+      </tr>
+      <tr>
+        <td>$g(n)$</td>
+        <td>The total cost to get to $n$ from initial state (node)</td>
+      </tr>
+      <tr>
+        <td>$h(n)$</td>
+        <td>The heuristic function that estimate the total cost to get to goal state from $n$</td>
+      </tr>
+      <tr>
+        <td>$c(n, a, n’)$</td>
+        <td>The actual cost of getting from $n$ to $n’$ through action $a$</td>
+      </tr>
+    </tbody>
+  </table>
+</blockquote>
+
+<h3 id="34-informed-search">3.4 Informed Search</h3>
+
+<p>Greedy search is a form of <strong>informed search</strong>, that is, information other than the definition of search problem is used to find the goal state. The informed search can find solutions more efficiently than an uninformed strategy.</p>
+
+<p>Among many types of informed search, the <strong>greedy search</strong> is one of the most general approach.</p>
+
+<p>Each node is evaluated using an <strong>evaluation function</strong> $f(n)$. The evaluation function $f(n)$’s value is considered as a <strong>cost estimate</strong>. In Greedy Search, the node in fringe with <em>the lowest</em> evaluation will be expanded first. For most of the evaluation function, there is a part of <strong>heuristic function</strong> (denoted as $h(n)$) that helps to estimate the cost from current node to the goal state.</p>
+
+<p>$$
+h(x) = \text{The estimated cost of the cheapest path from state node } n \text{ to the Goal State}
+$$</p>
+
+<p>A heuristic function is <strong>non-negative, problem specific</strong> function and there is only one constraint: if $n$ is a goal state, then $h(n) = 0$.</p>
+
+<h4 id="341-greedy-best-first-search">3.4.1 Greedy Best-first Search</h4>
+
+<p>Greedy Search evaluate the nodes <em>only using</em> the heuristic function $h(x)$. That is, the evaluation function $f(n)$ is equal to the heuristic function $h(x)$.</p>
+
+<p>A simple greedy best-first search’s tree search version is <strong>incomplete even in a finite state space</strong>. It’s graph search version is complete in finite state space.</p>
+
+<p>If the branching factor of graph is $\alpha$, then Greedy Search’s tree version’s worst time complexity will be $O(\alpha^m)$, where $m$ is the maximum depth of the search space. However, the actual time complexity of Greedy Best First Search will rely on the quality of heuristic function.</p>
+
+<h3 id="35-a-search">3.5 A* Search</h3>
+
+<p>A* Search evaluates nodes in search space by <strong>combining $g(n)$, the cost to reach the node, and $h(n)$, the estimated cost to get from the node to the goal</strong>. In A* search, the evaluation function $f(n)$ can be written in this form:</p>
+
+<p>$$ f(n) = g(n) + h(n) $$</p>
+
+<p>In this case, $f(n)$ is the estimated cost of the cheapest solution through $n$.</p>
+
+<div class="notification">Provided that the heuristic function $h(n)$ satisfies certain conditions, A* search is <b>both complete and optimal</b>.</div>
+
+<p>The A* search algorithm is identical to Uniform-Cost-Search except that A* uses $g(n) + h(n)$ while UCS use $g(n)$.</p>
+
+<h4 id="351-conditions-for-optimality-admissibility-and-consistency">3.5.1 Conditions for optimality: Admissibility and Consistency</h4>
+
+<p><strong>Admissibility</strong></p>
+
+<p>The evaluation function of A* search is $f(n) = h(n) + g(n)$, the admissibility means that for any node $n$, the evaluation function $f(n)$ <b>Never Overestimate</b> the actual cost of a solution along the current path through $n$.</p>
+
+<p><strong>Consistency</strong></p>
+
+<p>The heuristic function $h(n)$ is consistent if for every node $n$ and every successor $n’$ of $n$ generated by any action $a$, the estimated cost of reaching the goal from $n$ is no greater than the step cost of getting to $n’$ plus the estimated cost of reaching the goal from $n’$.</p>
+
+<p>$$h(n) \leq c(n, a, n’) + h(n’)$$</p>
+
+<h3 id="36-prove-the-optimality-of-a-search">*3.6 Prove the Optimality of A* Search</h3>
+
+<ul>
+  <li>Tree search version of A* search is optimal if $h(n)$ is admissible.</li>
+  <li>Graph search version of A* search is optimal if $h(n)$ is consistent.</li>
+</ul>
+
+<p>Below will show the proof of second argument.</p>
+
+<blockquote>
+  <p>Lemma 0: If $h(n)$ is consistent, then the values of $f(n)$ along any path are non-decreasing.</p>
+</blockquote>
+
+<p>Suppose $n’$ is a successor of $n$, then $g(n’) = g(n) + c(n, a, n’)$ for some action $a$. Therefore, we have</p>
+
+<p>$$f(n’) = g(n’) + h(n’) = g(n) + c(n, a, n’) + h(n’) \geq g(n) + h(n) = f(n)$$</p>
+
+<blockquote>
+  <p>Lemma 1 Whenever A* selects a node $n$ for expansion, the optimal path to that node has been found.</p>
+</blockquote>
+
+<p>Suppose this is not the case and there exist a path passing through node $n’$ and reach $n$ with lower cost, there will exist a conflict: Accroading to lemma 0, the $f(n)$ along any path are nondecreasing, then $f(n’) \leq f(n)$, which means that $n’$ is explored before $n$ is selected by A* algorithm.</p>
+
+<p>From these two lemma, we can draw conclusion that <strong>A* search expand nodes in the non-decreasing order of $f(n)$</strong>. For goal node, $f(n) = g(n)$ (as $h(n) = 0$), so the first selected goal node must be the goal node with minimum $g(n)$.</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2021/CS188-Chapter2.html" title="CS188 Chapter 2 Intelligent Agents">CS188 Chapter 2 Intelligent Agents</a><a class="next" href="/blog/2021/CS188-Chapter5.html" title="CS188 Chapter 5 Adversarial Search">CS188 Chapter 5 Adversarial Search</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2022/serverless-file-system.html" title="CS188 Chapter 5 Adversarial Search">Serverless File System based on AWS S3</a></li><li><a class="post-link" href="/blog/2022/Attention-Mechanism.html" title="CS188 Chapter 5 Adversarial Search">NLP 101: Attention Mechanism</a></li><li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="CS188 Chapter 5 Adversarial Search">NLP 101: Word Embedding 词嵌入</a></li><li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="CS188 Chapter 5 Adversarial Search">A* Search and its Variants</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="CS188 Chapter 5 Adversarial Search">A* Search and its Variants</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="CS188 Chapter 5 Adversarial Search">NLP 101: Word Embedding 词嵌入</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/2048-Project-1.html" title="CS188 Chapter 5 Adversarial Search">2048 Project (1)</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/CS188-Chapter15.html" title="CS188 Chapter 5 Adversarial Search">CS188 Chapter 15 Probabilistic Reasoning over Time</a></li>
+            
+          
+          
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

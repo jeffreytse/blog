@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>How to Type LaTeX Fast &amp; Elegant - A Guide from &amp; for Beginner | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="How to Type LaTeX Fast &amp; Elegant - A Guide from &amp; for Beginner">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="1 用 LaTeX, 而不是与 LaTeX 搏斗">
+<meta property="og:description" content="1 用 LaTeX, 而不是与 LaTeX 搏斗">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2022/type-LaTeX-fast.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2022/type-LaTeX-fast.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-02-16T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="How to Type LaTeX Fast &amp; Elegant - A Guide from &amp; for Beginner">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2022-02-16T00:00:00+00:00","datePublished":"2022-02-16T00:00:00+00:00","description":"1 用 LaTeX, 而不是与 LaTeX 搏斗","headline":"How to Type LaTeX Fast &amp; Elegant - A Guide from &amp; for Beginner","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2022/type-LaTeX-fast.html"},"url":"https://markchenyutian.github.io//blog/2022/type-LaTeX-fast.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">How to Type LaTeX Fast &amp; Elegant - A Guide from &amp; for Beginner</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-02-16T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 16, 2022
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 16 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags"><a class="post-tag" href="/blog/tags.html#Notes">#Notes</a></div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="1-用-latex-而不是与-latex-搏斗">1 用 LaTeX, 而不是与 LaTeX 搏斗</h2>
+
+<blockquote>
+  <p>LaTeX 的设计哲学是：让使用者付出最少的努力就能得到工整美观的排版</p>
+</blockquote>
+
+<p>然而，讽刺的是，大部分人（至少一开始）的体验似乎都与这个设计哲学正好相反。这是因为我们都习惯了使用 Word 这样“所见即所得”的排版软件/文字编辑器。当我们按下空格的时候，屏幕上就一定会出现一个空格。</p>
+
+<p>在 LaTeX 中，因为使用的是“编辑 - 编译 - 排版”的流程，我们不能直观的立刻看到我们在<code class="language-plaintext highlighter-rouge">TeX</code>文件中做出的改变。当我们在单词之间输入好几个空格却发现排版结果中只有一个空格时，自然会感觉非常奇怪和不适应。</p>
+
+<blockquote>
+  <p>实际上，很多时候在使用 LaTeX 时如果发现打起来非常麻烦/结果特别丑，大部分时候都是我们在作茧自缚，下面举几个常见的例子 （点击展开）：</p>
+</blockquote>
+
+<ol>
+  <li>
+    <details>
+      <summary>
+        <p><strong>通过 <code class="language-plaintext highlighter-rouge">//</code> 或者 <code class="language-plaintext highlighter-rouge">\newline</code> 来打“回车”，抱怨行和行都“挤在一起”</strong></p>
+      </summary>
+
+      <p>在 LaTeX 中，<code class="language-plaintext highlighter-rouge">//</code> 代表“断行” - 也就是说，下一行的内容与当前在同一段中，但是强制进行一次换行。所以 LaTeX 不会在这两行之间添加额外的空位。</p>
+
+      <p>大部分情况下，你可以将一整段话连续的写在同一行中。LaTeX 会自动根据页面宽度处理换行问题。如果你需要开启一个新的段落，在行和行之间添加一个空行即可。</p>
+
+      <p>正确的段落：</p>
+
+      <blockquote>
+        <pre><code class="tex"> [Paragraph 1] , random text with correct paragraph Pellentesque interdum sapien sed nulla. Proin tincidunt. 
+Aliquam volutpat est vel massa. Sed dolor lacus, imperdiet non, ornare non, commodo eu, neque. Integer pretium semper justo. Proin risus. Nullam id quam. Nam neque. 
+
+[Paragraph 2] , random text with correct paragraph Duis vitae wisi ullamcorper diam congue ultricies. Quisque ligula. Mauris vehicula.</code></pre>
+        <p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202022-02-17%20at%2012.51.14%20AM.png" alt="Screen Shot 2022-02-17 at 12.51.14 AM"></p>
+      </blockquote>
+
+      <p>错误的段落（用断行，而不是新段落）：</p>
+
+      <blockquote>
+        <pre><code class="tex"> \textbf{[Paragraph 1]} , random text with line break Pellentesque interdum sapien sed nulla. Proin tincidunt. 
+Aliquam volutpat est vel massa. Sed dolor lacus, imperdiet non, ornare non, commodo eu, neque. Integer pretium semper justo. Proin risus. Nullam id quam. Nam neque. \\
+\textbf{[Paragraph 2]} , random text with line break Duis vitae wisi ullamcorper diam congue ultricies. Quisque ligula. Mauris vehicula.</code></pre>
+        <p><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217005251.png" alt="20220217005251">
+经典错上加错：在断行的基础上强行用 <code class="language-plaintext highlighter-rouge">\vspace</code> 等指令拉大行之间的空白，营造一种“分段”的感觉</p>
+      </blockquote>
+    </details>
+  </li>
+  <li>
+    <details>
+      <summary>
+        <p><strong>通过 <code class="language-plaintext highlighter-rouge">$...$</code> 写公式，抱怨公式都堆到左边，并且挤成一团</strong></p>
+      </summary>
+
+      <p>用 <code class="language-plaintext highlighter-rouge">$...$</code> 符号括起来写的公式是“行内公式” - 也就是说，LaTeX 认为这些公式是跟普通文字写在同一行上的，所以会尽可能的压缩这些公式的高度，并且不会在行和行之间留下额外的空位</p>
+
+      <blockquote>
+        <p>行内公式：</p>
+        <pre><code class="tex">$-\frac{2a \pm \sqrt{b^2 - 4ac}}{b}$</code></pre>
+        <p>结果：$-\frac{2a \pm \sqrt{b^2 - 4ac}}{b}$</p>
+      </blockquote>
+
+      <p>如果需要打大公式，需要使用 <code class="language-plaintext highlighter-rouge">$$...$$</code>（或者 <code class="language-plaintext highlighter-rouge">\begin{equation}...\end{equation}</code>） 打一个“公式块” - 这样渲染出来的公式会自动居中并且占用一个段落的空间</p>
+
+      <blockquote>
+        <p>多行公式：</p>
+
+        <pre><code class="tex">\begin{equation*}
+    -\frac{2a \pm \sqrt{b^2 - 4ac}}{b}
+\end{equation*} </code></pre>
+
+        <p>结果：$$ -\frac{2a \pm \sqrt{b^2 - 4ac}}{b} $$</p>
+      </blockquote>
+
+      <p>如果你需要对齐多行公式（比如推导/化简长式子），使用 <code class="language-plaintext highlighter-rouge">\begin{equation}\begin{aligned}</code>…<code class="language-plaintext highlighter-rouge">\end{aligned}\end{equation}</code>。</p>
+
+      <blockquote>
+        <p>带对齐的多行公式：</p>
+        <pre><code class="tex">\begin{equation*}
+    \begin{aligned}
+           E[X + Y] &amp;= \sum_{j = 1}{s_j\cdot P[X + Y = s_j]}\\
+                    &amp;= \sum_{j = 1}{s_j\cdot \sum_{k, l \text{ s.t. } x_k + y_l = s_j}{P[X = x_k, Y = y_l]}}\\
+                    &amp;= \sum_{j}{\sum_{k, l \text{ s.t. } x_k + y_l = s_j}{(x_k + y_l)\cdot P[X = x_k, Y = y_l]}}\\
+                    &amp;= \sum_{k, l}{(x_k + y_l)\cdot P[X = x_k, Y = y_l]}\\
+                    &amp;= \sum_{k, l}{x_k\cdot P[X = x_k, Y = y_l]} + \sum_{k, l}{y_l\cdot P[X = x_k, Y = y_l]}\\
+                    &amp;= \sum_{k}x_k \cdot \sum_{l}{P[X = x_k, Y = y_l]} + \cdots \\
+                    &amp;= E[X] + E[Y]
+    \end{aligned}
+\end{equation*}</code></pre>
+        <p>结果：</p>
+
+        <p><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217124654.png" alt="20220217124654"></p>
+      </blockquote>
+    </details>
+  </li>
+  <li>类似的例子还有很多…… 比如疯狂用 <code class="language-plaintext highlighter-rouge">\;</code> 来代替word里的“空格”， etc.</li>
+</ol>
+
+<p>实际上，对于排版时遇到的大部分场景，LaTeX 都有提供对应的指令或环境，如果不知道对应的指令用 <code class="language-plaintext highlighter-rouge">\vspace</code>或者<code class="language-plaintext highlighter-rouge">\;</code> 来 “蛮干”，“硬干”，相当于是在和 $\LaTeX$ 搏斗，而不是使用它。</p>
+
+<p>当然，也有一些情况，$\LaTeX$ 自带的排版没法满足我们的需求，这种时候，我们应该创建自己的环境/模版/样式，或者找合适的 Package与template，而不是强行拉扯 $\LaTeX$ 提供的默认排版。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>命令/环境/语法</th>
+      <th>解释</th>
+      <th>效果</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217124421.png" alt="20220217124421"></td>
+      <td>多行公式</td>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217124434.png" alt="20220217124434"></td>
+    </tr>
+    <tr>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217124547.png" alt="20220217124547"></td>
+      <td>行内公式</td>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217124604.png" alt="20220217124604"></td>
+    </tr>
+    <tr>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217125002.png" alt="20220217125002"></td>
+      <td>多行对齐公式</td>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202022-02-17%20at%2012.50.19%20PM.png" alt="Screen Shot 2022-02-17 at 12.50.19 PM"></td>
+    </tr>
+    <tr>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217124317.png" alt="20220217124317"></td>
+      <td>分页</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217125308.png" alt="20220217125308"></td>
+      <td>无序列表</td>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217125319.png" alt="20220217125319"></td>
+    </tr>
+    <tr>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217125340.png" alt="20220217125340"></td>
+      <td>有序列表</td>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217125357.png" alt="20220217125357"></td>
+    </tr>
+    <tr>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217125456.png" alt="20220217125456"></td>
+      <td>无序列表（自定义编号）</td>
+      <td><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217125511.png" alt="20220217125511"></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="2-创建快捷指令">2 创建快捷指令</h2>
+
+<h3 id="21-基础快捷指令">2.1 基础快捷指令</h3>
+
+<p>但是这又带来了新的问题</p>
+
+<blockquote>
+  <p>“是啊，LaTeX 有这些默认的模版，但是用起来麻烦死了，你看输入一个多行公式前前后后加起来要打四行，太浪费时间了”</p>
+</blockquote>
+
+<blockquote>
+  <p>“虽然 LaTeX 打的公式很好看，但是真的好麻烦，打一个自然数的符号 $\mathbb{N}$ 要 <code class="language-plaintext highlighter-rouge">\mathbb{N}</code> 这么多个字符！”</p>
+</blockquote>
+
+<p>对于这个问题，LaTeX 自然也有对应的解决方法，我们可以使用 <code class="language-plaintext highlighter-rouge">\setnewcommand</code> 命令为自己常用的符号设置“快捷键”。比如下面的<code class="language-plaintext highlighter-rouge">TeX</code>指令允许我们在接下来的 LaTeX 中使用 <code class="language-plaintext highlighter-rouge">\N</code> 替代 <code class="language-plaintext highlighter-rouge">\mathbb{N}</code>。</p>
+
+<div class="language-tex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">\newcommand</span><span class="p">{</span><span class="k">\N</span><span class="p">}</span>[0]<span class="p">{</span><span class="k">\mathbb</span><span class="p">{</span>N<span class="p">}}</span>
+</code></pre></div></div>
+
+<p>实际上，你可以将任何常用，但是很麻烦的指令用这种快捷键的形式简化，创建快捷键的语法是</p>
+
+<div class="language-tex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">\newcommand</span><span class="p">{</span>你想用的快捷指令<span class="p">}</span>[0]<span class="p">{</span>实际上的复杂长指令<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="notification">
+  <p>注意：这些命令应该放在 <code class="language-plaintext highlighter-rouge">\begin{document}</code> 前， <code class="language-plaintext highlighter-rouge">\usepackage{...}</code> 后的位置</p>
+</div>
+
+<div class="notification">
+  <p><img class="emoji" title=":warning:" alt=":warning:" raw="⚠️" src="https://github.githubassets.com/images/icons/emoji/unicode/26a0.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">每新建完一个指令以后，最好<strong>马上尝试重新编译一下文件</strong>，因为有时候新创建的快捷键会和 LaTeX 原有指令冲突，这种时候就会出现一些奇怪的编译错误。（比如 <code class="language-plaintext highlighter-rouge">\and</code> 就是一个TeX的关键字，所以还是乖乖打 <code class="language-plaintext highlighter-rouge">\wedge</code> 吧（狗头））</p>
+</div>
+
+<h3 id="22-带参数的快捷指令">2.2 带参数的快捷指令</h3>
+
+<p>使用一些其它命令，你还可以创建有参数（甚至可以设定可选参数和其缺省值）的快捷指令。比如下面的 TeX 命令会创建一个叫 <code class="language-plaintext highlighter-rouge">\pic</code> 的快捷指令</p>
+
+<div class="language-tex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">\usepackage</span><span class="p">{</span>xparse<span class="p">}</span>   <span class="c">% 这个包让我们能够生成带“可选参数”的快捷指令</span>
+<span class="c">% ...</span>
+<span class="k">\NewDocumentCommand</span><span class="p">{</span><span class="k">\pic</span><span class="p">}{</span> O<span class="p">{</span><span class="k">\textwidth</span><span class="p">}</span> m <span class="p">}</span>    <span class="c">% O = 可选参数，大括号内为缺省值，m = 必须参数</span>
+<span class="p">{</span>
+  <span class="nt">\begin{center}</span>
+    <span class="nt">\begin{figure}</span>[ht]
+      <span class="k">\centering\includegraphics</span><span class="na">[width=#1]</span><span class="p">{</span>assets/#2<span class="p">}</span>   <span class="c">% 将参数1填到 #1 的位置，参数2填到 #2 的位置</span>
+    <span class="nt">\end{figure}</span>
+  <span class="nt">\end{center}</span><span class="k">\FloatBarrier</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>在这个定义之前，在 LaTeX 中插入与页面等宽的图片 <code class="language-plaintext highlighter-rouge">assets/1.jpeg</code> 要用这么长一段：</p>
+
+<div class="language-tex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">\begin{center}</span>
+    <span class="nt">\begin{figure}</span>[ht]
+      <span class="k">\centering\includegraphics</span><span class="na">[width=\textwidth]</span><span class="p">{</span>assets/1.jpeg<span class="p">}</span>
+    <span class="nt">\end{figure}</span>
+<span class="nt">\end{center}</span>
+<span class="k">\FloatBarrier</span>
+</code></pre></div></div>
+
+<p>现在，我们只需要 <code class="language-plaintext highlighter-rouge">\pic{1.jpeg}</code> 就可以做到一样的事情。如果我们想指定图片宽度为<code class="language-plaintext highlighter-rouge">300pt</code>，使用定义的可选参数 <code class="language-plaintext highlighter-rouge">\pic[300pt]{1.jpeg}</code> 即可。</p>
+
+<h2 id="3-使用-vs-code-插件-latex-workshop">3 使用 VS Code 插件 LaTeX Workshop</h2>
+
+<div class="info">
+
+  <p><a href="https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop">LaTeX Workshop 插件链接</a></p>
+
+  <p>在 VS Code 上配置和使用 LaTeX 的方法详见插件 Latex Workshop 的安装说明</p>
+</div>
+
+<h3 id="31-创建代码片段">3.1 创建代码片段</h3>
+
+<p>使用自定义的快捷指令可以大幅提高写 LaTeX 速度，但是会降低代码的可读性和灵活性（比如，在刚刚 <code class="language-plaintext highlighter-rouge">\pic</code> 的命令中，如果我想读取的照片不在 <code class="language-plaintext highlighter-rouge">assets</code> 文件夹中，就不能使用这个命令了）。同时，如果别人要读我的 <code class="language-plaintext highlighter-rouge">TeX</code> 文件，他看到 <code class="language-plaintext highlighter-rouge">\pic</code> 这个命令可能会一头雾水，因为这不是标准指令。</p>
+
+<p>这种时候，我们就可以使用 VS Code 的 “Code Snippet” 功能，创建一个“代码模版”。输入特定指令后，在自动补全选项中选择对应的选项，VS Code 会自动向光标位置插入预制好的模版代码。这样，在保证输入效率的前提下，我们可以兼得灵活性和可读性。</p>
+
+<ol>
+  <li>
+    <p>输入设置好的模版简写，在自动补全列表中选中模版</p>
+
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202022-02-17%20at%202.04.53%20AM.png" alt="Screen Shot 2022-02-17 at 2.04.53 AM"></p>
+  </li>
+  <li>
+    <p>按回车，模版被自动插入到文件中，光标自动移动到指定的位置</p>
+
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202022-02-17%20at%202.04.59%20AM.png" alt="Screen Shot 2022-02-17 at 2.04.59 AM"></p>
+  </li>
+</ol>
+
+<p>要设置这样的模版，在 VSCode 打开的 LaTeX 文件夹中（workspace）新建一个叫 <code class="language-plaintext highlighter-rouge">.vscode</code> 的文件夹，在其中新建 <code class="language-plaintext highlighter-rouge">tex_snippet.code-snippets</code> 文件，并使用这样的格式（JSON格式）书写：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+	</span><span class="nl">"Clean Equation Block"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"scope"</span><span class="p">:</span><span class="w"> </span><span class="s2">"latex"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"prefix"</span><span class="p">:</span><span class="w"> </span><span class="s2">"EQ*"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"body"</span><span class="p">:[</span><span class="w">
+			</span><span class="s2">"</span><span class="se">\\</span><span class="s2">begin{equation*}"</span><span class="p">,</span><span class="w">
+			</span><span class="s2">"    $1"</span><span class="p">,</span><span class="w">
+			</span><span class="s2">"</span><span class="se">\\</span><span class="s2">end{equation*}"</span><span class="w">
+		</span><span class="p">]</span><span class="w">
+	</span><span class="p">},</span><span class="w">
+    </span><span class="nl">"新的模版描述"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"scope"</span><span class="p">:</span><span class="w"> </span><span class="s2">"latex"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">我们的模版只在</span><span class="w"> </span><span class="err">LaTeX</span><span class="w"> </span><span class="err">文件中生效</span><span class="w">
+        </span><span class="nl">"prefix"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WHATEVER"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">模版的简写，一般用全大写字母，减小误触发可能</span><span class="w">
+        </span><span class="nl">"body"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"first line of template"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"    $1 &lt;- cursor will stop here after applying template"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"end the template"</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="32-使用插件内置的快捷键模版">3.2 使用插件内置的快捷键/模版</h3>
+
+<p>LaTeX workshop 插件内置了许多非常常用的快捷键和代码模版，这里提供其中一些常用的快捷键：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>模版简写</th>
+      <th>解释</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">BEN</code></td>
+      <td>有序列表（enumerate 环境）</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">BIT</code></td>
+      <td>无序列表（itemize 环境）</td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th>指令</th>
+      <th>内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">@a</code></td>
+      <td><code class="language-plaintext highlighter-rouge">\alpha</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">@A</code></td>
+      <td><code class="language-plaintext highlighter-rouge">\Alpha</code></td>
+    </tr>
+    <tr>
+      <td>…</td>
+      <td>…（大部分希腊字母都可以用 @ + 对应英文字母打出来）</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">@6</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">\partial</code> 偏微分符号</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">@/</code></td>
+      <td>
+<code class="language-plaintext highlighter-rouge">\frac{}{}</code> 分数</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="4-创建自己的模版样式">4 创建自己的模版/样式</h2>
+
+<blockquote>
+  <p>挖个坑，这里我自己也一知半解的，以后再填吧</p>
+</blockquote>
+
+<!-- <div class="notification">本指南仅供参考，本人无义务也不保证帮任何人解决 LaTeX 环境配置等问题。</div> -->
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2022/the-fences.html" title="The Fences | AR Web Application">The Fences | AR Web Application...</a><a class="next" href="/blog/2022/clac-embeddable.html" title="Embeddable Clac Execution Environment">Embeddable Clac Execution Environment</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2022/Transformers.html" title="Embeddable Clac Execution Environment">NLP 101: Transformer Model</a></li><li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="Embeddable Clac Execution Environment">A* Search and its Variants</a></li><li><a class="post-link" href="/blog/2021/magc-map-intro.html" title="Embeddable Clac Execution Environment">MAGC Map Structural Design</a></li><li><a class="post-link" href="/blog/2021/Batch-Normalization.html" title="Embeddable Clac Execution Environment">Batch Normalization 浅入深出</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="Embeddable Clac Execution Environment">A* Search and its Variants</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/sql-lecture-1.html" title="Embeddable Clac Execution Environment">SQL - Basic Query, Union and Inner Join</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2020/Gradient-Descent-Methods.html" title="Embeddable Clac Execution Environment">深度学习的梯度下降方法</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

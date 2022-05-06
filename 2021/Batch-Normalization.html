@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Batch Normalization 浅入深出 | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Batch Normalization 浅入深出">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="ch">
+<meta name="description" content="0 符号表">
+<meta property="og:description" content="0 符号表">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2021/Batch-Normalization.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2021/Batch-Normalization.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-12-26T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Batch Normalization 浅入深出">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2021-12-26T00:00:00+00:00","datePublished":"2021-12-26T00:00:00+00:00","description":"0 符号表","headline":"Batch Normalization 浅入深出","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2021/Batch-Normalization.html"},"url":"https://markchenyutian.github.io//blog/2021/Batch-Normalization.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="page-banner">
+    <div class="page-banner-img">
+      <div style="background-image: url(/blog/assets/images/banners/FunctionBackground.jpg)"></div>
+    </div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Batch Normalization 浅入深出</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-12-26T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Dec 26, 2021
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 48 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags"><a class="post-tag" href="/blog/tags.html#Neural%20Network">#Neural Network</a></div></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="0-符号表">0 符号表</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>符号</th>
+      <th>意义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>$\nabla_{W}f$</td>
+      <td>函数 $f$ 关于变量（集合）$W$ 的梯度</td>
+    </tr>
+    <tr>
+      <td>$N$</td>
+      <td>训练集中数据总量</td>
+    </tr>
+    <tr>
+      <td>$C$</td>
+      <td>损失函数（Cost Function），对于给定模型输出 $\hat{y}$ 与目标输出 $y$ 进行差距评估</td>
+    </tr>
+    <tr>
+      <td>$f(x, W)$</td>
+      <td>拥有权重参数 $W$ 神经网络对于输入 $x$ 的输出</td>
+    </tr>
+    <tr>
+      <td>$D$</td>
+      <td>目标函数（Ground Truth）</td>
+    </tr>
+    <tr>
+      <td>$X$</td>
+      <td>训练数据集</td>
+    </tr>
+    <tr>
+      <td>$X’$</td>
+      <td>训练数据集中的一个 mini-batch， $X’\subseteq X$</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="1-mini-batch-增量训练法与协方差问题">1 Mini-Batch 增量训练法与协方差问题</h2>
+
+<p>在进行神经网络训练的过程中，我们使用以下公式计算神经网络的权重参数梯度</p>
+
+<p>$$
+\nabla_{W} L(W) = \frac{1}{N}\sum_{x}{\nabla_{W}C(f(x, W), D(x))}
+$$</p>
+
+<p>对于训练集中的每一个数据 $x$，我们都计算出权重参数的梯度，将他们相加后除以$N$得到一个“平均梯度”。</p>
+
+<p>因为（我们假设）<strong>训练集中的数据分布于生产/测试环境一致</strong>，当使用整个训练集的结果进行梯度计算和参数更新时，网络 $f$ 能够更加准确的拟合到完整的目标函数 $D$ 上，而非目标函数 $D$ 一部分特殊的定义域上。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_B72671CFC736-1.jpeg" alt="IMG_B72671CFC736-1"></p>
+
+<center>Fig 1. 当训练集数据分布与测试集不同时（右图），模型拟合结果会显著降低</center>
+
+<p>然而，这样的参数更新方法虽然能够最大化模型的拟合准确率，由于每次进行参数更新前必须得知训练集中所有的输入 $x$ 对应的损失函数 $C(f(x, W), D(x))$ 和权重梯度 $\nabla_{W}C$，模型的权重更新速度会非常缓慢。</p>
+
+<p>为了解决这个问题，我们可以使用 Mini-batch 增量训练方法。每次我们从一个拥有 $N$ 个数据的训练集中随机，不重复的选择 $B$ 个数据作为一个 Batch。得到这 $B$ 个数据的损失函数和对应的梯度后，我们马上对模型进行一次参数更新。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_BF395E0F0FEB-1.jpeg" alt="IMG_BF395E0F0FEB-1"></p>
+
+<center>Fig 2. 使用 mini-batch 方法训练的模型更新参数的频率有显著提升</center>
+
+<p>可惜，天下没有免费的午餐，当我们使用 mini-batch 来训练神经网络的时候实际上我们有一个隐含的假设：<strong>mini-batch 中的数据分布于训练集相同</strong>。</p>
+
+<p>$$
+\text{argmin}<em>{W}{\left(
+	\sum</em>{x\in X’}{C(f(x, W), D(x))}
+\right)}</p>
+
+<p>\Leftrightarrow</p>
+
+<p>\text{argmin}<em>{W}{\left(
+	\sum</em>{x\in X}{C(f(x, W), D(x))}
+\right)}
+$$</p>
+
+<p>上面这两个最优化目标只有在 $X’$ （Mini-batch 中的数据） 与 $X$ （Training Set 中的数据） 的数据分布一致时才是一致的。</p>
+
+<p><strong>然而这个假设在很多情况下是不成立的</strong>。mini-batch 中的数据可能会有较大的协方差 (Covariance) - 也就是说，当前 mini-batch 的数据分布与训练集的数据分布并不相同。</p>
+
+<p>数据分布的差异会导致模型在优化权重参数时的目标 “最优化模型在当前 mini-batch 上的表现” 这个目标与我们真正的目标 —— “最优化模型在训练集上的表现”之间的偏差。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_FD5CF492EE8A-1.jpeg" alt="IMG_FD5CF492EE8A-1"></p>
+
+<center>Fig 3. 当我们训练模型时，我们构建的逻辑链条</center>
+
+<h2 id="2-batch-normalization-理论">2 Batch Normalization 理论</h2>
+
+<p>为了解决这个问题，Sergey Ioffe 和 Christian Szegedy 在 2015 年提出了 Batch Normalization （下文简称BN）的方法。BN 的理解实际上很简单 - 我们可以将所有的 mini-batch 移动到一个特殊的位置 ($\mu = 0$, $\sigma =1$)，来“正则化（Normalize）” mini-batch，让所有的 mini-batch 拥有一致的数据分布。</p>
+
+<p>然而，如果 BN 只有这一步，我们会不可避免的丢失数据本身的部分信息 - 训练集本身的平均值与方差。对于一个训练集 $X$，我们可以求出其平均值 $\mu_X$ 与方差 $\sigma_X$。这两个数据本身也是数据集的信息之一。</p>
+
+<p>为了解决这个问题，我们要向BN中添加两个<strong>可训练的参数</strong> $\gamma$ 与 $\beta$。在将mini-batch正则化后，我们通过计算 $\gamma x + \beta$ 把所有的 batch 统一移动到 $\mu = \beta$，$\sigma = \gamma$ 的位置。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211227115058717.png" alt="image-20211227115058717"></p>
+
+<center>Fig 4. Batch Normalization 的正则化过程可以分为三步：1. Centering （$\mu=0$）2. Scaling ($\sigma = 1$) 3. Moving （$\mu = \beta$, $\sigma = \gamma$)
+</center>
+
+<p>通过BN的操作，我们可以尽可能减小 mini-batch 中数据分布与训练集的不一致性，a.k.a mini-batch 的协方差。</p>
+
+<h2 id="3-batch-normalization-实现">3 Batch Normalization 实现</h2>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211227123210186.png" alt="image-20211227123210186"></p>
+
+<center>Fig 5. 一个使用了BN的神经元，可以看到BN实际上是在每个神经元中对输入加权&amp;偏置的值进行正则化</center>
+
+<p>可以将 BN 看作插入在神经元中的一个中间件。图5中的蓝色变量都是神经网络 $f(x, W)$ 中可训练的参数集合 $W$ 中的变量。如果我们用计算图的形式表现变量之间相互依赖的关系，我们会得到下面这样一张计算图：</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_4E0BC0496AB3-1.jpeg" alt="IMG_4E0BC0496AB3-1" style="zoom: 33%;"></p>
+
+<p>其中，我们有</p>
+
+<p>$$
+\mu_B = \frac{1}{B}\sum_{i=1}^B{z_i}
+$$</p>
+
+<p>$$
+\sigma^2<em>B = \frac{1}{B}\sum</em>{i=1}^B{(z_i - \mu_B)^2}
+$$</p>
+
+<p>$$
+u_i = \frac{z_i - u_B}{\sqrt{\sigma^2_B + \epsilon}},\quad\text{Where }\epsilon\text{ is a smooth factor}
+$$</p>
+
+<p>$$
+\hat{z}_i = \gamma u_i + \beta
+$$</p>
+
+<h2 id="4-batch-normalization-反向传播数学推导">4 Batch Normalization 反向传播数学推导</h2>
+
+<blockquote>
+  <p>Adapted from CMU 11785 Lecture 8 Notes</p>
+</blockquote>
+
+<p>假设我们现在已知 $\nabla_{\hat{z}} C(f(x, W), D(x))$，我们希望让这个梯度通过含有 Batch Normalization 的神经元，反向传播到 $\nabla_x C(f(x, W), D(x))$，那么我们需要计算 $\frac{\partial C}{\partial x_1}$，… ，$\frac{\partial C}{\partial x_n}$。</p>
+
+<p>根据偏微分的链式法则，我们知道</p>
+
+<p>$$
+\frac{\partial C}{\partial x_1} = \sum_{i=1}^{n}{\frac{\partial C}{\partial \hat{z}_i}\frac{\partial \hat{z}_i}{\partial x_1}}
+$$</p>
+
+<p>不失一般性的，因为在神经元的计算中，每一个 $x$ 分量的计算都是相同的，我们可以通过计算 $\frac{\partial C}{\partial x_1}$得出计算 $\frac{\partial C}{\partial x_i}$ 的通项公式。所以在下文中，我们会以计算 $x_1$ 的梯度为例子进行计算与推导。</p>
+
+<p>因为从 $u_i$ 开始，向量中的每个分量都是单独计算的，我们可以得知对于任意 $i\neq j$，我们有 $\partial \hat{z}_i /\partial u_j = 0$：</p>
+
+<p>$$
+\frac{\partial C}{\partial u_i} = \sum_{j=1}^n{\frac{\partial C}{\partial \hat z_j}\frac{\partial \hat z_j}{\partial u_i}} = \frac{\partial C}{\partial \hat z_i}\frac{\partial \hat z_i}{\partial u_i} = \frac{\partial C}{\partial \hat z_i}\cdot \gamma
+$$</p>
+
+<h3 id="41--bn中的直接连接反向传播公式推导">4.1  BN中的直接连接反向传播公式推导</h3>
+
+<p>重新回顾一下之前的BN计算图，我们不难发现 $z_1$ 的值计算到 $u_1$ 有三条不同的路线。我们需要计算 $\partial {u_i}/{\partial z_i}$ 时，需要计算三条路线上的微分并相加起来。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_614F94CA4D21-1.jpeg" alt="IMG_614F94CA4D21-1" style="zoom:25%;"></p>
+
+<p>$$
+\frac{\partial u_1}{\partial z_1} = \frac{\partial u_1}{\partial z_1} + \frac{\partial u_1}{\partial \mu_B}\frac{\partial \mu_B}{\partial z_1} + \frac{\partial u_1}{\partial \sigma^2_B}\frac{\partial \sigma^2_B}{\partial z_1}
+$$</p>
+
+<p>对于上式<strong>第一项（计算图中的黑色路线）</strong>，$\partial u_1/\partial z_1$，这里的直接连接来自于公式</p>
+
+<p>$$
+u_i = \frac{z_i - u_B}{\sqrt{\sigma^2_B + \epsilon}}
+$$</p>
+
+<p>所以我们可以直接计算出</p>
+
+<p>$$
+\frac{\partial u_1}{\partial z_1} = \frac{1}{\sqrt{\sigma^2_B + \epsilon}}
+$$</p>
+
+<p>对于<strong><font color="blue">第二项（计算图中的蓝色路线）</font></strong>，我们需要分别计算单独一个 $z_1$ 对整个 Mini-batch 的平均数 $\mu_B$ 的偏导数以及平均数 $\mu_B$ 对于BN结果 $u_1$ 的偏导数。</p>
+
+<p>因为我们有</p>
+
+<p>$$
+\mu_B = \frac{1}{B}\sum_{i=1}^B{z_i}
+$$</p>
+
+<p>不难得出</p>
+
+<p>$$
+\frac{\partial \mu_B}{\partial z_1} = \frac{1}{B}
+$$</p>
+
+<p>同时，对于 $\partial \mu_B/\partial u_1$，我们有</p>
+
+<p>$$
+u_i = \frac{z_i - u_B}{\sqrt{\sigma^2_B + \epsilon}}
+$$</p>
+
+<p>所以有</p>
+
+<p>$$
+\frac{\partial u_1}{\partial \mu_B} = -\frac{1}{\sqrt{\sigma_B^2 + \epsilon}}
+$$</p>
+
+<p>将两个偏导数乘起来，我们就能得到计算图中蓝色路线的反向传播公式：</p>
+
+<p>$$
+-\frac{1}{B\sqrt{\sigma_B^2 + \epsilon}}
+$$</p>
+
+<p>对于<strong><font color="purple">第三项（计算图中的紫色路线）</font></strong>，我们需要分别计算两条“支路”的偏微分之和</p>
+
+<p>$$
+\frac{\partial u_i}{\partial \sigma^2_B}\frac{\partial \sigma^2_B}{\partial z_1} = \frac{\partial u_i}{\partial \sigma^2_B}\left(
+	\frac{\partial \sigma^2_B}{\partial z_1} + \frac{\partial \sigma^2_B}{\partial \mu_B}\frac{\partial \mu_B}{\partial z_1}
+\right)
+$$</p>
+
+<p>从 $u_i$ 的计算公式，我们可以得知</p>
+
+<p>$$
+\frac{\partial u_1}{\partial \sigma^2B} = \frac{\partial }{\partial \sigma^2_B}\frac{z_1 - u_B}{\sqrt{\sigma^2_B + \epsilon}} = -\frac{z_1 - \mu_B}{2(\sigma_B^2 + \epsilon)^{3/2}}
+$$</p>
+
+<p>因为有方差$\sigma_B^2$的计算公式</p>
+
+<p>$$
+\sigma^2<em>B = \frac{1}{B}\sum</em>{i=1}^B{(z_i - \mu_B)^2}
+$$</p>
+
+<p>我们可以得知 $\partial \sigma_B^2 / \partial z_1$</p>
+
+<p>$$
+\frac{\partial \sigma_B^2}{\partial z_1} = \frac{\partial }{\partial z_1}\frac{(z_1 - \mu_B)^2}{B} = 2\frac{z_1 - \mu_B}{B}
+$$</p>
+
+<p>同时，我们有</p>
+
+<p>$$
+\frac{\partial \sigma_B^2}{\partial \mu_B}
+ = \frac{1}{B}\sum_{i=1}^B{-2(z_i - \mu_B) = -\frac{2}{B}\left(\sum_{i=1}^B{z_i} - \sum_{i=1}^B{\mu_B}\right)} = 0
+$$</p>
+
+<p>因此，计算图中的紫色路线的反向传播公式是：</p>
+
+<p>$$
+-\frac{z_1 - \mu_B}{2(\sigma_B^2 + \epsilon)^{3/2}} \cdot 2\frac{z_1 - \mu_B}{B} = -\frac{(z_1 - \mu_B)^2}{(\sigma_B^2 + \epsilon)^{3/2}B}
+$$</p>
+
+<p>将三条路线的反向传播公式相加，我们就能得到“直接连接“的反向传播公式</p>
+
+<p>$$
+\frac{\partial u_i}{\partial z_i} = \frac{1}{\sqrt{\sigma^2_B + \epsilon}} -\frac{1}{B\sqrt{\sigma_B^2 + \epsilon}} -\frac{(z_1 - \mu_B)^2}{B(\sigma_B^2 + \epsilon)^{3/2}}
+$$</p>
+
+<h3 id="42-bn-中的跨越连接反向传播公式推导">4.2 BN 中的跨越连接反向传播公式推导</h3>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211227162304898.png" alt="image-20211227162304898" style="zoom:25%;"></p>
+
+<p>对于跨越连接（$\partial u_i/\partial z_j$, where $i\neq j$），计算图中只有蓝色与紫色两条路径，所以我们有</p>
+
+<p>$$
+\frac{\partial u_i}{\partial z_j} = \begin{cases}
+\frac{1}{\sqrt{\sigma^2_B + \epsilon}} -\frac{1}{B\sqrt{\sigma_B^2 + \epsilon}} -\frac{(z_1 - \mu_B)^2}{B(\sigma_B^2 + \epsilon)^{3/2}} &amp; i=j<br>
+-\frac{1}{B\sqrt{\sigma_B^2 + \epsilon}} -\frac{(z_1 - \mu_B)^2}{B(\sigma_B^2 + \epsilon)^{3/2}} &amp; i\neq j
+\end{cases}
+$$</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2021/Word-Embedding.html" title="NLP 101: Word Embedding 词嵌入">NLP 101: Word Embedding 词嵌入</a><a class="next" href="/blog/2021/Seq2Seq.html" title="NLP 101: Seq2Seq 模型">NLP 101: Seq2Seq 模型</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="NLP 101: Seq2Seq 模型">A* Search and its Variants</a></li><li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="NLP 101: Seq2Seq 模型">NLP 101: Word Embedding 词嵌入</a></li><li><a class="post-link" href="/blog/2022/Transformers.html" title="NLP 101: Seq2Seq 模型">NLP 101: Transformer Model</a></li><li><a class="post-link" href="/blog/2021/magc-map-intro.html" title="NLP 101: Seq2Seq 模型">MAGC Map Structural Design</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Transformers.html" title="NLP 101: Seq2Seq 模型">NLP 101: Transformer Model</a></li>
+            
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Attention-Mechanism.html" title="NLP 101: Seq2Seq 模型">NLP 101: Attention Mechanism</a></li>
+            
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Seq2Seq.html" title="NLP 101: Seq2Seq 模型">NLP 101: Seq2Seq 模型</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="NLP 101: Seq2Seq 模型">NLP 101: Word Embedding 词嵌入</a></li>
+            
+          
+          
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

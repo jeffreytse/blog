@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Uniswap 3 - Starting from Uniswap v1 | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Uniswap 3 - Starting from Uniswap v1">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Uniswap v1 是什么">
+<meta property="og:description" content="Uniswap v1 是什么">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2021/uniswap3-2.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2021/uniswap3-2.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-08-20T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Uniswap 3 - Starting from Uniswap v1">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2021-08-20T00:00:00+00:00","datePublished":"2021-08-20T00:00:00+00:00","description":"Uniswap v1 是什么","headline":"Uniswap 3 - Starting from Uniswap v1","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2021/uniswap3-2.html"},"url":"https://markchenyutian.github.io//blog/2021/uniswap3-2.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="page-banner">
+    <div class="page-banner-img">
+      <div style="background-image: url(/blog/assets/images/banners/UniswapBackground.jpg)"></div>
+    </div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Uniswap 3 - Starting from Uniswap v1</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-08-20T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Aug 20, 2021
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/blog/tags.html#Cryptocurrency">#Cryptocurrency</a><a class="post-tag" href="/blog/tags.html#Decentralized%20Finance">#Decentralized Finance</a>
+</div></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="uniswap-v1-是什么">Uniswap v1 是什么</h2>
+
+<p>Source</p>
+
+<ul>
+  <li><a href="https://docs.uniswap.org/protocol/V1/introduction">The Uniswap V1 Protocol</a></li>
+  <li><a href="https://ethereum.org/en/developers/docs/standards/tokens/erc-20/">ERC-20 Token Standard</a></li>
+</ul>
+
+<p>Uniswap 是由一系列 <a href="https://ethereum.org/en/developers/docs/standards/tokens/erc-20/">ETH-ERC20</a> 交换协议构成的</p>
+
+<blockquote>
+  <p><em>什么是 ERC20 代币？</em></p>
+
+  <p>ETH-ERC20 是一种描述可交换代币的以太坊标准</p>
+
+  <p>这个标准为以太坊上的可交换代币的智能合约提供了统一的 API - Link: <a href="https://ethereum.org/en/developers/docs/standards/tokens/erc-20/">ERC-20 Token Standard</a></p>
+</blockquote>
+
+<h3 id="如何使用-uniswap-factory-为-erc20-生成-uniswap-protocal">如何使用 Uniswap Factory 为 ERC20 生成 Uniswap Protocal</h3>
+
+<p>每种 ERC20 代币有且只有一个 Uniswap 协议。如果一种代币没有 Uniswap 协议，任何人可以使用 Uniswap factory contract 来为代币生成一个 Uniswap 协议。</p>
+
+<h3 id="流动性贡献者的贡献比例计算方式">流动性贡献者的贡献比例计算方式</h3>
+
+<p>每一个智能合约会保存以太坊和相关联的 ERC20 代币。每个人都可以通过向智能合约贡献资产成为流动性贡献者之一。与一般的买卖双方市场不同，流动性贡献者需要提供<strong>等价的</strong>以太坊和 ERC20 代币。一种内置的 ERC20 代币 （池子币, Pool Token）被用来记录每个流动性贡献者的贡献比例。</p>
+
+<ul>
+  <li>
+    <p>当流动性贡献者将资产加入 Uniswap 流动性池子时，池子币会被“铸造 (mint) ”</p>
+  </li>
+  <li>
+    <p>当流动性贡献者将资产从流动性池子中取出时，池子币会被“销毁 (burn) ”</p>
+  </li>
+</ul>
+
+<h2 id="uniswap-v1-是如何工作的">Uniswap v1 是如何工作的</h2>
+
+<p>Sources</p>
+
+<ul>
+  <li><a href="https://hackmd.io/@HaydenAdams/HJ9jLsfTz?type=view">🦄 Uniswap Whitepaper - HackMD</a></li>
+</ul>
+
+<h3 id="eth--erc20-token-交易">ETH ⇄ ERC20 Token 交易</h3>
+
+<p>每一个 ETH⇄ERC20 的流动性池子都由一个 Uniswap 协议控制，Uniswap 协议约束流动性池子中的 ETH 与 ERC20 资产之乘积是一定的。</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sizeof(eth_pool) * sizeof(token_pool) = K, where K is constant
+</code></pre></div></div>
+
+<p><strong>例子：</strong></p>
+
+<blockquote>
+  <p>一个 Uniswap 流动性池子中，有流动性提供者供给的 10 ETH 和 500 OMG （一种 ERC20）代币。每一次自动做市商AMM的交易都会收取 0.3% 的手续费</p>
+</blockquote>
+
+<p>$$
+\text{ETH pool}\times \text{OMG pool} = K
+$$</p>
+
+<p>$$
+K=ETH \times OMG = 10 \times 500 = 5000
+$$</p>
+
+<p>这时候，一个交易者向流动性池子给出 <code class="language-plaintext highlighter-rouge">1 ETH</code></p>
+
+<ol>
+  <li>
+    <p>买方给出 1 ETH</p>
+  </li>
+  <li>
+    <p>手续费 = 1 ETH * 0.3% = 0.00333 ETH</p>
+  </li>
+  <li>流动性池子中的以太坊资产 = 10 ETH + 1 ETH - 0.00333 ETH = 10.99667 ETH</li>
+  <li>流动性池子中应有的 ERC20 资产 = 5000 / 10.99667 = 454.68309 OMG</li>
+  <li>应该给到买方的  ERC20 资产 = 500 - 454.68309 = 45.31691 OMG</li>
+</ol>
+
+<p>这时候流动性池子已经达到了新的平衡 (K = 5000)，然后我们把 ETH 的手续费自动注入流动性池子……</p>
+
+<ol>
+  <li>流动性池子中的以太坊资产 = 10.99667 ETH + 0.00333 ETH = 11 ETH</li>
+  <li>新的乘积常数 = 11 ETH * 454.68309 OMG = 5001.51399</li>
+</ol>
+
+<p>可以看到，随着手续费的注入，池子的规模又扩大了一点。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210809225021.jpg" alt="1cd6fa72fdd28df10cccfc91c7409bf"></p>
+
+<h3 id="erc20--erc20-交易">ERC20 ⇄ ERC20 交易</h3>
+
+<p><img src="https://i.imgur.com/0yDILRq.png" alt="img"></p>
+
+<p>当使用 Uniswap 交换两种 ERC20 Token 时， Uniswap 会将第一种 token 换成 ETH，再在第二个池中将 ETH 换成第二种 ERC20 Token</p>
+
+<h3 id="交换swap-vs-转换transfer">交换(Swap) vs 转换(Transfer)</h3>
+
+<p><code class="language-plaintext highlighter-rouge">Swap</code> 会将兑换后的结果直接返回给原账户</p>
+
+<p><code class="language-plaintext highlighter-rouge">Transfer</code> 可以将兑换完的 ERC20 Token 给到指定的新账户</p>
+
+<h2 id="提供流动性">提供流动性</h2>
+
+<h3 id="增加流动性">增加流动性</h3>
+
+<p>添加流动性需要向 ERC20 Token 的 Uniswap 合约添加相匹配的 ETH 和 ERC20 代币。</p>
+
+<p>前文提到 Uniswap V1 使用 Pool Token （一种 ERC20 Token）来计算流动性池子中每一个流动性提供者的贡献。</p>
+
+<p>Uniswap v1 中向合约注入资产的 <a href="https://github.com/ethereum/py-evm">Py-EVM</a> 代码</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">public</span>
+<span class="o">@</span><span class="n">payable</span>
+<span class="k">def</span> <span class="nf">addLiquidity</span><span class="p">():</span>
+    <span class="n">token_amount</span><span class="p">:</span> <span class="n">uint256</span> <span class="o">=</span> <span class="n">msg</span><span class="p">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">token_pool</span> <span class="o">/</span> <span class="n">eth_pool</span> 
+    <span class="n">liquidity_minted</span><span class="p">:</span> <span class="n">uint256</span> <span class="o">=</span> <span class="n">msg</span><span class="p">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">total_liquidity</span> <span class="o">/</span> <span class="n">eth_pool</span>
+        
+        
+    <span class="n">eth_added</span><span class="p">:</span> <span class="n">uint256</span> <span class="o">=</span> <span class="n">msg</span><span class="p">.</span><span class="n">value</span>
+    <span class="n">shares_minted</span><span class="p">:</span> <span class="n">uint256</span> <span class="o">=</span> <span class="p">(</span><span class="n">eth_added</span> <span class="o">*</span> <span class="bp">self</span><span class="p">.</span><span class="n">total_shares</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="p">.</span><span class="n">eth_pool</span>
+    <span class="n">tokens_added</span><span class="p">:</span> <span class="n">uint256</span> <span class="o">=</span> <span class="p">(</span><span class="n">shares_minted</span> <span class="o">*</span> <span class="bp">self</span><span class="p">.</span><span class="n">token_pool</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="p">.</span><span class="n">total_shares</span><span class="p">)</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">shares</span><span class="p">[</span><span class="n">msg</span><span class="p">.</span><span class="n">sender</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">shares</span><span class="p">[</span><span class="n">msg</span><span class="p">.</span><span class="n">sender</span><span class="p">]</span> <span class="o">+</span> <span class="n">shares_minted</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">total_shares</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">total_shares</span> <span class="o">+</span> <span class="n">shares_minted</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">eth_pool</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">eth_pool</span> <span class="o">+</span> <span class="n">eth_added</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">token_pool</span> <span class="o">=</span> <span class="bp">self</span><span class="p">.</span><span class="n">token_pool</span> <span class="o">+</span> <span class="n">tokens_added</span>
+    <span class="bp">self</span><span class="p">.</span><span class="n">token</span><span class="p">.</span><span class="n">transferFrom</span><span class="p">(</span><span class="n">msg</span><span class="p">.</span><span class="n">sender</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">tokens_added</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>每次向 Uniswap 合约注入资产时都会触发 Pool Token 的铸造（Mint），Pool Token 的铸造数量遵循此公式：</p>
+
+<p>$$
+amountMint=TotalAmount * \frac{ethDeposited}{ethPool}
+$$</p>
+
+<p>向 Uniswap 合约注入 ETH 和 ERC20 后<strong>必须</strong>维持合约的乘积恒等式，所以应该注入的 ERC20 数量可以这样计算：</p>
+
+<p>$$
+tokensDeposited = tokenPool * \frac{ethDeposited}{ethPool}
+$$</p>
+
+<h3 id="移除流动性">移除流动性</h3>
+
+<p>当流动性提供者从 Uniswap 合约中撤回自己投入的资产时，我们称其“移除了流动性”</p>
+
+<p>当流动性被移除时, Pool Token 会被焚毁 (Burn)</p>
+
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2021/CS188-Chapter15.html" title="CS188 Chapter 15 Probabilistic Reasoning over Time">CS188 Chapter 15 Probabilistic Reasoning over...</a><a class="next" href="/blog/2021/2048-Project-1.html" title="2048 Project (1)">2048 Project (1)</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2022/serverless-file-system.html" title="2048 Project (1)">Serverless File System based on AWS S3</a></li><li><a class="post-link" href="/blog/2022/the-fences.html" title="2048 Project (1)">The Fences | AR Web Application</a></li><li><a class="post-link" href="/blog/2022/clac-embeddable.html" title="2048 Project (1)">Embeddable Clac Execution Environment</a></li><li><a class="post-link" href="/blog/2022/type-LaTeX-fast.html" title="2048 Project (1)">How to Type LaTeX Fast &amp; Elegant - A Guide from &amp;...</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/uniswap3-3.html" title="2048 Project (1)">Uniswap 3 - Always profitable for Liquidity Provider?</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/uniswap3-1.html" title="2048 Project (1)">Uniswap 3 - Liquidity, Liquidity Provider and AMM</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2020/Elliptical-Curve-Signature.html" title="2048 Project (1)">Elliptical Curve Signature Algorithm</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

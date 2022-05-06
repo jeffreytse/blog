@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CS188 Chapter 1 What is AI | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="CS188 Chapter 1 What is AI">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="1.1 What is AI">
+<meta property="og:description" content="1.1 What is AI">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2021/CS188-Chapter1.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2021/CS188-Chapter1.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-02-25T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="CS188 Chapter 1 What is AI">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2021-02-25T00:00:00+00:00","datePublished":"2021-02-25T00:00:00+00:00","description":"1.1 What is AI","headline":"CS188 Chapter 1 What is AI","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2021/CS188-Chapter1.html"},"url":"https://markchenyutian.github.io//blog/2021/CS188-Chapter1.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="page-banner">
+    <div class="page-banner-img">
+      <div style="background-image: url(/blog/assets/images/banners/CS188Background.jpg)"></div>
+    </div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">CS188 Chapter 1 What is AI</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-02-25T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Feb 25, 2021
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 28 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags"><a class="post-tag" href="/blog/tags.html#Machine%20Learning">#Machine Learning</a></div></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h3 id="11-what-is-ai">1.1 What is AI</h3>
+
+<p>There are different kinds of definition on ‘what is an artificial intelligence’, which are shown below:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center"> </th>
+      <th style="text-align: center">Humanly</th>
+      <th style="text-align: center">Rationally</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">Thinking</td>
+      <td style="text-align: center">Thinking Humanly</td>
+      <td style="text-align: center">Thinking Rationally</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Acting</td>
+      <td style="text-align: center">Acting Humanly</td>
+      <td style="text-align: center">Acting Rationally</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The column ‘humanly’ measures the success in terms of <strong>fidelity to <em>human</em> performance</strong>, in other word, how alike the AI is comparing to a real human being.
+The column ‘rationally’ measures the success in terms of <strong>ideal performance</strong>, called <strong>rationality</strong>. The definition of ‘rationality’ of a system is that the system is doing the ‘right thing’.</p>
+
+<p><mark><strong>Rationality:</strong> Maximizing the expected revenue.</mark></p>
+
+<h4 id="111-acting-humanly-the-turing-test-approach">1.1.1 Acting Humanly: The Turing Test Approach</h4>
+
+<p><strong>Term Definition</strong></p>
+
+<blockquote>
+  <p>The <strong>Turing Test</strong> is designed to provide a satisfactory operational definition of intelligence.</p>
+</blockquote>
+
+<p>A compouter passes the test if a human interrogator (Someone who ask question to program and real people), after posing some written questions, cannot tell whether the written responses come from a person or from a computer.
+A program that can pass the Turing Test should have these components:</p>
+
+<ul>
+  <li>Natural Language Processing: The ability to Communicate</li>
+  <li>Knowledge Representation: Store what it knows or hears</li>
+  <li>Automated Reasoning: Use Stored information to Answer Questions and to draw new conclusions</li>
+  <li>Machine Learning: Adapt to new circumstances and to detect and Extrapolate patterns</li>
+</ul>
+
+<p>The <strong>Turing Test</strong> does not allow the interrogator to have a physical contact with the program itself since it is unnecessary. However, a <strong>Total Turing Test</strong> allow the interrogator to contact the robot with limited ways.</p>
+
+<p>To pass the Total Turing Test, a robot need these additional components:</p>
+
+<ul>
+  <li>Computer Vision to perceive objects</li>
+  <li>Robotics to manipulate objects and move about</li>
+</ul>
+
+<p>At the beginning, we try to mimic the human brain. However, it is not necessary to make the ‘Artificial Intelligence’ really look like human being.
+Though, we can learn the human brain and get some useful characteristics that is necessary to produce the intelligence.
+Two important characteristics: <strong>Memory</strong> and <strong>Stimulation</strong></p>
+
+<p>Like the aircraft, the AI only extract the characteristic from human being’s thinking process but not have to really ‘look like’ human beings.</p>
+
+<h4 id="112-thinking-humanly-the-cognitive-modeling-approach">1.1.2 Thinking Humanly: The Cognitive Modeling Approach</h4>
+
+<p>In order to let the computer program to ‘think like human’, we first have to know the actual working of human minds. And here is the use of <strong>Cognitive Science</strong> in Artificial Intelligence.</p>
+
+<p>The <strong>Cognitive Science</strong> brings together computer models from AI and experimental techniques from psychology to construct precise and testable theories of the human mind.</p>
+
+<h4 id="113-thinking-rationally-the-laws-of-thought-approach">1.1.3 Thinking Rationally: The ‘Laws of Thought’ Approach</h4>
+
+<p>The Greek philosopher Aristotle was the first people who try to provide a <strong>law of thought</strong>. His <strong>syllogisms</strong> (三段论) provided patterns for argument structures that always yield correct premises.</p>
+
+<p>However, there are two main obstacles to this approach.</p>
+
+<blockquote>
+  <ol>
+    <li>It is not easy to take informal knowledge and state it in the formal terms required by logical notation, particularly when the knowledge is not 100% certain</li>
+    <li>There is a big difference from solving a problem ‘in principle’ and ‘in practice’.</li>
+  </ol>
+</blockquote>
+
+<p>These two main points are the obstacle apply to <strong>any attempt to build up a computational reasoning system</strong>.</p>
+
+<h4 id="114-acting-rationally-the-rational-agent-approach">1.1.4 Acting Rationally: The Rational Agent Approach</h4>
+
+<p><mark>A rational agent is one that acts to achieve the best outcome, or, when there exists uncertainty, the <strong>best expected outcome</strong>.</mark></p>
+
+<p>Making <strong>Correct Inference</strong> is only a <strong>Part</strong> of being a rational agent. Since in some situations, there is no provably correct things to do*, but something still has to be done.</p>
+
+<p>The goal of building up a <strong>Rational Agent</strong> is much more approachable that building up <strong>Laws of Thought</strong> since the standard of Rationality is perfectly defined by Mathematic, and it is very General.</p>
+
+<p><strong>Perfect Rationality</strong>, which implies that the program will always do the correct thing is not possible in all situations. It will be easier for the program to achieve a <strong>Limited Rationality</strong>, which only acquire acting appropriately when there is not enough time to do all the computations one might like.</p>
+
+<h3 id="12-the-foundations-of-artificial-intelligence">1.2 The Foundations of Artificial Intelligence</h3>
+
+<h4 id="121-philosophy">1.2.1 Philosophy</h4>
+
+<ul>
+  <li>Can formal rules be used to draw valid conclusions?</li>
+  <li>How does the mid arise from a physical brain?</li>
+  <li>Where does knowledge come from?</li>
+  <li>How does knowledge lead to Actions?</li>
+</ul>
+
+<p>These question has been thought by people since 384 B.C..
+Aristotle provides an <strong>informal system of Syllogisms</strong>, which in principle will <strong>generate conclusions mechanically if the correct initial conditions are given</strong>.
+Many years later, on Vienna Circle, a theory called <strong>Logical Positivism</strong> is build up, and it claimed that <strong>all knowledge</strong> can be characterized by the <strong>logical theories connected</strong>.</p>
+
+<p><strong>Conformation theory</strong> attempt to analyze the acquisition of knowledge from experience. Carnap defined an <strong>Explicit Computational Procedure for extracting knowledge from elementary experiences</strong></p>
+
+<p>After that, people begin to concern that the <strong>Actions are justified by a logical connection between the goals and the knowledge of the action’s outcome</strong>. Though this is quite true and very useful for us to build up an Artificial Intelligence, it doesn’t say what to do when <strong>several actions will achieve the goal</strong> or when <strong>no action will achieve it completely</strong>.</p>
+
+<h4 id="122-mathematics">1.2.2 Mathematics</h4>
+
+<ul>
+  <li>What are formal rules to draw valid conclusions?</li>
+  <li>What can be computed?</li>
+  <li>How do we reason with uncertain information?</li>
+</ul>
+
+<p>Though the foundation of artificial intelligence is defined by the philosophy, it uses the theorems in Mathematics to make it to be a formal science.
+It is based on three main areas of mathematics: <strong>Logic, Computation, and Probability</strong>.</p>
+
+<p>The logic is developed also by the Aristotle, but the <strong>First Order Logic</strong> that we use till now is invented in 18th century. In 1931, the Godel’s <strong>Incompleteness Theorem</strong>(哥德尔不完备性定理) showed that in any formal theory as strong as <strong>Peano Arithmatic</strong>（皮亚诺公理系统）, there are <strong>True Statements that are UNDECIDABLE in the sense that they have no prove within the theory</strong>.</p>
+
+<p>About <strong>Computable Problem</strong>, Alan Turing first imagine a kind of machine called ‘Turing machine’, which can compute any computable given function’s solution, then he has shown that there were some functions that no Turing machine can compute. For example, no machine can tell <em>in general</em> whether a given program will return an answer or it will run forever.</p>
+
+<p>Comparing to <strong>Computable</strong>, the <strong>Tractability</strong> is in fact more important. A problem is called <strong>Intractable</strong> if the time complexity to solve it is <strong>Exponential</strong>, the problems that is intractable is also called the <strong>NP Problem</strong>. If one problem can only be solved by a time complexity of $O(2^n)$, then we say this problem is ‘NP - Complete’</p>
+
+<p>Besides logic and computation, another important part of mathematics used in AI is the <strong>Probability</strong>. As the Thomas Bayes proposed a <em>rule for updating probabilities in the light of new evidence</em>, which is a fundamental basis when the AI system nowadays are doing <strong>Uncertain Reasoning</strong>.</p>
+
+<h4 id="123-economics">1.2.3 Economics</h4>
+
+<ul>
+  <li>How should we make decisions to maximizing payoff?</li>
+  <li>How should we do this when others may not go along?</li>
+  <li>How should we do this when the payoff may be far in the future?</li>
+</ul>
+
+<p><strong><mark>Economics can be thought of as consisting of individual agents maximizing their own economic well-being</mark></strong>
+The economists use the theory of ‘utility’ to help AI make decision, which means that the AI will choose the step that will most benefit itself.</p>
+
+<p><strong>Decision Theory</strong>, which combines probability theory with utility theory with utility theory, provides the formal and complete framework for decisions.
+The <strong>Division Theory</strong> is useful when it is in a ‘large’ situation, that is, the action of an individual will not affect the whole environment’s status.</p>
+
+<p>When the AI is used in a ‘small’ situation, another theory called <strong>Game Theory</strong> should be used since the AI will change the whole environment with its own decisions.
+A <strong>game</strong> is where the action of a player can significantly affect the utility of another.
+It has been proven that for some specific games, it is better for AI to adopt policies that are (at least looks like) <em>Randomized</em>.</p>
+
+<p><strong>Operation Search</strong> is used to make decision when finding the solution of a particular problem needs a complex management decisions.</p>
+
+<p>After that, people find a class of sequential decision problems called <strong>Markov Decision Process</strong>.</p>
+
+<p>Like we have said before, in many situations, it is either impossible nor inefficient for AI to choose the ‘Best’ solution, we only need it to making decisions that are ‘good enough’.</p>
+
+<h4 id="124-neuroscience">1.2.4 Neuroscience</h4>
+
+<ul>
+  <li>How do brains process information?</li>
+</ul>
+
+<p><strong>Neuroscience</strong> is the study of the nervous system, particularly the brain. People can use mathematical models to the study of nervous system.
+People use the mathematical modeling tool to study the neuron science.
+People conclude that <em>a collection of simple cells can lead to thought, action and consciousness</em></p>
+
+<h4 id="125-psychology">1.2.5 Psychology</h4>
+
+<ul>
+  <li>How do humans and animals think and act?</li>
+</ul>
+
+<p><strong>Cognitive Psychology</strong>, which views the brain as an information - processing device.</p>
+
+<p>Craik specified three key steps of a knowledge - based agent:</p>
+
+<ol>
+  <li>The stimulus must be translated into an internal representation</li>
+  <li>The representation is manipulated by cognitive process to derive new internal representations.</li>
+  <li>These are in turn retranslated into action.</li>
+</ol>
+
+<h4 id="126-computer-engineering">1.2.6 Computer Engineering</h4>
+
+<ul>
+  <li>How can we build an efficient computer?</li>
+</ul>
+
+<h4 id="127-control-theory-and-cybernetics">1.2.7 Control Theory and Cybernetics</h4>
+
+<ul>
+  <li>How can artifacts operate under their own control</li>
+</ul>
+
+<p>People concern behavior as arising from a regulatory mechanism trying to minimize ‘error’, the difference between current state and goal state.
+People begin to use the homeostatic devices containing appropriate feedback loops to achieve stable adaptive behavior.</p>
+
+<p>Tools of logical inference and computation allowed AI researchers to consider problems such as language, vision, and planning that fell completely outside the control theorist’s preview.</p>
+
+<h4 id="128-linguistics">1.2.8 Linguistics</h4>
+
+<ul>
+  <li>How does language relate to thought?</li>
+</ul>
+
+<p>Born with ‘AI’, an interesting hybrid field called <strong>computational linguistics</strong> or <strong>Natural Language Processing</strong> (NLP). Then people soon find out that the understanding of language requires an <em>understanding of the subject and context</em>, not only just understanding the structure of sentences.</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2020/USACO-2017-Dec-Gold.html" title="USACO 2017 Dec Gold Analysis">USACO 2017 Dec Gold Analysis</a><a class="next" href="/blog/2021/CS188-Chapter2.html" title="CS188 Chapter 2 Intelligent Agents">CS188 Chapter 2 Intelligent Agents</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2022/the-fences.html" title="CS188 Chapter 2 Intelligent Agents">The Fences | AR Web Application</a></li><li><a class="post-link" href="/blog/2022/clac-embeddable.html" title="CS188 Chapter 2 Intelligent Agents">Embeddable Clac Execution Environment</a></li><li><a class="post-link" href="/blog/2022/serverless-file-system.html" title="CS188 Chapter 2 Intelligent Agents">Serverless File System based on AWS S3</a></li><li><a class="post-link" href="/blog/2022/Attention-Mechanism.html" title="CS188 Chapter 2 Intelligent Agents">NLP 101: Attention Mechanism</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="CS188 Chapter 2 Intelligent Agents">A* Search and its Variants</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="CS188 Chapter 2 Intelligent Agents">NLP 101: Word Embedding 词嵌入</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/2048-Project-1.html" title="CS188 Chapter 2 Intelligent Agents">2048 Project (1)</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/CS188-Chapter15.html" title="CS188 Chapter 2 Intelligent Agents">CS188 Chapter 15 Probabilistic Reasoning over Time</a></li>
+            
+          
+          
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

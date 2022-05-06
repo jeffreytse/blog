@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>NLP 101: Seq2Seq 模型 | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="NLP 101: Seq2Seq 模型">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="ch">
+<meta name="description" content="0 四种时间序列问题">
+<meta property="og:description" content="0 四种时间序列问题">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2021/Seq2Seq.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2021/Seq2Seq.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-12-28T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="NLP 101: Seq2Seq 模型">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2021-12-28T00:00:00+00:00","datePublished":"2021-12-28T00:00:00+00:00","description":"0 四种时间序列问题","headline":"NLP 101: Seq2Seq 模型","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2021/Seq2Seq.html"},"url":"https://markchenyutian.github.io//blog/2021/Seq2Seq.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="page-banner">
+    <div class="page-banner-img">
+      <div style="background-image: url(/blog/assets/images/banners/NeuralNetworkBackground.jpg)"></div>
+    </div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">NLP 101: Seq2Seq 模型</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-12-28T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Dec 28, 2021
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 37 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/blog/tags.html#NLP">#NLP</a><a class="post-tag" href="/blog/tags.html#Neural%20Network">#Neural Network</a>
+</div></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="0-四种时间序列问题">0 四种时间序列问题</h2>
+
+<p>在与时间序列相关的问题中，我们通过“时序对齐（Alignment）”与“时序同步性（Synchronous）”两个维度将所有问题分为四个不同的类型</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td><strong>对齐</strong></td>
+      <td><strong>不对齐</strong></td>
+    </tr>
+    <tr>
+      <td> 
+<br>
+<strong>同步</strong>
+<br>
+ </td>
+      <td>
+<img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202021-12-29%20at%2011.41.39%20AM.png" style="height: 100px;">
+<br>
+输入时同时输出，一帧输入与一帧输出对应（视频标注）
+<br>
+模型：LSTM，Naive RNN</td>
+      <td>
+<br><br>
+ </td>
+    </tr>
+    
+    
+    <tr>
+      <td> 
+<br>
+<strong>不同步</strong>
+<br>
+ </td>
+      <td>
+<img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202021-12-29%20at%2011.45.28%20AM.png" style="height: 100px">
+<br>
+输入与输出的顺序相同，但是没有一一对应的关系（语音识别）
+<br>
+模型：Connectionist Temporal Classification (CTC)</td>
+      <td>
+<img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202021-12-29%20at%2011.43.43%20AM.png" style="height: 100px;">
+<br>
+输入一个序列，在整个输入完成后输出一个顺序不一定对应的序列 （机器翻译）
+<br>
+模型：<strong>Seq2Seq</strong>
+</td>
+    </tr>
+    
+    
+  </tbody>
+</table>
+
+<p>下文提到的 Seq2Seq 模型是处理“不对齐，不同步”序列问题的一种模型。一个典型的不对齐不同步问题是机器翻译。</p>
+
+<p>假如我们要让模型将英语 “I ate an apple” 翻译为德语 “Ich habe einen apfel gegessen”，我们会发现翻译结果中的语序和原来并不相同，同时，一些翻译结果并不能与英语中的词汇一一对应到。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202021-12-29%20at%2011.52.07%20AM.png" alt="Screen Shot 2021-12-29 at 11.52.07 AM" style="zoom:50%;"></p>
+
+<center>Fig 1. 机器翻译输入与输出并没有简单的一一对应关系 ｜ 图片来源：CMU 11-785 Lecture 18 page 5</center>
+
+<h2 id="1-如何确保模型获得了所需的信息">1 如何确保模型获得了所需的信息？</h2>
+
+<p>在不对齐不同步问题中，我们不能直接使用LSTM这样的模型，因为在时间序列的 $t$ 时刻，我们并不能确定此时的模型是否已经获得了所有输出正确结果所需要的信息。因此，我们的解决方案是：<strong>先处理完所有的输入，将所有输入编码（encode）到一个隐藏状态（Hidden State），然后再逐步对这个隐藏状态进行解码（decode）</strong>。</p>
+
+<p>通过这样的结构，我们能确定在解码过程中模型一定收到了所有所需的信息。</p>
+
+<p>在运行这个模型之前，我们还有两个小问题没有解决</p>
+
+<ol>
+  <li>如何让模型知道当前的输入已经结束了，可以开始解码隐藏状态了</li>
+  <li>一个递归神经网络理论上可以给出无限长的输出序列，我们应该怎样获知模型已经完成了对隐藏状态的解码，并停止接受模型的输出？</li>
+</ol>
+
+<p>实际上这两个问题的解决方案是一致的 - 我们可以在模型的词汇表中添加一个特殊的 token - <code class="language-plaintext highlighter-rouge">&lt;EOS&gt;</code> 这个 token 代表“End Of Sentence”。当我们向模型输入一个 <code class="language-plaintext highlighter-rouge">&lt;EOS&gt;</code> 时，模型就知道当前输入已经结束，并开始输出隐藏状态的解码结果。</p>
+
+<p>当模型在解码阶段输出 <code class="language-plaintext highlighter-rouge">&lt;EOS&gt;</code> 时，我们就可以获知模型已经完成了对隐藏状态的解码。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_46AF89134238-1.jpeg" alt="IMG_46AF89134238-1"></p>
+
+<center>Fig 2. 一种能够确保模型在输出阶段获得了所有所需信息的模型</center>
+
+<h2 id="2-确保解码结果的上下文相关性">2 确保解码结果的上下文相关性</h2>
+
+<p>上面的模型在解决了输入信息完整性的同时还有一个明显的缺陷：在解码阶段中，<strong>每一个输出只和当前隐藏状态有关，与之前的输出没有联系</strong>。</p>
+
+<p>在现实问题中，模型输出的序列一般都会有上下文相关性 - 也就是说，知道模型在 $t - 1$ 时刻的输出会改变模型在 $t$ 时刻输出的概率分布 - $P(w_t \mid w_{t-1}) \neq P(w_t)$。比如在机器翻译的任务中，如果第 $t - 1$ 个词是 “an”，那么第 $t$ 个词是 $dark$ 的概率就应该很很低。</p>
+
+<p>为了解决这个问题，我们可以将模型在 $t-1$ 时刻的输出作为模型的输入传递到 $t$ 时刻。这样带来的好处非常明显：</p>
+
+<ol>
+  <li>我们可以直接在 $t$ 时刻与 $t - 1$ 时刻建立联系</li>
+  <li>在解码过程中，模型在过去时刻的输出也会被编码到模型的hidden state中，所以模型可以“知道”自己在整个解码阶段中曾经输出过什么内容。</li>
+</ol>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_C2214BB4110E-1.jpeg" alt="IMG_C2214BB4110E-1"></p>
+
+<center>Fig 3. 一种能够考虑到解码结果上下文相关性的 Encoder-Decoder 模型</center>
+
+<p>在图三这种模型中，接受输入的部分被称为<strong>编码器（Encoder）</strong>。编码器会“总结”输入内容并将结果总结到自己的隐藏状态中。当编码器接受完整个输入后，其隐藏状态被称为 “Summary Vector”，因为这个张量包含了整个输入的语义。</p>
+
+<p>接着，Summary Vector 被传递到了<strong>解码器（Decoder）</strong>的隐藏状态。解码器会解析传入的隐藏状态并（在这个例子中）给出翻译结果。</p>
+
+<p>这样一种由 Encoder 和 Decoder 构成的模型就是我们所说的 Seq2Seq 模型了。</p>
+
+<h2 id="3-seq2seq-模型与词嵌入---我们如何解读解码结果">3 Seq2Seq 模型与词嵌入 - 我们如何解读解码结果？</h2>
+
+<blockquote>
+  <p>Partially Adapted from 11-785 Lec. 18 Notes P45 - P56</p>
+</blockquote>
+
+<blockquote>
+  <p><a href="/blog/2021/Word-Embedding.html">词嵌入 (Word Embedding)</a> 是一种将高维度的，使用 One-hot 编码的词汇表嵌入到低维空间的方法。这里泛指用向量表示自然语言。</p>
+</blockquote>
+
+<p>解码器在运行时会输出向量，我们可以通过“查表”的方法将自然语言转化为向量，但是我们如何去解读解码器输出的结果来将向量转化回自然语言呢？</p>
+
+<p><em>为了方便起见，我们在下文中先假设所有词汇都是通过 one-hot 方式编码的。同时，我们使用 $y_t^{A}$ 描述在时刻模型在时刻 $t$ 输出的向量中表述词汇为 $A$ 的概率</em>。</p>
+
+<p>任意一种解读解码结果的目标都是一样的 - 对于解码器给出的一串向量输出 $y_1, \cdots, y_t$，我们要从中找到对应的词汇 $O_1, \cdots, O_n$ 使得 $P(O_1, \cdots, O_n \mid x_1,\cdots, x_m)$ 最大化。也就是说，我们希望解读方法能够做到下面这样的效果：</p>
+
+<p>$$
+\text{argmax}_{O_1, \cdots, O_n}(y_1^{O_1}\cdots y_n^{O_n})
+$$</p>
+
+<h3 id="31-贪心算法解读解码结果">3.1 贪心算法解读解码结果</h3>
+
+<p>一种简单的思路是使用<strong>贪心算法</strong> - 在每一时刻 $t$，我们都选择当前输出向量 $y_t$ 所代表的，（相似度）概率最高的词向量 $O$ 作为 $O_t$ 的解读结果。</p>
+
+<p>$$
+\DeclareMathOperator*{\argmax}{argmax}
+O_t = \argmax_{O_t}(y_t^{O_t})
+$$</p>
+
+<p>然而，这样的方法有一个弊端：如果在时刻 $t$ 模型的最优输出并不是正确的结果，从 $t + 1$ 开始的每个时刻，模型都会受到这样一个错误输出的影响，最后导致模型“越走越偏”。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_917415594339-1.jpeg" alt=""></p>
+
+<center>Fig 4.  直接使用贪心算法对解码器输出进行解读可能导致未来的序列被“误导”</center>
+
+<h3 id="32-既然不够信息做选择我全都要">3.2 既然不够信息做选择，我全都要！</h3>
+
+<p>如果因为贪心算法存在上一段描述的缺陷就拒绝使用贪心算法，我们会遇到一个问题：<strong>在 $t$ 时刻做出错误的选择一定会导致整个序列的错误与偏差，但是我们在 $t$ 时刻并不知道哪个选择是错误的</strong>。那么我们怎么解决这个问题呢？</p>
+
+<blockquote>
+  <p>实际上，我们的大脑每时每刻都在处理同样的问题 - 自然语言中充斥着模糊性，这种模糊性来自于词法(Lexical Ambiguity)，结构(Structural Ambiguity) 和 语音(Acoustic Ambiguity) 。而大脑在日常交流中在无时无刻的进行去模糊化的动作。用于去模糊化的信息主要来自于对话的上下文和场景。</p>
+
+  <p>也就是说 - 在日常交流的过程中我们的大脑会先保留时刻 $t$ 的语言模糊性，等到积累了足够的上下文后再对 $t$ 时刻的结果进行去模糊化操作。</p>
+</blockquote>
+
+<p><strong>也许相似的过程也能用在我们对 Seq2Seq 模型的输出解读上！</strong></p>
+
+<p>既然我们在时刻 $t$ 无法得知足够的信息来做出选择，那么我们就<em>不做出选择</em> - 直到我们积累了足够多的信息来做出选择我们再返回来 $t$ 时刻进行决择。在每个时刻，我们选择<strong>概率最高的$n$个词向量</strong>作为对解码器在 $t$ 时刻输出的解读。我们将解码器 “分叉到不同的时间线”上 - 在每个分叉中，我们使用不同的词向量作为 $t + 1$ 时刻的解码器输入。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_3B1063339A5F-1.jpeg" alt="IMG_3B1063339A5F-1"></p>
+
+<center>Fig 5. 每一个时刻，如果概率最高的两个解读结果概率差距不大，我们可以将解码器“分叉”，在不同的assumption 上继续推理并在未来回溯至该时刻进行选择</center>
+
+<p>当模型在某个分支上输出了 <code class="language-plaintext highlighter-rouge">&lt;EOS&gt;</code> 这个特殊的token时，这个分支就结束了。因为 <code class="language-plaintext highlighter-rouge">&lt;EOS&gt;</code> 是约定的结束解码器输出序列的标志符。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_007491957EB3-1.jpeg" alt="IMG_007491957EB3-1" style="zoom: 25%;"></p>
+
+<center>Fig 6. 解码器每个时刻因为对解码结果的不同解读产生不同的分叉。每个分叉在输出<code>&lt;EOS&gt;</code>时结束</center>
+
+<p>当解码器所有的分支都结束输出以后，我们可以对每一个分支输出的序列进行评估并在其中选择最优的序列。</p>
+
+<blockquote>
+  <p>因为分支的数量随序列长度成指数上升，这里我们一般会在评估时使用一种叫 <a href="https://en.wikipedia.org/wiki/Beam_search">Beam Search</a> 的启发式搜索算法对需要评估的分支进行剪枝。</p>
+</blockquote>
+
+<h2 id="4-seq2seq-模型的训练">4 Seq2Seq 模型的训练</h2>
+
+<p>在训练 Seq2Seq 模型时，我们不用对模型在编码阶段的输出做任何评估。我们只需要对比模型在解码阶段给出的输出即可。</p>
+
+<p>在训练阶段，我们并不会将解码器在 $t - 1$ 时刻的输出作为输入传输给 $t$ 时刻（我们在模型推理阶段会这么做来建立模型输出的上下文联系）。我们会直接将正确的 ground truth  中的第 $t - 1$ 时刻的内容作为输入传输给 $t$ 时刻。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_58B92A9252D3-1.jpeg" alt="IMG_58B92A9252D3-1"></p>
+
+<center>Fig 7. 训练阶段的 Seq2Seq 模型，梯度沿紫色箭头路线反向传播</center>
+
+<p>在训练阶段中，如果我们选择 SGD 作为优化方法，我们可以这样训练模型：</p>
+
+<ol>
+  <li>随机在训练集中选择一个 (input, output) 数据</li>
+  <li>使用这个数据让模型进行前向计算</li>
+  <li>随机选择模型在解码阶段的一个输出进行 Loss 计算并进行反向传播</li>
+  <li>更新模型权重参数</li>
+</ol>
+
+<h2 id="5-seq2seq-的缺陷与改进方法">5 Seq2Seq 的缺陷与改进方法</h2>
+
+<p>Seq2Seq 模型到现在依然是解决非同步非对齐序列预测问题的经典模型之一。然而，它的结构存在一个缺陷 - 这个缺陷会在模型接受长输入序列时被暴露无遗。注意到图3中的编码器-解码器模型。在这个模型中，编码器与解码器只通过隐藏状态（总结向量）连接起来。这直接导致了两个问题：</p>
+
+<ol>
+  <li>当输入序列较长时，这个隐藏状态可能无法完全容纳输入中蕴含的所有信息量，从而导致模型接受信息的损失。<strong>【编码器与解码器之间的连接太狭窄，无法传递所有信息】</strong>
+</li>
+  <li>如果输入序列较长，一些信息可能会在编码器接受新信息的过程中被“稀释”，这可能会导致解码器遗漏输入中的关键信息。<strong>【编码器中所有的隐藏状态都含有独特的信息，但是只有最终状态被传递给了解码器】</strong>
+</li>
+</ol>
+
+<p>而这两个问题的解决方案则是目前大有一统 CNN，RNN，多模态学习 之势的 Transformer 模型的底层结构 - 注意力机制（Attention Mechanism）</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2021/Batch-Normalization.html" title="Batch Normalization 浅入深出">Batch Normalization 浅入深出</a><a class="next" href="/blog/2022/Attention-Mechanism.html" title="NLP 101: Attention Mechanism">NLP 101: Attention Mechanism</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2022/clac-embeddable.html" title="NLP 101: Attention Mechanism">Embeddable Clac Execution Environment</a></li><li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="NLP 101: Attention Mechanism">A* Search and its Variants</a></li><li><a class="post-link" href="/blog/2021/Batch-Normalization.html" title="NLP 101: Attention Mechanism">Batch Normalization 浅入深出</a></li><li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="NLP 101: Attention Mechanism">NLP 101: Word Embedding 词嵌入</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Transformers.html" title="NLP 101: Attention Mechanism">NLP 101: Transformer Model</a></li>
+            
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Attention-Mechanism.html" title="NLP 101: Attention Mechanism">NLP 101: Attention Mechanism</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Batch-Normalization.html" title="NLP 101: Attention Mechanism">Batch Normalization 浅入深出</a></li>
+            
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="NLP 101: Attention Mechanism">NLP 101: Word Embedding 词嵌入</a></li>
+            
+          
+          
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

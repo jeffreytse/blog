@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CS188 Chapter 14 Probabilistic Reasoning | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="CS188 Chapter 14 Probabilistic Reasoning">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="14.1 Representing Knowledge in an Uncertain Domain">
+<meta property="og:description" content="14.1 Representing Knowledge in an Uncertain Domain">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2021/CS188-Chapter14.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2021/CS188-Chapter14.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-06-13T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="CS188 Chapter 14 Probabilistic Reasoning">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2021-06-13T00:00:00+00:00","datePublished":"2021-06-13T00:00:00+00:00","description":"14.1 Representing Knowledge in an Uncertain Domain","headline":"CS188 Chapter 14 Probabilistic Reasoning","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2021/CS188-Chapter14.html"},"url":"https://markchenyutian.github.io//blog/2021/CS188-Chapter14.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="page-banner">
+    <div class="page-banner-img">
+      <div style="background-image: url(/blog/assets/images/banners/CS188Background.jpg)"></div>
+    </div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">CS188 Chapter 14 Probabilistic Reasoning</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-06-13T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Jun 13, 2021
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 20 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags"><a class="post-tag" href="/blog/tags.html#Machine%20Learning">#Machine Learning</a></div></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="141-representing-knowledge-in-an-uncertain-domain">14.1 Representing Knowledge in an Uncertain Domain</h2>
+
+<p>This section will introduce a data structure called <strong>Bayesian network</strong> to represent the dependencies between variables. Bayesian network can represent <em>any</em> full-joint probability distribution and in many cases can do so very concisely.</p>
+
+<p>A Bayesian network is a directed acyclic graph (DAC) where each node is annotated with quantitative probability information.</p>
+
+<ol>
+  <li>Each node corresponds to a random variable, which may be discrete or continuous.</li>
+  <li>A set of directed links or arrows connects pairs of nodes. If there is an arrow from node $X$ to $Y$, $X$ is said to be a parent of $Y$.</li>
+  <li>Each node $X_i$ has a conditional probability distribution $\mathbf{P}(X_i\mid Parents(X_i))$ that quantifies the effect of the parents on the node.</li>
+</ol>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210607204337.jpg" alt="445d0b3c3422cc07a6e40f85fca27a8"></p>
+
+<p>In each node of the Bayesian network, a conditional probability table (CPT) is stored. For instance, the node “$Toothache$” stores $\mathbf{P}(Toothache \mid Cavity)$.</p>
+
+<p>In general, a table for a Boolean variable with $k$ Boolean parents contains $2^k$ independently specifiable probabilities.</p>
+
+<h2 id="142-the-semantics-of-bayesian-networks">14.2 The Semantics of Bayesian Networks</h2>
+
+<h3 id="1421-representing-the-full-joint-distribution">14.2.1 Representing the full joint distribution</h3>
+
+<p>The full joint distribution of variables $X_1$ to $X_n$ can be represented in this way:</p>
+
+<p>$$
+P(x_1, \cdots, x_n) = \prod_{i=1}^{n}{P(x_i \mid parents(X_i))}
+$$</p>
+
+<p>Where $parents(X_i)$ is the parent nodes of variable $X_i$. This equation defines what a given Bayesian network means.</p>
+
+<h4 id="how-to-construct-bayesian-networks">How to construct Bayesian Networks</h4>
+
+<p>Except the equation above, there is another way to calculate $P(x_1, \cdots, x_n)$. Using product rule, we can also represent it in this way:</p>
+
+<p>$$
+P(x_1, \cdots, x_n) = P(x_n \mid x_{n-1}, x_{n-2}, \cdots, x_1)P(x_{n-1}, x_{n-2}, \cdots, x_1)
+$$</p>
+
+<p>Applying product rule recursively on the equation above, we can represent $P(x_1, \cdots, x_n)$ in a long product:</p>
+
+<p>$$
+P(x_1, \cdots, x_n) = P(x_n \mid x_{n-1}, x_{n-2}, \cdots, x_1)P(x_{n-1} \mid  x_{n-2}, \cdots, x_1)\cdots P(x_2 \mid x_1)P(x_1) \= \prod_{i=1}^{n}{P(x_i \mid x_{i-1} \cdots x_1)}
+$$</p>
+
+<p>Therefore, we can learn that</p>
+
+<p>$$
+P(X_i\mid X_{i-1}. \cdots. X_i) = P(X_i \mid parents(X_i))
+$$</p>
+
+<p>This equation indicates that …
+$$
+P(X\mid Parents(X))\;\bot\; P(Ancestor(X) \mid Parents(X))
+$$
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20210614220259.jpg" alt="a48c4f85ffc63ba7ec657b08d301a7f"></p>
+
+<ol>
+  <li>
+<em>Nodes</em>: First find a set of variables $X_1, \cdots, X_n$ that will be included into the Bayes Network. <u>The network will be more compact if the variables are ordered such that cause precede effect</u>
+</li>
+  <li>
+<em>Links</em> For $i = 1$ to $n$, do
+    <ul>
+      <li>Choose from $X_1, \cdots, X_{i-1}$ a minimal set of parents for $X_i$, such that Equation $P(X_i\mid X_{i-1}. \cdots. X_i) = P(X_i \mid parents(X_i))$ is satisfied.</li>
+      <li>For each parent insert a link from parent to $X_{i}$</li>
+      <li>Write down the conditional probability table, $\mathbf{P}(X_i \mid Parents(X_i))$</li>
+    </ul>
+  </li>
+</ol>
+
+<div class="info">
+    The Bayesian network is a correct representation of the domain only if each node is conditionally independent of its other predecessors in the node ordering, given its parents.
+</div>
+<div class="notification">
+Some information is omitted here as they requires sophisticated knowledge in 2D Gaussian distribution, topology, etc. You can find them in Chapter 14.2 - 14.3
+</div>
+
+<h2 id="144-exact-inference-in-bayesian-networks">14.4 Exact Inference in Bayesian Networks</h2>
+
+<p>The basic task for probabilistic inference system is to compute the posterior probability distribution for a set of <strong>query variables</strong>, given some observed <strong>event</strong> (the assignment of values to a set of <strong>evidence variables</strong>).</p>
+
+<p>$$
+\text{All Variables} = \text{Query Variables }\cup\text{ Evidence Variables }\cup\text{ Hidden Variables}
+$$</p>
+
+<p>A typical query asks for the posterior probability distribution $\mathbf{P}(X\mid \mathbf{e})$</p>
+
+<h3 id="1441-inference-by-enumeration">14.4.1 Inference by Enumeration</h3>
+
+<p>A query $\mathbf{P}(X \mid \mathbf{e})$ can be answered using the equation below:</p>
+
+<p>$$
+\mathbf{P}(X \mid \mathbf{e}) = \alpha \mathbf{P}(X, \mathbf{e}) = \alpha \sum_y{\mathbf{P}(X,\mathbf{e}, \mathbf{y})}
+$$</p>
+
+<p><mark>A query can be answered using a Bayesian Network by computing sums of products of conditional probabilities from the network.</mark></p>
+
+<blockquote>
+  <p><strong>Example</strong></p>
+
+  <p>Suppose we have such a Bayesian Network</p>
+
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210614221114.jpg" alt="b1512cd7f41c44fc2aed0676e9f57cc" style="zoom: 33%;"></p>
+
+  <p>We use $B$ to represent the variable $Burglary$, $m$ and $j$ represent the known value of $JohnCalls$ and $MaryCalls$ (True or False). Now we want to calculate $\mathbf{P}(B\mid m, j)$</p>
+
+  <p>$$
+\begin{aligned}
+	\mathbf{P}(B\mid m, j) &amp;= \left\langle \frac{P(b, j, m)}{P(j, m)}, \frac{P(\neg b, j, m)}{P(j, m)} \right\rangle<br>
+	&amp;= \alpha \left\langle \underbrace{P(b, j, m)}_{\text{Expand}}, P(\neg b, j, m)\right\rangle
+\end{aligned}
+$$</p>
+
+  <p>Using <strong>Chain Rule</strong>, we can expand $P(b, j, m, E, A)$</p>
+
+  <p>$$
+\begin{aligned}
+P(b, j, m) &amp;= \sum_E{\sum_A{P(b, j, m, E, A)}}<br>
+&amp;= \sum_E{\sum_A{P(m \mid j, A, E, b)P(j \mid A, E, b)P(A \mid E, b)P(E\mid b)P(b)}}
+\end{aligned}
+$$</p>
+
+  <blockquote>
+    <p>Note: For simplicity</p>
+
+    <p>$x\bot y$ is the shorten for $P(x)\bot P(y)$</p>
+
+    <p>$x\bot y \mid a$ is the shorten for $P(x\mid a) \bot P(y\mid a)$</p>
+
+    <p>$x\bot y, z \mid a$ is the shorten for $P(x\mid a)\bot P(y\mid a)$ and $P(x\mid a)\bot P(z\mid a)$</p>
+  </blockquote>
+
+  <p>According to the structure of Bayesian Network, we can know that $m \bot j$, $m \bot b, E \mid A$, $j \bot b, E \mid A$ and $b\mid E$. Therefore, we can simplify the formula above</p>
+
+  <p>$$
+\begin{aligned}
+P(b, j, m) &amp;= \sum_E{\sum_A{P(m \mid j, A, E, b)P(j \mid A, E, b)P(A \mid E, b)P(E\mid b)P(b)}}<br>
+&amp;= \sum_E{\sum_A{P(m\mid A)P(j \mid A)P(A\mid E, b)P(E)P(b)}}
+\end{aligned}
+$$</p>
+
+  <p>To simplify this formula, we can “extract the common factor” out from nested sum$\sum$.</p>
+
+  <p>$$
+\begin{aligned}
+&amp;P(b, j, m)<br>
+= &amp;P(b)\sum_E\left({P(E)\sum_A\left({P(m \mid A)P(j\mid A)P(A\mid E, b)}\right)}\right)<br>
+= &amp;P(b)\sum_E\left({P(E)\sum_A\left({\underbrace{P(m\mid Parents(m))P(j\mid Parents(j))P(A\mid Parents(A))}_{\text{Find these value in Bayesian Network}}}\right)}\right)
+\end{aligned}
+$$</p>
+</blockquote>
+
+<p>The worst time complexity of query with enumeration is $O(n2^n)$</p>
+
+<p>To formally describe the process of Inference by Enumeration, we can use two functions - $\text{ENUMERATION-ASK}$ and $\text{ENUMERATE-ALL}$.</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210615102519.jpg" alt="e8e8e0482668ce9ff68fc7b628f4762" style="zoom: 33%;"></p>
+
+<blockquote>
+  <p>The $\times$ here represents the <strong>pointwise product</strong> between vectors instead of scalar product.</p>
+</blockquote>
+
+<p>Here’s how to use $\text{ENUMERATION-ASK}$ and $\text{ENUMERATE-ALL}$ to evaluate $\text{ENUMERATION-ASK}(B, \lbrace j,m\rbrace, bn)$.</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210615105150.jpg" alt="8918902a08f4f456312d98b252d9846"></p>
+
+<div class="notification">
+Some information is omitted here. You can find them in Chapter 14.4.2 - 14.4.4
+</div>
+
+<h2 id="145-approximate-inference-in-bayesian-networks">14.5 Approximate Inference in Bayesian Networks</h2>
+
+<p>This section describes randomized sampling algorithms, also called <strong>Monte Carlo</strong> algorithms, that provide approximate answers whose accuracy depends on the number of samples generated.</p>
+
+<h3 id="1451-direct-sampling-methods">14.5.1 Direct Sampling Methods</h3>
+
+<h4 id="prior-sample">Prior Sample</h4>
+
+<p>Step 1. Use topological sort to sort all variables in the Bayesian Network.</p>
+
+<p>Step 2. Assign a value to the first variable (the node with no Parents) randomly with probability distribution $\mathbf{P}(X_1)$.</p>
+
+<p>Step 3. Assign a value to next variable with probability distribution $\mathbf{P}(X_2 \mid Parents(X_2))$</p>
+
+<p>Step 4. Repeat Step 3 until all variables in Bayesian Network has an assignment</p>
+
+<p>After step 4, we successfully construct a sample from Bayesian network. By repeating the sampling for many times, we can approximate the Probability distribution $\mathbf{P}(X\mid e)$.</p>
+
+<p>Suppose $S_{PS}(x_1, \cdots, x_n)$ represents the probability of getting sample where $X_1 = x_1, \cdots, X_n=x_n$.</p>
+
+<p>$$
+S_{PS}(x_1\cdots x_n) = \prod_{i=1}^n{P(x_i\mid Parents(X_i))}
+$$</p>
+
+<p>Suppose we have taken $N$ direct samples and among them, there are $N_{PS}(x_1\cdots x_n)$ samples where $X_1=x_1\cdots X_n=x_n$. The ration between $N$ and $N_{SP}$ will converge as $N$ approach $\infty$.</p>
+
+<p>$$
+\lim_{N\rightarrow\infty}{\frac{N_{PS}(x_1\cdots x_n)}{N}} = S_{PS}(x_1, \cdots, x_n)=P(x_1, \cdots, x_n)
+$$</p>
+
+<p>The estimated probability becomes exact in the large-sample limit. Such an estimate is called <strong>consistent</strong>.</p>
+
+<p>$$
+P(x_1, \cdots, x_m)\approx N_{PS}(x_1, \cdots, x_m)/N
+$$</p>
+
+<h4 id="rejection-sampling">Rejection Sampling</h4>
+
+<p><strong>Rejection sampling</strong> is a general method for producing samples from a hard-to-sample distribution given an easy-to-sample distribution. It can produce a consistent estimation of the true probability.</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210615134504.jpg" alt="b00ce22da893459c32e8a44cc39f6e1" style="zoom:50%;"></p>
+
+<p>The biggest problem of rejection sampling is that it rejects too many samples! The number of samples being rejected increases exponentially as the number of evidence variable increases.</p>
+
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2021/CS188-Naive-Bayes-MNIST.html" title="CS188 Ch13. Case Study - Recognize MNIST base on Naive Bayes">CS188 Ch13. Case Study - Recognize...</a><a class="next" href="/blog/2021/uniswap3-1.html" title="Uniswap 3 - Liquidity, Liquidity Provider and AMM">Uniswap 3 - Liquidity, Liquidity Provider...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2022/Transformers.html" title="Uniswap 3 - Liquidity, Liquidity Provider and AMM">NLP 101: Transformer Model</a></li><li><a class="post-link" href="/blog/2022/Attention-Mechanism.html" title="Uniswap 3 - Liquidity, Liquidity Provider and AMM">NLP 101: Attention Mechanism</a></li><li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="Uniswap 3 - Liquidity, Liquidity Provider and AMM">NLP 101: Word Embedding 词嵌入</a></li><li><a class="post-link" href="/blog/2021/Seq2Seq.html" title="Uniswap 3 - Liquidity, Liquidity Provider and AMM">NLP 101: Seq2Seq 模型</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="Uniswap 3 - Liquidity, Liquidity Provider and AMM">A* Search and its Variants</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="Uniswap 3 - Liquidity, Liquidity Provider and AMM">NLP 101: Word Embedding 词嵌入</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/2048-Project-1.html" title="Uniswap 3 - Liquidity, Liquidity Provider and AMM">2048 Project (1)</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/CS188-Chapter15.html" title="Uniswap 3 - Liquidity, Liquidity Provider and AMM">CS188 Chapter 15 Probabilistic Reasoning over Time</a></li>
+            
+          
+          
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

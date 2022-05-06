@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="ch">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>NLP 101: Transformer Model | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="NLP 101: Transformer Model">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="ch">
+<meta name="description" content="0 背景知识">
+<meta property="og:description" content="0 背景知识">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2022/Transformers.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2022/Transformers.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-01-09T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="NLP 101: Transformer Model">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2022-01-09T00:00:00+00:00","datePublished":"2022-01-09T00:00:00+00:00","description":"0 背景知识","headline":"NLP 101: Transformer Model","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2022/Transformers.html"},"url":"https://markchenyutian.github.io//blog/2022/Transformers.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="page-banner">
+    <div class="page-banner-img">
+      <div style="background-image: url(/blog/assets/images/banners/NeuralNetworkBackground.jpg)"></div>
+    </div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">NLP 101: Transformer Model</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-01-09T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Jan 09, 2022
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 33 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/blog/tags.html#NLP">#NLP</a><a class="post-tag" href="/blog/tags.html#Neural%20Network">#Neural Network</a>
+</div></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="0-背景知识">0 背景知识</h2>
+
+<ol>
+  <li>
+    <p><a href="/blog/2021/Word-Embedding.html">词嵌入 - Word Embedding</a></p>
+
+    <p>一种将自然语言在转化为向量表示的同时保留词汇原有的语义余上下文信息的方法（将高维的自然语言“嵌入”到低维向量空间）</p>
+  </li>
+  <li>
+    <p><a href="/blog/2021/Seq2Seq.html">编码器-解码器结构 - Encoder-Decoder Architecture</a></p>
+
+    <p>编码器-解码器结构将任务分成两个步骤：先由编码器将输入编码/总结，再通过解码器将编码结果解析成真正的输出</p>
+  </li>
+  <li>
+    <p><a href="/blog/2022/Attention-Mechanism.html">注意力机制 - Attention Mechanism</a></p>
+
+    <p>一种通过动态赋予编码器所有隐藏状态权重让解码器充分，有重点的获取信息的方法。</p>
+  </li>
+</ol>
+
+<h2 id="1-self-attention-自注意力机制">1 Self-Attention 自注意力机制</h2>
+
+<h3 hide-toc="true">1.1 Self-Attention 与 Attention 的区别</h3>
+
+<p>注意力机制的提出是作为解决 Seq2Seq 模型中的信息瓶颈与中间状态丢失问题的一个解决方案。然而，在 Google 2018 年发表的论文 <em>Attention is All You Need</em> 中，研究人员们创新性的提出了“自注意力机制”。在这种注意力机制的变种中，注意力机制不再作为连接模型两个部分的中间件出现。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_D6D1A983D5DF-1.jpeg" alt="IMG_D6D1A983D5DF-1"></p>
+  <figcaption>Fig 1. 注意力机制 vs. 自注意力机制</figcaption>
+</figure>
+
+<p>如 Fig 1 所示，在自注意力机制中，我们让 $q_t = k_t = v_t = h_t$，并将注意力权重在各个隐藏状态上的加权平均直接输出。这也是这个结构名称“自注意力机制”的来由 —— 用来计算注意力权重的 $q_i$ 与 $k_i$ 都来自于同一层数据（自己）。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_1E706864A324-1.jpeg" alt="IMG_1E706864A324-1"></p>
+  <figcaption> Fig 2. 自注意力机制的 $q$, $k$, $v$ 都来自于“自己”</figcaption>
+</figure>
+
+<h3 hide-toc="true">1.2 删去传统 NLP 模型中的 RNN 结构 - Attention is All You Need！</h3>
+
+<p>仔细分析 Fig 2 中的结构，我们会发现实际上自注意力机制的结构还可以更加简单。我们在 Seq2Seq 模型中使用 LSTM 是为了让模型获知整个输入序列的上下文内容。然而，在 Self-Attention 模型中，这么做似乎没有什么意义。因为注意力机制单独可以保证输出层可以获得整个输入序列的上下文。</p>
+
+<p>所以，我们实际上可以直接删去 Self-Attention 结构中的 RNN 而不影响模型获取的信息量。这也是论文题目 <strong><em>Attnetion is All You Need</em></strong>  的意思了 —— 我们的模型实际上可以只使用自注意力机制，完全不使用之前十多年中各类解决 NLP 问题的模型的核心结构 - 递归神经网络 RNN。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_AB1D95A09BC4-1.jpeg" alt="IMG_AB1D95A09BC4-1"></p>
+  <figcaption> Fig 3. 删去 RNN 连接后的自注意力层，输出依然可以获得整个输入序列的上下文</figcaption>
+</figure>
+
+<h3 hide-toc="true">1.3 自注意力机制 vs 全连接层？</h3>
+
+<p>观察 Fig 2，不难发现自注意力结构的输出结果其实就是输入的线性结合而已。如果是这样的话，那自注意力层与全连接层有什么区别呢？难道经过了十多年的发展，神经网络的研究者们又用 fancy 的方法重新发明了一次全连接层吗？</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_E4BF48EFE99F-1.jpeg" alt="IMG_E4BF48EFE99F-1"></p>
+  <figcaption> Fig 4. 自注意力层与全连接层非常相似 —— 从某种意义上说</figcaption>
+</figure>
+
+<p><strong>实际上自注意力机制可以看成一种更加高级，抽象的全连接层。</strong>与全连接层直接学习神经元之间的权重不同，自注意力机制在训练过程中会学习如何分配神经元之间权重使得损失函数最小化。 如果说全连接层是在直接学习 $y = Wx$ 中的权重参数 $W$，那么自注意力机制则是在学习 $g: x \rightarrow W$ 这样一个<strong>根据输入动态计算权重</strong>的函数。</p>
+
+<p>同时，因为自注意力机制不是直接学习神经元之间的权重，我们可以在不定长度的输入上使用自注意力机制。</p>
+
+<h3 hide-toc="true">1.4 自注意力机制 vs 递归神经网络？</h3>
+
+<p>自注意力机制在建立输出与整个输入序列之间的联系的同时避免了递归神经网络的许多缺点：</p>
+
+<p>因为在自注意力机制中没有递归调用自身参数，我们不会有梯度消失/爆炸问题。</p>
+
+<p>同时，因为在递归神经网络中，每一个时刻网络的状态都由该时刻前网络的状态所决定，我们<em>不能并行</em>的处理输入序列。在自注意力机制中，因为输出中的每一个分量都是互相独立的，我们可以并行的计算所有输出分量。这可以让模型的计算速度大幅增加。</p>
+
+<p>在论文中，作者比较了 自注意力机制，递归神经网络和卷积的时间复杂度与并行运算时间 （假设词向量维度为 $d$，输入序列长度为 $n$，卷积核尺寸为 $k\times k$）</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: right"> </th>
+      <th style="text-align: center">Time Complexity</th>
+      <th style="text-align: center">Work Span</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">Self-Attention</td>
+      <td style="text-align: center">$O(n^2\cdot d)$</td>
+      <td style="text-align: center">$O(1)$</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Recurrent NN</td>
+      <td style="text-align: center">$O(n\cdot d^2)$</td>
+      <td style="text-align: center">$O(n)$</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Convolution</td>
+      <td style="text-align: center">$O(k\cdot n\cdot d^2)$</td>
+      <td style="text-align: center">$O(1)$</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>可以发现，在输入序列长度不超过词向量维度的情况下，自注意力机制的时间复杂度与并行运算时间都是三种模型中最小的。</p>
+<h2 id="2-multi-head-attention-多头注意力机制">2 Multi-Head Attention 多头注意力机制</h2>
+
+<p>现在我们将上文提到的自注意力机制封装成一个模块 - 向这个模块输入长度相同的向量 $K$，$V$ 和 $Q$，模块会输出长度相同的一个结果 $Y$。</p>
+
+<figure>
+    <img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_60993124ACDA-1.jpeg" style="zoom: 20%">
+    <figcaption> Fig 5. 为了方便下文讨论，我们将自注意力层封装成一个模块讨论</figcaption>
+</figure>
+
+<p>虽然在上文关于自注意力机制的讨论中，我们为了方便起见，让 $q_i = k_i = v_i = x_i$，在实际的 Self-Attention 模型中，我们会分别对 $x$ 进行不同的操作得到不同的 $Q$, $K$, $V$。</p>
+
+<p>我们可以将这些操作用矩阵 $W$ 表示：</p>
+
+<p>$$
+Q = W_q X,\quad K = W_k X,\quad V = W_v X
+$$</p>
+
+<p>其中，这三个 $W$ 矩阵都是模型中<strong>可学习的参数</strong>。而我们上面的例子中则使用的是 $W_q = W_k = W_v = I$ 的一个特殊情况。我们把这样一个自注意力层 + Q，K，V 分别的线性变换操作合称为一个“单头注意力”。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_2893.jpg" alt="IMG_2893"></p>
+  <figcaption> Fig 6. 单头注意力模型由一个自注意力层与三个对输入的线性变换构成</figcaption>
+</figure>
+
+<p>将多个单头注意力合并在同一层上，就形成了一个“多头注意力层(Multi-head Attention)”。 理论上，多头注意力中的每一个自注意力层会学习到不同的权重参数，从而提高编码器的表达力。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_F444A7C83CF2-1.jpeg" alt="IMG_F444A7C83CF2-1"></p>
+  <figcaption> Fig 7. 多头注意力由多个单头注意力堆叠而成 </figcaption>
+</figure>
+
+<h2 id="3-transformer-的结构">3 Transformer 的结构</h2>
+
+<h3 id="31-编码器-encoder">3.1 编码器 Encoder</h3>
+
+<p>在 Transformer 中，一个编码器模块由一个多头注意力与一个前馈网络构成。前馈神经网络会单独处理多头注意力的每一个输出 token。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_CE1493F0D6C6-1.jpeg" alt="IMG_CE1493F0D6C6-1"></p>
+  <figcaption> Fig 8. Transformer 中的每一个解码器模块都由两个部分构成，两个部分各司其职。同时，模块内部的组件之间有 Shortcut Connection 保证梯度的传递</figcaption>
+</figure>
+
+<p>这样，在解码器的每一个模块中其实对输入信息做了两步处理：</p>
+
+<ol>
+  <li>
+    <p>将输入的 tokens 通过多头注意力“混合”起来，使得每一个输出token都得到了所有输入中所需的信息</p>
+  </li>
+  <li>
+    <p>将“混合”后的 token 通过前馈神经网络进行特征提取，对每一个 token 进行真正的“解读”</p>
+  </li>
+</ol>
+
+<p>与此同时，作者为了防止重复堆叠编码器模块导致梯度消失/爆炸，模仿 ResNet 的做法在每一个模块的两个组件之间都添加了短路连接来帮助梯度反向传播。</p>
+
+<p>在输入序列进入堆叠的编码器模块前要先经过词嵌入层与位置编码层。词嵌入层通过类似查表的方式将自然语言输入转化为 $\mathbb{R}^n$ 向量空间中可以计算的向量形式。位置编码层则将输入token之间的<strong>绝对位置关系</strong>通过加法的形式写入到token中传递给编码器。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_0D1DA4A8EBFD-1.jpeg" style="width: 50%;"></p>
+  <figcaption> Fig 9. Transformer 的编码器结构</figcaption>
+</figure>
+
+<h3 id="32-解码器-decoder">3.2 解码器 Decoder</h3>
+
+<p>Transformer 的解码器与编码器类似，也由重复堆叠的解码模块构成。每一个解码模块的结构如下</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_B6E42D58B414-1.jpeg" style="width: 80%;"></p>
+  <figcaption> Fig 10. Transformer 的解码模块中有一个 Masked Multi-head Attention，一个 Multi-head Attention 和 前馈神经网络</figcaption>
+</figure>
+
+<p>在解码器中出现了一个之前没有提及的“Masked Multi-head Attention”。这里的“Masked”指的是加在原始注意力权重 $g(q, k)$ 上的一个矩阵。</p>
+
+<figure>
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20220111153841.png" style="width: 33%">
+<figcaption> Fig 11. Masked Multihead Attention 的计算图，可以看到遮罩是放在 Q，K 的运算结果（原始注意力权重）上的</figcaption>
+</figure>
+
+<p>这个遮罩可以防止解码器利用“未来”的信息。比如解码器已经输出了 “I / am / fine / .”，我们现在将这些token输入到解码器中，让解码器预测下一个token。由于解码器输出 “I” 的时候 “am / fine / .” 还没有生成，I 和这些 token 没有关系。通过遮罩，我们可以“手动”将这些没有因果关系的注意力权重设置为0.</p>
+
+<figure>
+<img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_80BF9CA01C03-1.jpeg" style="width: 50%">
+<figcaption> Fig 12. Masked Multihead Attention 中，我们可以用遮罩手动，显式的移除这个 token 与解码器在未来的输出之间的关系</figcaption>
+</figure>
+
+<h3 id="33-整体">3.3 整体</h3>
+
+<p>将编码器与解码器合并起来，我们就的到了 Transformer 的模型：</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_B24E2B3D67CF-1.jpeg" alt="IMG_B24E2B3D67CF-1"></p>
+
+<h2 id="4-参考来源-sources">4 参考来源 Sources</h2>
+
+<ul>
+  <li>
+    <p><a href="https://arxiv.org/abs/1706.03762">Attention is All You Need</a></p>
+  </li>
+  <li>
+    <p><a href="https://mediaservices.cmu.edu/media/Deep+Learning+%28Fall+2021%29_Introduction+to+Transformers/1_49anpe1e/223190053">CMU 11-785 21 Fall Lecture 19: Transformer &amp; GNN</a></p>
+  </li>
+  <li>
+    <p><a href="https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0">Illustrated Guide to Transformers Neural Network</a></p>
+  </li>
+  <li>
+    <p><a href="https://stackoverflow.com/questions/58127059/how-to-understand-masked-multi-head-attention-in-transformer">Stack Overflow - How to Understand Masked Multi-head Attention in Transformer</a></p>
+  </li>
+  <li>
+    <p><a href="https://stackoverflow.com/questions/64218678/whats-the-difference-between-self-attention-mechanism-and-full-connection-l">Stack Overflow - Difference between Self-attention and Fully Connection Layer</a></p>
+  </li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2022/Attention-Mechanism.html" title="NLP 101: Attention Mechanism">NLP 101: Attention Mechanism</a><a class="next" href="/blog/2022/serverless-file-system.html" title="Serverless File System based on AWS S3">Serverless File System based on AWS...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2021/Seq2Seq.html" title="Serverless File System based on AWS S3">NLP 101: Seq2Seq 模型</a></li><li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="Serverless File System based on AWS S3">A* Search and its Variants</a></li><li><a class="post-link" href="/blog/2022/type-LaTeX-fast.html" title="Serverless File System based on AWS S3">How to Type LaTeX Fast &amp; Elegant - A Guide from &amp;...</a></li><li><a class="post-link" href="/blog/2022/Attention-Mechanism.html" title="Serverless File System based on AWS S3">NLP 101: Attention Mechanism</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Attention-Mechanism.html" title="Serverless File System based on AWS S3">NLP 101: Attention Mechanism</a></li>
+            
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Seq2Seq.html" title="Serverless File System based on AWS S3">NLP 101: Seq2Seq 模型</a></li>
+            
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Batch-Normalization.html" title="Serverless File System based on AWS S3">Batch Normalization 浅入深出</a></li>
+            
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="Serverless File System based on AWS S3">NLP 101: Word Embedding 词嵌入</a></li>
+            
+          
+          
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

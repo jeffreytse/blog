@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>CS188 Chapter 6 Constraint Satisfaction Problems | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="CS188 Chapter 6 Constraint Satisfaction Problems">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="6.1 Define Constraint Satisfaction Problems">
+<meta property="og:description" content="6.1 Define Constraint Satisfaction Problems">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2021/CS188-Chapter6.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2021/CS188-Chapter6.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-05-11T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="CS188 Chapter 6 Constraint Satisfaction Problems">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2021-05-11T00:00:00+00:00","datePublished":"2021-05-11T00:00:00+00:00","description":"6.1 Define Constraint Satisfaction Problems","headline":"CS188 Chapter 6 Constraint Satisfaction Problems","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2021/CS188-Chapter6.html"},"url":"https://markchenyutian.github.io//blog/2021/CS188-Chapter6.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="page-banner">
+    <div class="page-banner-img">
+      <div style="background-image: url(/blog/assets/images/banners/CS188Background.jpg)"></div>
+    </div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">CS188 Chapter 6 Constraint Satisfaction Problems</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-05-11T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> May 11, 2021
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 20 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags"><a class="post-tag" href="/blog/tags.html#Machine%20Learning">#Machine Learning</a></div></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="61-define-constraint-satisfaction-problems">6.1 Define Constraint Satisfaction Problems</h2>
+
+<p>A CSP contains three components - $X$, $D$ and $C$.</p>
+
+<ul>
+  <li>$X$ is a set of variables</li>
+  <li>$D$ is a set of domains, one for each variable.</li>
+  <li>$C$ is a set of constraints that specify the allowable combination between variables.</li>
+</ul>
+
+<p>Each constraint can be represented in two parameters - the $scope$ and the $relation$. The $scope$ define the variables that are related with this constraint. The $relation$ define the values that variables can take.</p>
+
+<p>The $relation$ can be either an explicit list of all legal value tuple the variables can get or an abstract relation.</p>
+
+<blockquote>
+  <p>Example 1 (Abstract, Implicit Relation) : If the constraint is $x &lt; y$. The formal way to represent constraint will be:</p>
+
+  <p>$$
+\langle scope:(x, y),\quad relation:\;\lt\rangle
+$$</p>
+
+  <p>Example 2 (Explicit Relation): If we have $0 &lt; x &lt; 4$ and $0 &lt; y &lt; 3$, the constraint can be represented in this way:</p>
+
+  <p>$$
+\langle
+	scope: (x, y),\quad
+	relation: [(1, 1), (1, 2), \cdots, (3, 1), (3, 2)]
+\rangle
+$$</p>
+</blockquote>
+
+<p>To solve the Constraint Satisfaction Problem (abbr. as CSP below), we need to define the solution and state space for CSP first. Each state of CSP is defined by an <u>**assignment** of values to some or all of the variables</u>.</p>
+
+<p>An assignment that does NOT violate any constraint in $C$ is called a <strong>consistent assignment</strong> (or, <strong>legal assignment</strong>).</p>
+
+<p>A <strong>Complete Assignment</strong> is an assignment where every variable in $X$ is assigned.</p>
+
+<p>The <strong>Solution</strong> of CSP is both Complete Assignment and Consistent Assignment.</p>
+
+<h2 id="62-why-we-need-csp">6.2 Why we need CSP</h2>
+
+<p>In the real world, many problems can be converted to CSP. As long as we have a legal CSP solver, we can generalize this solver to different problems with little difficulty. It will be easier to use a generalized CSP solver than design a custom solution using domain-specific knowledge.</p>
+
+<h2 id="63-solving-csp">6.3 Solving CSP</h2>
+
+<p>When we are finding the solution of CSP, once we find out that a partial assignment is not a solution, we can immediately discard further refinements of the partial assignment.</p>
+
+<h3 id="631-types-of-constraints-in-csp">6.3.1 Types of Constraints in CSP</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Constraint Type</th>
+      <th>Explanation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Unary Constraint</td>
+      <td>Constraint that only contain one variable in the scope <br>Example: $\langle (x), x\neq 2\rangle$</td>
+    </tr>
+    <tr>
+      <td>Binary Constraint</td>
+      <td>Constraint that contains two variables in the scope <br>Example: $\langle (x, y), x &lt; y \rangle$</td>
+    </tr>
+    <tr>
+      <td>k-ary Constraint</td>
+      <td>Constraint that contains $k$ variables in the scope <br>Example: $\langle (x, y, z), \max(x, y, z) &lt; 5 \rangle$</td>
+    </tr>
+    <tr>
+      <td>Global Constraint</td>
+      <td>Constraint that involving all variables in $X$<br>Example: $Alldiff$ Constraint requires all variables in $X$ has different assigned value.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><mark>Every finite-domain constraint can be converted to a set of binary constraints if enough auxiliary variables are introduced.</mark> Therefore, we can <mark>Transform every CSP into CSP with binary constraint only</mark>.</p>
+
+<h3 id="632-constraint-propagation-inference-in-csp">6.3.2 Constraint Propagation: Inference in CSP</h3>
+
+<p>A regular search algorithm can only do one thing: search. In CSP, the algorithm can search or do specific type of <strong>inference</strong> called <strong>constraint propagation in CSP</strong>. Using constraint to reduce the number of legal values of a variable, which, in turn reduce the legal values of another variable.</p>
+
+<p>Constraint propagation can work during the search process or work as a pre-processing step.</p>
+
+<p>The key idea of constraint propagation is the <strong>local consistency</strong>. If we see each variable in CSP as node, binary constraint as edge of graph, the local consistency is the consistency in a part of the whole constraint graph.</p>
+
+<div class="info"><p>Basically, you can see local consistency as a set of pruning algorithms running on CSP. By cutting off domain of each variable, the workload for search algorithm is greatly reduced.</p></div>
+
+<h4 id="node-consistency">Node Consistency</h4>
+
+<blockquote>
+  <p>Node Consistency Check tighten the unary domain using unary constraint</p>
+</blockquote>
+
+<p>A single variable is <strong>node-consistent</strong> if all the values in the variable’s domain satisfy the variable’s unary constraints.</p>
+
+<p>It is always possible to eliminate all the unary constraints in a CSP by running node consistency.</p>
+
+<h4 id="arc-consistency">Arc Consistency</h4>
+
+<blockquote>
+  <p>Arc Consistency Check tighten the unary domain using binary constraint</p>
+</blockquote>
+
+<p>A variable in a CSP is <strong>arc-consistent</strong> if every value in its domain satisfies the variable’s binary constraints.</p>
+
+<p>Formally speaking, $X_i$ is arc-consistent with respect to $X_j$ if for every value in $D_i$ there exist some value in $D_j$ such that the binary constraint between $X_i$ and $X_j$ is satisfied.</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210529155034.jpg" alt="2787acae2d13b8f1188d0dd505ec2ec" style="zoom: 25%;"></p>
+
+<blockquote>
+  <p>Note - <em>iff</em> stands for <em>if and only if</em></p>
+</blockquote>
+
+<p>AC3 is the most popular algorithm for arc consistency. To make every variable arc-consistent, the AC-3 algorithm maintains a queue of arcs to consider. Initially, the queue contains all the arcs in the CSP. AC-3 then pops off an arbitrary arc $(X_i, X_j)$ from the queue and makes $X_i$ arc-consistent with respect to $X_j$.</p>
+
+<p>If this step makes the domain $D_i$ of variable $X_i$ unchanged, we will move forward to next arc.</p>
+
+<p>If not, we add to the queue all arcs $(X_k, X_i)$ where $X_k$ is a neighbor of $X_i$. This is because the change of domain $D_i$ may lead to further reduction in the domain of $D_k$, even if we have previously considered $X_k$.</p>
+
+<p>An arc-consistency CSP is <strong>equivalent</strong> to original CSP, but faster to search because its variables has smaller domains.</p>
+
+<h4 id="path-consistency">Path Consistency</h4>
+
+<blockquote>
+  <p>Path Consistency Check tighten the binary constraints by using implicit constraints that are inferred by triples of variables</p>
+</blockquote>
+
+<p>In Arc Consistency, we are using binary constraint to optimize the unary domain. For most of the cases, this works well and can directly find solution (every domain is restricted to only 1 value) or prove that there is no solution for CSP (at least one domain contains 0 valid value).</p>
+
+<p>However, in some situation, the arc consistency has nothing to do with the unary domain using only binary constraint.</p>
+
+<blockquote>
+  <p>Example 3. A situation that arc consistency doesn’t work as expected</p>
+
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210529224801.jpg" alt="f4a3bf197f46b09d5beb4c4abe7ccf2" style="zoom:33%;"></p>
+
+  <p>$X = {x, y, z}$</p>
+
+  <p>$D = {[Red, Blue], [Red, Blue], [Red, Blue]}$</p>
+
+  <p>$C = {\langle(x, y), x\neq y\rangle, \langle(z, y), z\neq y\rangle, \langle(x, z), x\neq z\rangle}$</p>
+
+  <p>If we are running arc consistency on this CSP, no domain will be changed. (When $x = Red$, $y = Blue$ is valid and vice versa). However, it is clear that this CSP will have no solution.</p>
+</blockquote>
+
+<p>To solve this problem, we introduce the thought of Path Consistency.</p>
+
+<p>Formal description of Path Consistency:</p>
+
+<p>A two-variable set ${x_i, x_j}$ is path consistent with a third-variable ${x_k}$ if for every assignment ${x_i = a, x_j=b}$ that satisfy the constraint between $x_i$ and $x_j$, there exists a valid assignment to $x_k$ such that the constraint between $x_k$ and $x_i$, $x_k$ and $x_j$ is not violated.</p>
+
+<h4 id="k-consistency">$k$-Consistency</h4>
+
+<p>A generalized way to represent consistency of CSP is called $k$-consistency. A CSP is $k$-consistent if for any set of $k-1$ variables and for any consistent assignment to these variables, there always exist a consistent assignment to $k$th variable.</p>
+
+<blockquote>
+  <p>Node Consistency = 1-consistency, Arc Consistency = 2-consistency, Path Consistency = 3-consistency</p>
+</blockquote>
+
+<p>A CSP is <strong>strongly  k-consistent</strong> if it is $k$-consistent and is also $(k-1)$-consistent, $(k-2)$-consistent … all the way to $1$-consistent.</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2021/R-CNN.html" title="物体检测模型 R-CNN">物体检测模型 R-CNN</a><a class="next" href="/blog/2021/Segment-Tree.html" title="线段树 Segment Tree">线段树 Segment Tree</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2022/clac-embeddable.html" title="线段树 Segment Tree">Embeddable Clac Execution Environment</a></li><li><a class="post-link" href="/blog/2022/type-LaTeX-fast.html" title="线段树 Segment Tree">How to Type LaTeX Fast &amp; Elegant - A Guide from &amp;...</a></li><li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="线段树 Segment Tree">A* Search and its Variants</a></li><li><a class="post-link" href="/blog/2022/serverless-file-system.html" title="线段树 Segment Tree">Serverless File System based on AWS S3</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="线段树 Segment Tree">A* Search and its Variants</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="线段树 Segment Tree">NLP 101: Word Embedding 词嵌入</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/2048-Project-1.html" title="线段树 Segment Tree">2048 Project (1)</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/CS188-Chapter15.html" title="线段树 Segment Tree">CS188 Chapter 15 Probabilistic Reasoning over Time</a></li>
+            
+          
+          
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

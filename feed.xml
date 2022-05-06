@@ -1,0 +1,1706 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="https://markchenyutian.github.io//blog/feed.xml" rel="self" type="application/atom+xml" /><link href="https://markchenyutian.github.io//blog/" rel="alternate" type="text/html" /><updated>2022-05-06T21:35:21+00:00</updated><id>https://markchenyutian.github.io//blog/feed.xml</id><title type="html">Yutian’s Blog</title><subtitle>Where I Learn, Create and Share with everyone. </subtitle><author><name>Yutian (Mark) Chen</name></author><entry><title type="html">A* Search and its Variants</title><link href="https://markchenyutian.github.io//blog/2022/Multi-heuristic-Astar.html" rel="alternate" type="text/html" title="A* Search and its Variants" /><published>2022-04-20T00:00:00+00:00</published><updated>2022-04-20T00:00:00+00:00</updated><id>https://markchenyutian.github.io//blog/2022/Multi-heuristic-Astar</id><content type="html" xml:base="https://markchenyutian.github.io//blog/2022/Multi-heuristic-Astar.html"><![CDATA[<p>Let $g(s)$ denote the cost of a least-cost path from $s_{start}$ to $s$, we then have
+$$
+g(s) = \min_{s’\in pred(s)}{(g(s’) + c(s’, s))}
+$$
+That is, the minimum cost from $s_{start}$ to $s$ equals to the min cost to get to the predecessor of $s$ (a.k.a. $s’$ in the formula above) add the actual cost from $s’$ to $s$.</p>
+
+<h2 id="a-search">A* Search</h2>
+
+<blockquote>
+  <p>:package: A* Search is guaranteed to <strong>Return an optimal path</strong></p>
+
+  <p>Perform <strong>minimal number of state expansions</strong> required to guarantee optimality.</p>
+</blockquote>
+
+<p>The predicted cost to get from $s_{start}$ to $s_{goal}$ through state $s$ can be estimated through
+$$
+f(s_{start}, s, s_{goal}) = g(s_{start}, s) + h(s, s_{goal})
+$$
+$g$ represents the <strong>actual</strong> minimum cost of getting to $s$ from the starting state. $h$ represents a <strong>heuristic estimation</strong> of cost to get to $s_{goal}$ from $s$.</p>
+
+<h3 id="requirement-of-heuristic-function">Requirement of Heuristic Function</h3>
+
+<p>Heuristic function must be</p>
+
+<p><strong>Admissible</strong> - The heuristic function must <em>underestimate / accurately predict the cost</em>.
+$$
+h(s) \leq \min{c(s, s_{goal})}
+$$
+<strong>Consistent</strong> - the function $h$ should satisfy the triangle inequality.
+$$
+h(s_{goal}, s_{goal}) = 0,\quad h(S) \leq c(s, s’) + h(s’)
+$$</p>
+
+<p><mark>A consistent heuristic function $h$ must be admissible.</mark></p>
+
+<h2 id="multi-goal-a-search-with-imaginary-goal-state">Multi-goal A* Search (With Imaginary Goal State)</h2>
+
+<p>When there are multiple goals, we can construct an <em>imaginary goal</em> in the graph that connects all goals.</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_C066319B49CB-1.jpeg" alt="IMG_C066319B49CB-1" /></p>
+
+<p>If goals have different weights (we have preference to certain goal over others), we can adjust the weights of edge between each goal state to <code class="language-plaintext highlighter-rouge">Imaginary Goal</code> state.</p>
+
+<h2 id="weighted-a-search">Weighted A* Search</h2>
+
+<blockquote>
+  <p>:package: The weighted A* allow us to get sub-optimal result with less state expansion, which consumes less memory and computation time.</p>
+</blockquote>
+
+<p>The scale of explored nodes in A* search is much smaller than in the dijkastra algorithm. This is because $f(s) = h(s) + g(s)$ provides two constraints on the nodes to explore.</p>
+
+<p>However, for high dimensional graph, the algorithm will soon out of memory. We need some stronger constraint to the expansion of nodes. <strong>Weighted A*</strong>, is one of the algorithm that apply a stronger constraint on expansion, with the cost of losing optimality of A* search.</p>
+
+<p>Instead of using $f(s) = h(s) + g(s)$, the weighted A* puts a weight $\epsilon$ on heuristic function
+$$
+f(s) = g(s) + \epsilon h(s)
+$$
+This will make the algorithm has more <strong>bias towards states that are closer to goal.</strong></p>
+
+<p><strong>Definition ($\varepsilon$-suboptimal)</strong> $cost(solution) \leq \varepsilon\cdot cost(optimal\;solution)$</p>
+
+<h2 id="common-heuristic-functions">Common Heuristic Functions</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Heuristic Function</th>
+      <th>Equation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Euclidean Distance</td>
+      <td>$h(x, y) = \sqrt{(x - x_{goal})^2 + (y - y_{goal})^2}$</td>
+    </tr>
+    <tr>
+      <td>Manhattan Distance</td>
+      <td>$h(x, y) = abs(x - x_{goal}) + abs(y - y_{goal})$</td>
+    </tr>
+    <tr>
+      <td>Diagonal Distance</td>
+      <td>$h(x, y) = max(abs(x - x_{goal}), abs(y - y_{goal}))$</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>These heuristic functions are both <strong>consistent</strong> and <strong>admissible</strong>.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="zap-useful-properties-of-heuristic-functions">:zap: Useful Properties of Heuristic Functions</h2>
+
+<ol>
+  <li>
+    <p>If $h_1(s)$, $h_2(s)$ are consistent, then - $h(s) = \max(h_1(s), h_2(s))$ is also consistent.</p>
+  </li>
+  <li>
+    <p>If A* uses $\varepsilon$-consistent heuristics
+ $$
+ \forall s\neq s_{goal}\quad h(s_{goal}) = 0 \wedge h(s) \leq \varepsilon c(s, succ(s)) + h(succ(s))
+ $$
+ then A* is $\varepsilon$-suboptimal
+ $$
+ Cost(solution) \leq \varepsilon \cdot Cost(optimal\;solution)
+ $$</p>
+  </li>
+  <li>
+    <p>Weighted A* with $f(s) = g(s) + \varepsilon h(s)$ is A* with $\varepsilon$ -consistent heuristics.</p>
+  </li>
+  <li>
+    <p>$h_1(s)$, $h_2(s)$ are both consistent, then $h_1(s) + h_2(s)$ is $\varepsilon$-consistent.</p>
+
+    <p>:question: what is $\varepsilon$ here? There is no such variable in the $h_1$ and $h_2$…</p>
+  </li>
+</ol>
+
+<h2 id="why-we-need-multiple-heuristic">Why we Need Multiple Heuristic?</h2>
+
+<blockquote>
+  <p>:package: Can we use a bunch of <strong>inadmissible heuristics simultaneously</strong> while preserving guarantees on completeness and bounded sub-optimality?</p>
+</blockquote>
+
+<p>To solve real-world problem with high DoF robots, we need to use a series of <strong>arbitrary, inadmissible</strong> heuristic functions! How can we reach this result …? :drum::drum::drum: <strong><em>Multi-heuristic A*!</em></strong></p>
+
+<p><strong>Why not taking <code class="language-plaintext highlighter-rouge">max</code> directly?</strong></p>
+
+<ol>
+  <li>Information is lost when using <code class="language-plaintext highlighter-rouge">max</code> function</li>
+  <li>Creates local minima inside the search space</li>
+  <li>Requires all heuristics to be admissible :arrow_left: <em>this is a real problem</em></li>
+</ol>
+
+<h2 id="multi-heuristic-a-search">Multi-Heuristic A* Search</h2>
+
+<h3 id="version-1---parallel-a">Version 1 - Parallel A*</h3>
+
+<p>Run $N$ independent, inadmissible A* searches. If one of them find the solution, then the whole algorithm finds the solution.</p>
+
+<h3 id="version-2---shared-a-search">Version 2 - Shared A* Search</h3>
+
+<p>Share information between searches</p>
+
+<blockquote>
+  <p>Share the <code class="language-plaintext highlighter-rouge">Open</code> and <code class="language-plaintext highlighter-rouge">Closed</code> between algorithms. When one search algorithm adds a node into <code class="language-plaintext highlighter-rouge">Open</code>, add to other algorithm’s <code class="language-plaintext highlighter-rouge">Open</code> as well.</p>
+</blockquote>
+
+<p>Such shared information have several advantages:</p>
+
+<ol>
+  <li>Different inadmissive A* search algorithms can <em>help each other</em> to get out the local minimas.</li>
+  <li>Since the <code class="language-plaintext highlighter-rouge">Closed</code> are also shared between algorithms, states are expanded at most <strong>once</strong> across ALL searches</li>
+</ol>
+
+<p>Yet, there are still some problems:</p>
+
+<ol>
+  <li>No completeness guarantees or bounds on solution quality.</li>
+</ol>
+
+<h3 id="version-3---anchor-search">Version 3 - Anchor Search</h3>
+
+<p>Search with admissible heuristic function to <strong>control expansions</strong>.</p>
+
+<blockquote>
+  <p>:package: In this way, the algorithm is <strong>complete</strong> and <strong>provide bounds on solution quality</strong>.</p>
+</blockquote>
+
+<p>The A* that use admissible heuristic function is called <code class="language-plaintext highlighter-rouge">Anchor Search</code>.</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202022-03-15%20at%2022.49.22.png" alt="Screen Shot 2022-03-15 at 22.49.22" style="zoom: 25%;" /></p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Anchor</code> search can help ensure the completness of multi-heuristic A*.</p>]]></content><author><name>Yutian (Mark) Chen</name></author><category term="[&quot;Machine Learning&quot;]" /><category term="Machine Learning" /><category term="Notes" /><summary type="html"><![CDATA[Let $g(s)$ denote the cost of a least-cost path from $s_{start}$ to $s$, we then have $$ g(s) = \min_{s’\in pred(s)}{(g(s’) + c(s’, s))} $$ That is, the minimum cost from $s_{start}$ to $s$ equals to the min cost to get to the predecessor of $s$ (a.k.a. $s’$ in the formula above) add the actual cost from $s’$ to $s$.]]></summary></entry><entry><title type="html">Embeddable Clac Execution Environment</title><link href="https://markchenyutian.github.io//blog/2022/clac-embeddable.html" rel="alternate" type="text/html" title="Embeddable Clac Execution Environment" /><published>2022-04-05T00:00:00+00:00</published><updated>2022-04-05T00:00:00+00:00</updated><id>https://markchenyutian.github.io//blog/2022/clac-embeddable</id><content type="html" xml:base="https://markchenyutian.github.io//blog/2022/clac-embeddable.html"><![CDATA[<h2 id="demo">Demo</h2>
+
+<p>An open-to-use, embeddable clac execution implemented with <code class="language-plaintext highlighter-rouge">React</code> and <code class="language-plaintext highlighter-rouge">TypeScript</code>. You can try it below!</p>
+
+<p>For example, try to input the instruction <code class="language-plaintext highlighter-rouge">: square 1 pick * ; 2 square print</code> into the wedget below and see what will happen!</p>
+
+<div id="claculator-interactive" data-mode="embeddable"></div>
+
+<h2 id="about-this-project">About This Project</h2>
+
+<p>This is an attempt to build interactive web-based runtimes of a toy language used in <em>15-122 Principle of Imperative Computation</em>, <code class="language-plaintext highlighter-rouge">Clac</code>,  with TypeScript and React. You can find the source code at <a href="https://github.com/MarkChenYutian/TypeScript-Claculator">https://github.com/MarkChenYutian/TypeScript-Claculator</a>.</p>
+
+<h2 id="so-cool-how-can-i-deploy-it-on-my-site">So Cool! How Can I deploy it on my site?</h2>
+
+<p>Download the <code class="language-plaintext highlighter-rouge">index.min.js</code> file from <a href="/blog/apps/clac/index.min.js">Here</a>, link it to your webpage with</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">&lt;!-- Place this line at the end of your page --&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"&lt;your-installation-dir&gt;/index.min.js"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>Then, at where you want to insert the widget, insert this line:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"claculator-interactive"</span> <span class="na">data-mode=</span><span class="s">"embeddable"</span><span class="nt">&gt;&lt;/div&gt;</span>
+</code></pre></div></div>
+
+<h2 id="about-the-clac-language">About The Clac Language</h2>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202022-04-05%20at%2021.10.44.png" alt="Screen Shot 2022-04-05 at 21.10.44" /></p>
+
+<p>Notes*:</p>
+
+<ol>
+  <li>The <code class="language-plaintext highlighter-rouge">print</code> token causes 𝑛n to be printed, followed by a newline.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">quit</code> token causes the interpreter to stop.</li>
+  <li>This is a 32 bit, two’s complement language, so addition, subtraction, multiplication, and exponentiation should behave just as in C0 without raising any overflow errors.</li>
+  <li>Division or modulus by 0, or division/modulus of <code class="language-plaintext highlighter-rouge">int_min()</code> by -1, which would result in an arithmetic error according to the definition of C0 (see page 4 of the <a href="https://c0.cs.cmu.edu/docs/c0-reference.pdf">C0 Reference</a>), should raise an error in Clac. Negative exponents are undefined and should also raise an error.</li>
+  <li>The <code class="language-plaintext highlighter-rouge">pick</code> token should raise an error if 𝑛n, the value on the top of the stack, is not strictly positive. The <code class="language-plaintext highlighter-rouge">skip</code> token should raise an error if 𝑛n is negative; 0 is acceptable.</li>
+</ol>
+
+<p><strong>* Notes of Notes: Since we are implementing its core with <code class="language-plaintext highlighter-rouge">JavaScript</code>, some specific numerical calculation may not match the original, <code class="language-plaintext highlighter-rouge">C0</code> version’s result.</strong></p>
+
+<script src="/blog/apps/clac/index.min.js"></script>]]></content><author><name>Yutian (Mark) Chen</name></author><category term="[&quot;Frontend&quot;]" /><category term="Web" /><category term="React" /><summary type="html"><![CDATA[Demo]]></summary></entry><entry><title type="html">How to Type LaTeX Fast &amp;amp; Elegant - A Guide from &amp;amp; for Beginner</title><link href="https://markchenyutian.github.io//blog/2022/type-LaTeX-fast.html" rel="alternate" type="text/html" title="How to Type LaTeX Fast &amp;amp; Elegant - A Guide from &amp;amp; for Beginner" /><published>2022-02-16T00:00:00+00:00</published><updated>2022-02-16T00:00:00+00:00</updated><id>https://markchenyutian.github.io//blog/2022/type-LaTeX-fast</id><content type="html" xml:base="https://markchenyutian.github.io//blog/2022/type-LaTeX-fast.html"><![CDATA[<h2 id="1-用-latex-而不是与-latex-搏斗">1 用 LaTeX, 而不是与 LaTeX 搏斗</h2>
+
+<blockquote>
+  <p>LaTeX 的设计哲学是：让使用者付出最少的努力就能得到工整美观的排版</p>
+</blockquote>
+
+<p>然而，讽刺的是，大部分人（至少一开始）的体验似乎都与这个设计哲学正好相反。这是因为我们都习惯了使用 Word 这样“所见即所得”的排版软件/文字编辑器。当我们按下空格的时候，屏幕上就一定会出现一个空格。</p>
+
+<p>在 LaTeX 中，因为使用的是“编辑 - 编译 - 排版”的流程，我们不能直观的立刻看到我们在<code class="language-plaintext highlighter-rouge">TeX</code>文件中做出的改变。当我们在单词之间输入好几个空格却发现排版结果中只有一个空格时，自然会感觉非常奇怪和不适应。</p>
+
+<blockquote>
+  <p>实际上，很多时候在使用 LaTeX 时如果发现打起来非常麻烦/结果特别丑，大部分时候都是我们在作茧自缚，下面举几个常见的例子 （点击展开）：</p>
+</blockquote>
+
+<ol>
+  <li>
+    <details>
+      <summary>
+        <p><strong>通过 <code class="language-plaintext highlighter-rouge">//</code> 或者 <code class="language-plaintext highlighter-rouge">\newline</code> 来打“回车”，抱怨行和行都“挤在一起”</strong></p>
+      </summary>
+
+      <p>在 LaTeX 中，<code class="language-plaintext highlighter-rouge">//</code> 代表“断行” - 也就是说，下一行的内容与当前在同一段中，但是强制进行一次换行。所以 LaTeX 不会在这两行之间添加额外的空位。</p>
+
+      <p>大部分情况下，你可以将一整段话连续的写在同一行中。LaTeX 会自动根据页面宽度处理换行问题。如果你需要开启一个新的段落，在行和行之间添加一个空行即可。</p>
+
+      <p>正确的段落：</p>
+
+      <blockquote>
+        <pre><code class="tex"> [Paragraph 1] , random text with correct paragraph Pellentesque interdum sapien sed nulla. Proin tincidunt. 
+Aliquam volutpat est vel massa. Sed dolor lacus, imperdiet non, ornare non, commodo eu, neque. Integer pretium semper justo. Proin risus. Nullam id quam. Nam neque. 
+
+[Paragraph 2] , random text with correct paragraph Duis vitae wisi ullamcorper diam congue ultricies. Quisque ligula. Mauris vehicula.</code></pre>
+        <p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen Shot 2022-02-17 at 12.51.14 AM.png" alt="Screen Shot 2022-02-17 at 12.51.14 AM" /></p>
+      </blockquote>
+
+      <p>错误的段落（用断行，而不是新段落）：</p>
+
+      <blockquote>
+        <pre><code class="tex"> \textbf{[Paragraph 1]} , random text with line break Pellentesque interdum sapien sed nulla. Proin tincidunt. 
+Aliquam volutpat est vel massa. Sed dolor lacus, imperdiet non, ornare non, commodo eu, neque. Integer pretium semper justo. Proin risus. Nullam id quam. Nam neque. \\
+\textbf{[Paragraph 2]} , random text with line break Duis vitae wisi ullamcorper diam congue ultricies. Quisque ligula. Mauris vehicula.</code></pre>
+        <p><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217005251.png" alt="20220217005251" />
+经典错上加错：在断行的基础上强行用 <code class="language-plaintext highlighter-rouge">\vspace</code> 等指令拉大行之间的空白，营造一种“分段”的感觉</p>
+      </blockquote>
+    </details>
+  </li>
+  <li>
+    <details>
+      <summary>
+        <p><strong>通过 <code class="language-plaintext highlighter-rouge">$...$</code> 写公式，抱怨公式都堆到左边，并且挤成一团</strong></p>
+      </summary>
+
+      <p>用 <code class="language-plaintext highlighter-rouge">$...$</code> 符号括起来写的公式是“行内公式” - 也就是说，LaTeX 认为这些公式是跟普通文字写在同一行上的，所以会尽可能的压缩这些公式的高度，并且不会在行和行之间留下额外的空位</p>
+
+      <blockquote>
+        <p>行内公式：</p>
+        <pre><code class="tex">$-\frac{2a \pm \sqrt{b^2 - 4ac}}{b}$</code></pre>
+        <p>结果：$-\frac{2a \pm \sqrt{b^2 - 4ac}}{b}$</p>
+      </blockquote>
+
+      <p>如果需要打大公式，需要使用 <code class="language-plaintext highlighter-rouge">$$...$$</code>（或者 <code class="language-plaintext highlighter-rouge">\begin{equation}...\end{equation}</code>） 打一个“公式块” - 这样渲染出来的公式会自动居中并且占用一个段落的空间</p>
+
+      <blockquote>
+        <p>多行公式：</p>
+
+        <pre><code class="tex">\begin{equation*}
+    -\frac{2a \pm \sqrt{b^2 - 4ac}}{b}
+\end{equation*} </code></pre>
+
+        <p>结果：$$ -\frac{2a \pm \sqrt{b^2 - 4ac}}{b} $$</p>
+      </blockquote>
+
+      <p>如果你需要对齐多行公式（比如推导/化简长式子），使用 <code class="language-plaintext highlighter-rouge">\begin{equation}\begin{aligned}</code>…<code class="language-plaintext highlighter-rouge">\end{aligned}\end{equation}</code>。</p>
+
+      <blockquote>
+        <p>带对齐的多行公式：</p>
+        <pre><code class="tex">\begin{equation*}
+    \begin{aligned}
+           E[X + Y] &amp;= \sum_{j = 1}{s_j\cdot P[X + Y = s_j]}\\
+                    &amp;= \sum_{j = 1}{s_j\cdot \sum_{k, l \text{ s.t. } x_k + y_l = s_j}{P[X = x_k, Y = y_l]}}\\
+                    &amp;= \sum_{j}{\sum_{k, l \text{ s.t. } x_k + y_l = s_j}{(x_k + y_l)\cdot P[X = x_k, Y = y_l]}}\\
+                    &amp;= \sum_{k, l}{(x_k + y_l)\cdot P[X = x_k, Y = y_l]}\\
+                    &amp;= \sum_{k, l}{x_k\cdot P[X = x_k, Y = y_l]} + \sum_{k, l}{y_l\cdot P[X = x_k, Y = y_l]}\\
+                    &amp;= \sum_{k}x_k \cdot \sum_{l}{P[X = x_k, Y = y_l]} + \cdots \\
+                    &amp;= E[X] + E[Y]
+    \end{aligned}
+\end{equation*}</code></pre>
+        <p>结果：</p>
+
+        <p><img src="https://markdown-img-1304853431.file.myqcloud.com/20220217124654.png" alt="20220217124654" /></p>
+      </blockquote>
+    </details>
+  </li>
+  <li>类似的例子还有很多…… 比如疯狂用 <code class="language-plaintext highlighter-rouge">\;</code> 来代替word里的“空格”， etc.</li>
+</ol>
+
+<p>实际上，对于排版时遇到的大部分场景，LaTeX 都有提供对应的指令或环境，如果不知道对应的指令用 <code class="language-plaintext highlighter-rouge">\vspace</code>或者<code class="language-plaintext highlighter-rouge">\;</code> 来 “蛮干”，“硬干”，相当于是在和 $\LaTeX$ 搏斗，而不是使用它。</p>
+
+<p>当然，也有一些情况，$\LaTeX$ 自带的排版没法满足我们的需求，这种时候，我们应该创建自己的环境/模版/样式，或者找合适的 Package与template，而不是强行拉扯 $\LaTeX$ 提供的默认排版。</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>命令/环境/语法</th>
+      <th>解释</th>
+      <th>效果</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>![20220217124421](https://markdown-img-1304853431.file.myqcloud.com/20220217124421.png)</td>
+      <td>多行公式</td>
+      <td>![20220217124434](https://markdown-img-1304853431.file.myqcloud.com/20220217124434.png)</td>
+    </tr>
+    <tr>
+      <td>![20220217124547](https://markdown-img-1304853431.file.myqcloud.com/20220217124547.png)</td>
+      <td>行内公式</td>
+      <td>![20220217124604](https://markdown-img-1304853431.file.myqcloud.com/20220217124604.png)</td>
+    </tr>
+    <tr>
+      <td>![20220217125002](https://markdown-img-1304853431.file.myqcloud.com/20220217125002.png)</td>
+      <td>多行对齐公式</td>
+      <td>![Screen Shot 2022-02-17 at 12.50.19 PM](https://markdown-img-1304853431.file.myqcloud.com/Screen Shot 2022-02-17 at 12.50.19 PM.png)</td>
+    </tr>
+    <tr>
+      <td>![20220217124317](https://markdown-img-1304853431.file.myqcloud.com/20220217124317.png)</td>
+      <td>分页</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td>![20220217125308](https://markdown-img-1304853431.file.myqcloud.com/20220217125308.png)</td>
+      <td>无序列表</td>
+      <td>![20220217125319](https://markdown-img-1304853431.file.myqcloud.com/20220217125319.png)</td>
+    </tr>
+    <tr>
+      <td>![20220217125340](https://markdown-img-1304853431.file.myqcloud.com/20220217125340.png)</td>
+      <td>有序列表</td>
+      <td>![20220217125357](https://markdown-img-1304853431.file.myqcloud.com/20220217125357.png)</td>
+    </tr>
+    <tr>
+      <td>![20220217125456](https://markdown-img-1304853431.file.myqcloud.com/20220217125456.png)</td>
+      <td>无序列表（自定义编号）</td>
+      <td>![20220217125511](https://markdown-img-1304853431.file.myqcloud.com/20220217125511.png)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="2-创建快捷指令">2 创建快捷指令</h2>
+
+<h3 id="21-基础快捷指令">2.1 基础快捷指令</h3>
+
+<p>但是这又带来了新的问题</p>
+
+<blockquote>
+  <p>“是啊，LaTeX 有这些默认的模版，但是用起来麻烦死了，你看输入一个多行公式前前后后加起来要打四行，太浪费时间了”</p>
+</blockquote>
+
+<blockquote>
+  <p>“虽然 LaTeX 打的公式很好看，但是真的好麻烦，打一个自然数的符号 $\mathbb{N}$ 要 <code class="language-plaintext highlighter-rouge">\mathbb{N}</code> 这么多个字符！”</p>
+</blockquote>
+
+<p>对于这个问题，LaTeX 自然也有对应的解决方法，我们可以使用 <code class="language-plaintext highlighter-rouge">\setnewcommand</code> 命令为自己常用的符号设置“快捷键”。比如下面的<code class="language-plaintext highlighter-rouge">TeX</code>指令允许我们在接下来的 LaTeX 中使用 <code class="language-plaintext highlighter-rouge">\N</code> 替代 <code class="language-plaintext highlighter-rouge">\mathbb{N}</code>。</p>
+
+<div class="language-tex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">\newcommand</span><span class="p">{</span><span class="k">\N</span><span class="p">}</span>[0]<span class="p">{</span><span class="k">\mathbb</span><span class="p">{</span>N<span class="p">}}</span>
+</code></pre></div></div>
+
+<p>实际上，你可以将任何常用，但是很麻烦的指令用这种快捷键的形式简化，创建快捷键的语法是</p>
+
+<div class="language-tex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">\newcommand</span><span class="p">{</span>你想用的快捷指令<span class="p">}</span>[0]<span class="p">{</span>实际上的复杂长指令<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="notification">
+  <p>注意：这些命令应该放在 <code class="language-plaintext highlighter-rouge">\begin{document}</code> 前， <code class="language-plaintext highlighter-rouge">\usepackage{...}</code> 后的位置</p>
+</div>
+
+<div class="notification">
+  <p>:warning: 每新建完一个指令以后，最好<strong>马上尝试重新编译一下文件</strong>，因为有时候新创建的快捷键会和 LaTeX 原有指令冲突，这种时候就会出现一些奇怪的编译错误。（比如 <code class="language-plaintext highlighter-rouge">\and</code> 就是一个TeX的关键字，所以还是乖乖打 <code class="language-plaintext highlighter-rouge">\wedge</code> 吧（狗头））</p>
+</div>
+
+<h3 id="22-带参数的快捷指令">2.2 带参数的快捷指令</h3>
+
+<p>使用一些其它命令，你还可以创建有参数（甚至可以设定可选参数和其缺省值）的快捷指令。比如下面的 TeX 命令会创建一个叫 <code class="language-plaintext highlighter-rouge">\pic</code> 的快捷指令</p>
+
+<div class="language-tex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">\usepackage</span><span class="p">{</span>xparse<span class="p">}</span>   <span class="c">% 这个包让我们能够生成带“可选参数”的快捷指令</span>
+<span class="c">% ...</span>
+<span class="k">\NewDocumentCommand</span><span class="p">{</span><span class="k">\pic</span><span class="p">}{</span> O<span class="p">{</span><span class="k">\textwidth</span><span class="p">}</span> m <span class="p">}</span>    <span class="c">% O = 可选参数，大括号内为缺省值，m = 必须参数</span>
+<span class="p">{</span>
+  <span class="nt">\begin{center}</span>
+    <span class="nt">\begin{figure}</span>[ht]
+      <span class="k">\centering\includegraphics</span><span class="na">[width=#1]</span><span class="p">{</span>assets/#2<span class="p">}</span>   <span class="c">% 将参数1填到 #1 的位置，参数2填到 #2 的位置</span>
+    <span class="nt">\end{figure}</span>
+  <span class="nt">\end{center}</span><span class="k">\FloatBarrier</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>在这个定义之前，在 LaTeX 中插入与页面等宽的图片 <code class="language-plaintext highlighter-rouge">assets/1.jpeg</code> 要用这么长一段：</p>
+
+<div class="language-tex highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">\begin{center}</span>
+    <span class="nt">\begin{figure}</span>[ht]
+      <span class="k">\centering\includegraphics</span><span class="na">[width=\textwidth]</span><span class="p">{</span>assets/1.jpeg<span class="p">}</span>
+    <span class="nt">\end{figure}</span>
+<span class="nt">\end{center}</span>
+<span class="k">\FloatBarrier</span>
+</code></pre></div></div>
+
+<p>现在，我们只需要 <code class="language-plaintext highlighter-rouge">\pic{1.jpeg}</code> 就可以做到一样的事情。如果我们想指定图片宽度为<code class="language-plaintext highlighter-rouge">300pt</code>，使用定义的可选参数 <code class="language-plaintext highlighter-rouge">\pic[300pt]{1.jpeg}</code> 即可。</p>
+
+<h2 id="3-使用-vs-code-插件-latex-workshop">3 使用 VS Code 插件 LaTeX Workshop</h2>
+
+<div class="info">
+
+  <p><a href="https://marketplace.visualstudio.com/items?itemName=James-Yu.latex-workshop">LaTeX Workshop 插件链接</a></p>
+
+  <p>在 VS Code 上配置和使用 LaTeX 的方法详见插件 Latex Workshop 的安装说明</p>
+</div>
+
+<h3 id="31-创建代码片段">3.1 创建代码片段</h3>
+
+<p>使用自定义的快捷指令可以大幅提高写 LaTeX 速度，但是会降低代码的可读性和灵活性（比如，在刚刚 <code class="language-plaintext highlighter-rouge">\pic</code> 的命令中，如果我想读取的照片不在 <code class="language-plaintext highlighter-rouge">assets</code> 文件夹中，就不能使用这个命令了）。同时，如果别人要读我的 <code class="language-plaintext highlighter-rouge">TeX</code> 文件，他看到 <code class="language-plaintext highlighter-rouge">\pic</code> 这个命令可能会一头雾水，因为这不是标准指令。</p>
+
+<p>这种时候，我们就可以使用 VS Code 的 “Code Snippet” 功能，创建一个“代码模版”。输入特定指令后，在自动补全选项中选择对应的选项，VS Code 会自动向光标位置插入预制好的模版代码。这样，在保证输入效率的前提下，我们可以兼得灵活性和可读性。</p>
+
+<ol>
+  <li>
+    <p>输入设置好的模版简写，在自动补全列表中选中模版</p>
+
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen Shot 2022-02-17 at 2.04.53 AM.png" alt="Screen Shot 2022-02-17 at 2.04.53 AM" /></p>
+  </li>
+  <li>
+    <p>按回车，模版被自动插入到文件中，光标自动移动到指定的位置</p>
+
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen Shot 2022-02-17 at 2.04.59 AM.png" alt="Screen Shot 2022-02-17 at 2.04.59 AM" /></p>
+  </li>
+</ol>
+
+<p>要设置这样的模版，在 VSCode 打开的 LaTeX 文件夹中（workspace）新建一个叫 <code class="language-plaintext highlighter-rouge">.vscode</code> 的文件夹，在其中新建 <code class="language-plaintext highlighter-rouge">tex_snippet.code-snippets</code> 文件，并使用这样的格式（JSON格式）书写：</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+	</span><span class="nl">"Clean Equation Block"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+		</span><span class="nl">"scope"</span><span class="p">:</span><span class="w"> </span><span class="s2">"latex"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"prefix"</span><span class="p">:</span><span class="w"> </span><span class="s2">"EQ*"</span><span class="p">,</span><span class="w">
+		</span><span class="nl">"body"</span><span class="p">:[</span><span class="w">
+			</span><span class="s2">"</span><span class="se">\\</span><span class="s2">begin{equation*}"</span><span class="p">,</span><span class="w">
+			</span><span class="s2">"    $1"</span><span class="p">,</span><span class="w">
+			</span><span class="s2">"</span><span class="se">\\</span><span class="s2">end{equation*}"</span><span class="w">
+		</span><span class="p">]</span><span class="w">
+	</span><span class="p">},</span><span class="w">
+    </span><span class="nl">"新的模版描述"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="nl">"scope"</span><span class="p">:</span><span class="w"> </span><span class="s2">"latex"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">我们的模版只在</span><span class="w"> </span><span class="err">LaTeX</span><span class="w"> </span><span class="err">文件中生效</span><span class="w">
+        </span><span class="nl">"prefix"</span><span class="p">:</span><span class="w"> </span><span class="s2">"WHATEVER"</span><span class="p">,</span><span class="w"> </span><span class="err">//</span><span class="w"> </span><span class="err">模版的简写，一般用全大写字母，减小误触发可能</span><span class="w">
+        </span><span class="nl">"body"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+            </span><span class="s2">"first line of template"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"    $1 &lt;- cursor will stop here after applying template"</span><span class="p">,</span><span class="w">
+            </span><span class="s2">"end the template"</span><span class="w">
+        </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h3 id="32-使用插件内置的快捷键模版">3.2 使用插件内置的快捷键/模版</h3>
+
+<p>LaTeX workshop 插件内置了许多非常常用的快捷键和代码模版，这里提供其中一些常用的快捷键：</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>模版简写</th>
+      <th>解释</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">BEN</code></td>
+      <td>有序列表（enumerate 环境）</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">BIT</code></td>
+      <td>无序列表（itemize 环境）</td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th>指令</th>
+      <th>内容</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">@a</code></td>
+      <td><code class="language-plaintext highlighter-rouge">\alpha</code></td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">@A</code></td>
+      <td><code class="language-plaintext highlighter-rouge">\Alpha</code></td>
+    </tr>
+    <tr>
+      <td>…</td>
+      <td>…（大部分希腊字母都可以用 @ + 对应英文字母打出来）</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">@6</code></td>
+      <td><code class="language-plaintext highlighter-rouge">\partial</code> 偏微分符号</td>
+    </tr>
+    <tr>
+      <td><code class="language-plaintext highlighter-rouge">@/</code></td>
+      <td><code class="language-plaintext highlighter-rouge">\frac{}{}</code> 分数</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="4-创建自己的模版样式">4 创建自己的模版/样式</h2>
+
+<blockquote>
+  <p>挖个坑，这里我自己也一知半解的，以后再填吧</p>
+</blockquote>
+
+<!-- <div class="notification">本指南仅供参考，本人无义务也不保证帮任何人解决 LaTeX 环境配置等问题。</div> -->]]></content><author><name>Yutian (Mark) Chen</name></author><category term="[&quot;Notes&quot;]" /><category term="Notes" /><summary type="html"><![CDATA[1 用 LaTeX, 而不是与 LaTeX 搏斗]]></summary></entry><entry><title type="html">The Fences | AR Web Application</title><link href="https://markchenyutian.github.io//blog/2022/the-fences.html" rel="alternate" type="text/html" title="The Fences | AR Web Application" /><published>2022-02-11T00:00:00+00:00</published><updated>2022-02-11T00:00:00+00:00</updated><id>https://markchenyutian.github.io//blog/2022/the-fences</id><content type="html" xml:base="https://markchenyutian.github.io//blog/2022/the-fences.html"><![CDATA[<h2 id="in-a-sentence-what-is-it">In a Sentence, What is It?</h2>
+
+<p>Our inspiration came from The Fence at CMU:</p>
+
+<p>By providing a synchronized, immersive AR experience across different platforms, we aim to build a bond between virtual space and physical world, allowing people to share their ideas openly, just like role of The Fence.</p>
+
+<h2 id="short-demo">Short Demo</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>iOS Application</th>
+      <th>Web Application</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>&lt;img src="https://user-images.githubusercontent.com/47029019/152687716-21fb26b1-a8f5-4d14-b952-7df44f0b2eaa.gif" style="height: 25rem"/&gt;</td>
+      <td>![web-demo-min](https://user-images.githubusercontent.com/47029019/152687732-d309165a-c033-444b-8bb8-8011d533efcf.gif)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>You can experience the web application here: <a href="https://the-fence-340405.web.app/frontend/viewer/">https://the-fence-340405.web.app/frontend/viewer/</a>.</p>
+
+<div class="notification">
+  <p>However, since the application requires specific QR-code to detect a board, you will not see any AR content unless you print the QR code denoting <code class="language-plaintext highlighter-rouge">UL-6d44ae39</code> and <code class="language-plaintext highlighter-rouge">DR-6d44ae39</code> and stick them on the wall.</p>
+
+  <p>:warning: Our application relies on the QR-detector built in browser. However, it is known that <strong>QR-detector in Chrome on MacOS has a memory leak problem</strong>. So the webpage may use up to 7GB of memory if you leave it on for 2hrs.</p>
+</div>
+
+<h2 id="how-we-implement-these-magical-apps-brief-version">How We Implement These Magical Apps? (Brief Version)</h2>
+
+<h3 id="mobile-application">Mobile Application</h3>
+
+<p>For mobile application, we build upon <code class="language-plaintext highlighter-rouge">AR Kit</code>, <code class="language-plaintext highlighter-rouge">ML Core</code> and <code class="language-plaintext highlighter-rouge">Scene Kit</code>. With <code class="language-plaintext highlighter-rouge">ML Core</code> recognizing physical environment, <code class="language-plaintext highlighter-rouge">AR Kit</code> initializing AR space, and <code class="language-plaintext highlighter-rouge">Scene Kit</code> rendering AR content, our app provide user with a fluent and immersive AR experience.</p>
+
+<p><img src="https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/152685412-22d75f03-0385-4552-8917-f785381ffb69.jpg" alt="Mobile Application" /></p>
+
+<h3 id="web-application">Web Application</h3>
+
+<p>For web application, we use the <code class="language-plaintext highlighter-rouge">WebRTC</code>, <code class="language-plaintext highlighter-rouge">OpenCV</code> and <code class="language-plaintext highlighter-rouge">WebAssembly</code> to create a chance to view experience for all mobile users without any need of installing application.</p>
+
+<p><img src="https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/152671055-229ad26c-dadf-4f90-a28b-d92802374c21.jpg" alt="Web Application" /></p>
+
+<p>Specifically, we use the QR Code not only to identify the current board’s ID, but also calculate the perspective matrix of current frame and use it to draw AR overlay on browser.</p>
+
+<h3 id="serverless-backend">Serverless Backend</h3>
+
+<p>For backend support, we deploy our product on <code class="language-plaintext highlighter-rouge">Firebase</code> and <code class="language-plaintext highlighter-rouge">Cloud Run</code> from Google Cloud Platform. The nature of cloud service allow our app to have low latency and high availability across different splatforms.</p>
+
+<p><img src="https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/152683764-030f614c-e7c3-4dc1-8f72-7833ac1443a5.jpg" alt="Serverless Backend" /></p>
+
+<h2 id="technical-details---ar-web-application">Technical Details - AR Web Application</h2>
+
+<h3 id="why-we-call-this-pseudo-ar-experience">Why we call this <em>Pseudo-AR Experience</em>?</h3>
+
+<p>The special nature of this project (showing AR-like content boards on the wall) makes it possible to create a real-time renderer purely through web technical stack (Javascript and WebAssembly).</p>
+
+<p>Unlike the broad definition of AR objects (which may float in the 3D space around user or some “anchor”), the content we need to render is ensured to stay on a plane.</p>
+
+<h3 id="how-we-render-actually">How We Render, Actually?</h3>
+
+<p>Since we have an QR Code as anchor (Up-Left corner of content), we can calculate the <strong>perspective transform matrix</strong> using original dimension of QR code and detected contour of QR Code.</p>
+
+<p>As the content is on the same plane as the QR Code, it’s safe for us to assume that they share the same perspective transform matrix. Therefore, we can re-apply the resulted transformation on raw image to render it.</p>
+
+<p><img src="https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/152671125-abfa8e38-0c09-423e-8637-7a2328dd5443.jpg" alt="Untitled Notebook-33" /></p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">getPerspectiveMatrix</span><span class="p">(</span><span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">,</span> <span class="nx">p4</span><span class="p">,</span> <span class="nx">bboxW</span><span class="p">,</span> <span class="nx">bboxH</span><span class="p">)</span>
+<span class="c1">// Originally p1, p2, p3, p4 in QR detected.</span>
+<span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">corner1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">Point</span><span class="p">(</span><span class="nx">p1</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">p1</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">corner2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">Point</span><span class="p">(</span><span class="nx">p2</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">p2</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">corner3</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">Point</span><span class="p">(</span><span class="nx">p3</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">p3</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">corner4</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">Point</span><span class="p">(</span><span class="nx">p4</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">p4</span><span class="p">.</span><span class="nx">y</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">perspectiveArray</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nx">corner1</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">corner1</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span> 
+        <span class="nx">corner2</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">corner2</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span>
+        <span class="nx">corner3</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">corner3</span><span class="p">.</span><span class="nx">y</span><span class="p">,</span>
+        <span class="nx">corner4</span><span class="p">.</span><span class="nx">x</span><span class="p">,</span> <span class="nx">corner4</span><span class="p">.</span><span class="nx">y</span>
+    <span class="p">];</span>
+    <span class="kd">let</span> <span class="nx">srcArray</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">bboxW</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="nx">bboxW</span><span class="p">,</span> <span class="nx">bboxH</span><span class="p">,</span>
+        <span class="mi">0</span><span class="p">,</span> <span class="nx">bboxH</span>
+    <span class="p">];</span>
+    <span class="kd">let</span> <span class="nx">perspectiveMat</span> <span class="o">=</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">matFromArray</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">CV_32FC2</span><span class="p">,</span> <span class="nx">perspectiveArray</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">srcMat</span> <span class="o">=</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">matFromArray</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">CV_32FC2</span><span class="p">,</span> <span class="nx">srcArray</span><span class="p">);</span>
+    <span class="nx">T</span> <span class="o">=</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">getPerspectiveTransform</span><span class="p">(</span><span class="nx">srcMat</span><span class="p">,</span> <span class="nx">perspectiveMat</span><span class="p">);</span>
+    <span class="nx">srcMat</span><span class="p">.</span><span class="k">delete</span><span class="p">();</span> <span class="nx">perspectiveMat</span><span class="p">.</span><span class="k">delete</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nx">T</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">renderPerspective</span><span class="p">(</span><span class="nx">p0</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">,</span> <span class="nx">bboxW</span><span class="p">,</span> <span class="nx">bboxH</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="nx">boardMat</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">isLoaded</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">board-src</span><span class="dl">"</span><span class="p">))){</span>
+        <span class="nx">boardMat</span> <span class="o">=</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">imread</span><span class="p">(</span><span class="dl">"</span><span class="s2">board-src</span><span class="dl">"</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">boardMat</span> <span class="o">=</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">imread</span><span class="p">(</span><span class="dl">"</span><span class="s2">loading</span><span class="dl">"</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nx">T</span> <span class="o">=</span> <span class="nx">getPerspectiveMatrix</span><span class="p">(</span><span class="nx">p0</span><span class="p">,</span> <span class="nx">p1</span><span class="p">,</span> <span class="nx">p2</span><span class="p">,</span> <span class="nx">p3</span><span class="p">,</span> <span class="nx">bboxW</span><span class="p">,</span> <span class="nx">bboxH</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">perspectiveMat</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">Mat</span><span class="p">(</span><span class="nx">boardElem</span><span class="p">.</span><span class="nx">height</span><span class="p">,</span> <span class="nx">boardElem</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">CV_8UC4</span><span class="p">);</span>
+    <span class="kd">let</span> <span class="nx">dsize</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">Size</span><span class="p">(</span><span class="nx">overlayElem</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">overlayElem</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
+    <span class="nx">cv</span><span class="p">.</span><span class="nx">warpPerspective</span><span class="p">(</span>
+        <span class="nx">boardMat</span><span class="p">,</span> <span class="nx">perspectiveMat</span><span class="p">,</span> <span class="nx">T</span><span class="p">,</span> <span class="nx">dsize</span><span class="p">,</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">INTER_LINEAR</span><span class="p">,</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">BORDER_CONSTANT</span><span class="p">,</span> <span class="k">new</span> <span class="nx">cv</span><span class="p">.</span><span class="nx">Scalar</span><span class="p">()</span>
+    <span class="p">);</span>
+    <span class="nx">cv</span><span class="p">.</span><span class="nx">imshow</span><span class="p">(</span><span class="nx">overlayElemID</span><span class="p">,</span> <span class="nx">perspectiveMat</span><span class="p">);</span>
+    <span class="nx">boardMat</span><span class="p">.</span><span class="k">delete</span><span class="p">();</span> <span class="nx">T</span><span class="p">.</span><span class="k">delete</span><span class="p">();</span> <span class="nx">perspectiveMat</span><span class="p">.</span><span class="k">delete</span><span class="p">();</span>
+    <span class="nx">calculateRatio</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>By laying the original video, rendered output canvas, and HTML Document Elements in a stack, we can create a <em>pseudo-AR</em> experience for users, <strong>even when their device does not support standard WebXR APIs</strong>.</p>
+
+<p><img src="https://markdown-img-1304853431.cos.ap-guangzhou.myqcloud.com/152671154-8bd10367-223d-455e-b1f5-823ea3a3d4d0.jpg" alt="Untitled Notebook-27" /></p>
+
+<p>When a new detection result arrives, in two cases we don’t need to update our render result:</p>
+
+<ol>
+  <li>No QR Code is detected at this frame (the QR Detector occationally miss QR codes in view) <strong>Countinuity Enhancement Intervened</strong></li>
+  <li>The new perspective matrix is almost the same as previous one <strong>Stability Enhancement Intervened</strong></li>
+</ol>
+
+<h3 id="continuity-enhancement">Continuity Enhancement</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">barcodeDetector</code> provided by Chrome is fast, but also unstable. Minor change in perspective or camera position may lead to a loss of 1-2 frames of detection result.</p>
+
+<p>When there are only 1-2 frames with no QR code is detected, the renderer will Not clear the canvas at once. Instead, it will begin to count the number of frame without QR detection result. If the counter reach 10, the canvas will then be cleared. This can greatly relief the flickering problem in AR Content.</p>
+
+<h3 id="stability-enhancement">Stability Enhancement</h3>
+
+<p>If we render every frame based on the result of QR Scanner directly, the content will be highly unstable and have poor user experience.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Before Stabilization</th>
+      <th>After Stabilization</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>![BadExample-min](https://user-images.githubusercontent.com/47029019/152672103-b7260f7c-171b-4b82-894c-69c18187a250.gif)</td>
+      <td>![GoodExample-min](https://user-images.githubusercontent.com/47029019/152672171-288b6b09-8fe7-4a75-8b52-c317f3769cdb.gif)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>When the new QR Code <code class="language-plaintext highlighter-rouge">P1</code> is within three pixels away from previos detection result (<code class="language-plaintext highlighter-rouge">P1'</code>), we will NOT update the AR Render. This can minimize the “shaking” of AR content, and provide a better user experience.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Illustration</th>
+      <th>Explaination</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>![illustration](https://user-images.githubusercontent.com/47029019/152673584-0124049d-506e-456f-802f-09d08c06fbe7.jpeg)</td>
+      <td>If the black square is detection result at frame <code class="language-plaintext highlighter-rouge">t</code>, the AR content will be re-rendered only in case of green frames. If the detection result at <code class="language-plaintext highlighter-rouge">t + 1</code> is the red bounding box, then AR content will NOT be re-rendered.</td>
+    </tr>
+  </tbody>
+</table>]]></content><author><name>Yutian (Mark) Chen</name></author><category term="[&quot;Frontend&quot;]" /><category term="Web" /><summary type="html"><![CDATA[In a Sentence, What is It?]]></summary></entry><entry><title type="html">Serverless File System based on AWS S3</title><link href="https://markchenyutian.github.io//blog/2022/serverless-file-system.html" rel="alternate" type="text/html" title="Serverless File System based on AWS S3" /><published>2022-01-19T00:00:00+00:00</published><updated>2022-01-19T00:00:00+00:00</updated><id>https://markchenyutian.github.io//blog/2022/serverless-file-system</id><content type="html" xml:base="https://markchenyutian.github.io//blog/2022/serverless-file-system.html"><![CDATA[<p>This system is deployed on <a href="/blog/files.html">My blog’s file Sharing Page</a> as a front-end application.</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20220119171645.jpg" alt="Serverless-file-system" /></p>
+
+<p>Reference Information:</p>
+
+<ul>
+  <li><a href="https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/s3-example-photos-view.html">Viewing Photo stored in S3 Buckets</a></li>
+  <li><a href="https://docs.aws.amazon.com/sdk-for-javascript/v3/developer-guide/welcome.html">AWS SDK for JavaScript</a></li>
+  <li><a href="https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/getting-started-browser.html#getting-started-browser-create-identity-pool">AWS Cognito Identity Pool</a></li>
+</ul>
+
+<h2 id="how-these-work">How these Work?</h2>
+
+<p>A user identity pool is created using AWS Cognito. Any user authenticated / unauthenticated join this identity pool will be automatically assigned with an AWS role. Then, we create a AWS SDK key corresponding to this identity pool. Anyone access AWS Service using SDK and given key will get an role called <code class="language-plaintext highlighter-rouge">Cognito_MyBlogFilesUnAuth_Role</code>.</p>
+
+<p>Using IAM, we can assign this role with permission to access some specific AWS Resource. In this case, we only allow users to access the S3 storage bucket <code class="language-plaintext highlighter-rouge">yutian-public</code> and allow them to <code class="language-plaintext highlighter-rouge">List</code> and <code class="language-plaintext highlighter-rouge">Get</code> objects from the bucket.</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="nl">"Version"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2012-10-17"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"Statement"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"VisualEditor0"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3:ListBucket"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:s3:::yutian-public"</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="w">
+            </span><span class="nl">"Sid"</span><span class="p">:</span><span class="w"> </span><span class="s2">"VisualEditor1"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Effect"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Allow"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Action"</span><span class="p">:</span><span class="w"> </span><span class="s2">"s3:GetObject"</span><span class="p">,</span><span class="w">
+            </span><span class="nl">"Resource"</span><span class="p">:</span><span class="w"> </span><span class="s2">"arn:aws:s3:::yutian-public/*"</span><span class="w">
+        </span><span class="p">}</span><span class="w">
+    </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>]]></content><author><name>Yutian (Mark) Chen</name></author><category term="[&quot;Frontend&quot;]" /><category term="Web" /><summary type="html"><![CDATA[This system is deployed on My blog’s file Sharing Page as a front-end application.]]></summary></entry><entry xml:lang="ch"><title type="html">NLP 101: Transformer Model</title><link href="https://markchenyutian.github.io//blog/2022/Transformers.html" rel="alternate" type="text/html" title="NLP 101: Transformer Model" /><published>2022-01-09T00:00:00+00:00</published><updated>2022-01-09T00:00:00+00:00</updated><id>https://markchenyutian.github.io//blog/2022/Transformers</id><content type="html" xml:base="https://markchenyutian.github.io//blog/2022/Transformers.html"><![CDATA[<h2 id="0-背景知识">0 背景知识</h2>
+
+<ol>
+  <li>
+    <p><a href="/blog/2021/Word-Embedding.html">词嵌入 - Word Embedding</a></p>
+
+    <p>一种将自然语言在转化为向量表示的同时保留词汇原有的语义余上下文信息的方法（将高维的自然语言“嵌入”到低维向量空间）</p>
+  </li>
+  <li>
+    <p><a href="/blog/2021/Seq2Seq.html">编码器-解码器结构 - Encoder-Decoder Architecture</a></p>
+
+    <p>编码器-解码器结构将任务分成两个步骤：先由编码器将输入编码/总结，再通过解码器将编码结果解析成真正的输出</p>
+  </li>
+  <li>
+    <p><a href="/blog/2022/Attention-Mechanism.html">注意力机制 - Attention Mechanism</a></p>
+
+    <p>一种通过动态赋予编码器所有隐藏状态权重让解码器充分，有重点的获取信息的方法。</p>
+  </li>
+</ol>
+
+<h2 id="1-self-attention-自注意力机制">1 Self-Attention 自注意力机制</h2>
+
+<h3 hide-toc="true">1.1 Self-Attention 与 Attention 的区别</h3>
+
+<p>注意力机制的提出是作为解决 Seq2Seq 模型中的信息瓶颈与中间状态丢失问题的一个解决方案。然而，在 Google 2018 年发表的论文 <em>Attention is All You Need</em> 中，研究人员们创新性的提出了“自注意力机制”。在这种注意力机制的变种中，注意力机制不再作为连接模型两个部分的中间件出现。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_D6D1A983D5DF-1.jpeg" alt="IMG_D6D1A983D5DF-1" /></p>
+  <figcaption>Fig 1. 注意力机制 vs. 自注意力机制</figcaption>
+</figure>
+
+<p>如 Fig 1 所示，在自注意力机制中，我们让 $q_t = k_t = v_t = h_t$，并将注意力权重在各个隐藏状态上的加权平均直接输出。这也是这个结构名称“自注意力机制”的来由 —— 用来计算注意力权重的 $q_i$ 与 $k_i$ 都来自于同一层数据（自己）。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_1E706864A324-1.jpeg" alt="IMG_1E706864A324-1" /></p>
+  <figcaption> Fig 2. 自注意力机制的 $q$, $k$, $v$ 都来自于“自己”</figcaption>
+</figure>
+
+<h3 hide-toc="true">1.2 删去传统 NLP 模型中的 RNN 结构 - Attention is All You Need！</h3>
+
+<p>仔细分析 Fig 2 中的结构，我们会发现实际上自注意力机制的结构还可以更加简单。我们在 Seq2Seq 模型中使用 LSTM 是为了让模型获知整个输入序列的上下文内容。然而，在 Self-Attention 模型中，这么做似乎没有什么意义。因为注意力机制单独可以保证输出层可以获得整个输入序列的上下文。</p>
+
+<p>所以，我们实际上可以直接删去 Self-Attention 结构中的 RNN 而不影响模型获取的信息量。这也是论文题目 <strong><em>Attnetion is All You Need</em></strong>  的意思了 —— 我们的模型实际上可以只使用自注意力机制，完全不使用之前十多年中各类解决 NLP 问题的模型的核心结构 - 递归神经网络 RNN。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_AB1D95A09BC4-1.jpeg" alt="IMG_AB1D95A09BC4-1" /></p>
+  <figcaption> Fig 3. 删去 RNN 连接后的自注意力层，输出依然可以获得整个输入序列的上下文</figcaption>
+</figure>
+
+<h3 hide-toc="true">1.3 自注意力机制 vs 全连接层？</h3>
+
+<p>观察 Fig 2，不难发现自注意力结构的输出结果其实就是输入的线性结合而已。如果是这样的话，那自注意力层与全连接层有什么区别呢？难道经过了十多年的发展，神经网络的研究者们又用 fancy 的方法重新发明了一次全连接层吗？</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_E4BF48EFE99F-1.jpeg" alt="IMG_E4BF48EFE99F-1" /></p>
+  <figcaption> Fig 4. 自注意力层与全连接层非常相似 —— 从某种意义上说</figcaption>
+</figure>
+
+<p><strong>实际上自注意力机制可以看成一种更加高级，抽象的全连接层。</strong>与全连接层直接学习神经元之间的权重不同，自注意力机制在训练过程中会学习如何分配神经元之间权重使得损失函数最小化。 如果说全连接层是在直接学习 $y = Wx$ 中的权重参数 $W$，那么自注意力机制则是在学习 $g: x \rightarrow W$ 这样一个<strong>根据输入动态计算权重</strong>的函数。</p>
+
+<p>同时，因为自注意力机制不是直接学习神经元之间的权重，我们可以在不定长度的输入上使用自注意力机制。</p>
+
+<h3 hide-toc="true">1.4 自注意力机制 vs 递归神经网络？</h3>
+
+<p>自注意力机制在建立输出与整个输入序列之间的联系的同时避免了递归神经网络的许多缺点：</p>
+
+<p>因为在自注意力机制中没有递归调用自身参数，我们不会有梯度消失/爆炸问题。</p>
+
+<p>同时，因为在递归神经网络中，每一个时刻网络的状态都由该时刻前网络的状态所决定，我们<em>不能并行</em>的处理输入序列。在自注意力机制中，因为输出中的每一个分量都是互相独立的，我们可以并行的计算所有输出分量。这可以让模型的计算速度大幅增加。</p>
+
+<p>在论文中，作者比较了 自注意力机制，递归神经网络和卷积的时间复杂度与并行运算时间 （假设词向量维度为 $d$，输入序列长度为 $n$，卷积核尺寸为 $k\times k$）</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: right"> </th>
+      <th style="text-align: center">Time Complexity</th>
+      <th style="text-align: center">Work Span</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: right">Self-Attention</td>
+      <td style="text-align: center">$O(n^2\cdot d)$</td>
+      <td style="text-align: center">$O(1)$</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Recurrent NN</td>
+      <td style="text-align: center">$O(n\cdot d^2)$</td>
+      <td style="text-align: center">$O(n)$</td>
+    </tr>
+    <tr>
+      <td style="text-align: right">Convolution</td>
+      <td style="text-align: center">$O(k\cdot n\cdot d^2)$</td>
+      <td style="text-align: center">$O(1)$</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>可以发现，在输入序列长度不超过词向量维度的情况下，自注意力机制的时间复杂度与并行运算时间都是三种模型中最小的。</p>
+<h2 id="2-multi-head-attention-多头注意力机制">2 Multi-Head Attention 多头注意力机制</h2>
+
+<p>现在我们将上文提到的自注意力机制封装成一个模块 - 向这个模块输入长度相同的向量 $K$，$V$ 和 $Q$，模块会输出长度相同的一个结果 $Y$。</p>
+
+<figure>
+    <img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_60993124ACDA-1.jpeg" style="zoom: 20%" />
+    <figcaption> Fig 5. 为了方便下文讨论，我们将自注意力层封装成一个模块讨论</figcaption>
+</figure>
+
+<p>虽然在上文关于自注意力机制的讨论中，我们为了方便起见，让 $q_i = k_i = v_i = x_i$，在实际的 Self-Attention 模型中，我们会分别对 $x$ 进行不同的操作得到不同的 $Q$, $K$, $V$。</p>
+
+<p>我们可以将这些操作用矩阵 $W$ 表示：</p>
+
+<p>$$
+Q = W_q X,\quad K = W_k X,\quad V = W_v X
+$$</p>
+
+<p>其中，这三个 $W$ 矩阵都是模型中<strong>可学习的参数</strong>。而我们上面的例子中则使用的是 $W_q = W_k = W_v = I$ 的一个特殊情况。我们把这样一个自注意力层 + Q，K，V 分别的线性变换操作合称为一个“单头注意力”。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_2893.jpg" alt="IMG_2893" /></p>
+  <figcaption> Fig 6. 单头注意力模型由一个自注意力层与三个对输入的线性变换构成</figcaption>
+</figure>
+
+<p>将多个单头注意力合并在同一层上，就形成了一个“多头注意力层(Multi-head Attention)”。 理论上，多头注意力中的每一个自注意力层会学习到不同的权重参数，从而提高编码器的表达力。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_F444A7C83CF2-1.jpeg" alt="IMG_F444A7C83CF2-1" /></p>
+  <figcaption> Fig 7. 多头注意力由多个单头注意力堆叠而成 </figcaption>
+</figure>
+
+<h2 id="3-transformer-的结构">3 Transformer 的结构</h2>
+
+<h3 id="31-编码器-encoder">3.1 编码器 Encoder</h3>
+
+<p>在 Transformer 中，一个编码器模块由一个多头注意力与一个前馈网络构成。前馈神经网络会单独处理多头注意力的每一个输出 token。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_CE1493F0D6C6-1.jpeg" alt="IMG_CE1493F0D6C6-1" /></p>
+  <figcaption> Fig 8. Transformer 中的每一个解码器模块都由两个部分构成，两个部分各司其职。同时，模块内部的组件之间有 Shortcut Connection 保证梯度的传递</figcaption>
+</figure>
+
+<p>这样，在解码器的每一个模块中其实对输入信息做了两步处理：</p>
+
+<ol>
+  <li>
+    <p>将输入的 tokens 通过多头注意力“混合”起来，使得每一个输出token都得到了所有输入中所需的信息</p>
+  </li>
+  <li>
+    <p>将“混合”后的 token 通过前馈神经网络进行特征提取，对每一个 token 进行真正的“解读”</p>
+  </li>
+</ol>
+
+<p>与此同时，作者为了防止重复堆叠编码器模块导致梯度消失/爆炸，模仿 ResNet 的做法在每一个模块的两个组件之间都添加了短路连接来帮助梯度反向传播。</p>
+
+<p>在输入序列进入堆叠的编码器模块前要先经过词嵌入层与位置编码层。词嵌入层通过类似查表的方式将自然语言输入转化为 $\mathbb{R}^n$ 向量空间中可以计算的向量形式。位置编码层则将输入token之间的<strong>绝对位置关系</strong>通过加法的形式写入到token中传递给编码器。</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_0D1DA4A8EBFD-1.jpeg" style="width: 50%;" /></p>
+  <figcaption> Fig 9. Transformer 的编码器结构</figcaption>
+</figure>
+
+<h3 id="32-解码器-decoder">3.2 解码器 Decoder</h3>
+
+<p>Transformer 的解码器与编码器类似，也由重复堆叠的解码模块构成。每一个解码模块的结构如下</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_B6E42D58B414-1.jpeg" style="width: 80%;" /></p>
+  <figcaption> Fig 10. Transformer 的解码模块中有一个 Masked Multi-head Attention，一个 Multi-head Attention 和 前馈神经网络</figcaption>
+</figure>
+
+<p>在解码器中出现了一个之前没有提及的“Masked Multi-head Attention”。这里的“Masked”指的是加在原始注意力权重 $g(q, k)$ 上的一个矩阵。</p>
+
+<figure>
+<img src="https://markdown-img-1304853431.file.myqcloud.com/20220111153841.png" style="width: 33%" />
+<figcaption> Fig 11. Masked Multihead Attention 的计算图，可以看到遮罩是放在 Q，K 的运算结果（原始注意力权重）上的</figcaption>
+</figure>
+
+<p>这个遮罩可以防止解码器利用“未来”的信息。比如解码器已经输出了 “I / am / fine / .”，我们现在将这些token输入到解码器中，让解码器预测下一个token。由于解码器输出 “I” 的时候 “am / fine / .” 还没有生成，I 和这些 token 没有关系。通过遮罩，我们可以“手动”将这些没有因果关系的注意力权重设置为0.</p>
+
+<figure>
+<img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_80BF9CA01C03-1.jpeg" style="width: 50%" />
+<figcaption> Fig 12. Masked Multihead Attention 中，我们可以用遮罩手动，显式的移除这个 token 与解码器在未来的输出之间的关系</figcaption>
+</figure>
+
+<h3 id="33-整体">3.3 整体</h3>
+
+<p>将编码器与解码器合并起来，我们就的到了 Transformer 的模型：</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_B24E2B3D67CF-1.jpeg" alt="IMG_B24E2B3D67CF-1" /></p>
+
+<h2 id="4-参考来源-sources">4 参考来源 Sources</h2>
+
+<ul>
+  <li>
+    <p><a href="https://arxiv.org/abs/1706.03762">Attention is All You Need</a></p>
+  </li>
+  <li>
+    <p><a href="https://mediaservices.cmu.edu/media/Deep+Learning+%28Fall+2021%29_Introduction+to+Transformers/1_49anpe1e/223190053">CMU 11-785 21 Fall Lecture 19: Transformer &amp; GNN</a></p>
+  </li>
+  <li>
+    <p><a href="https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0">Illustrated Guide to Transformers Neural Network</a></p>
+  </li>
+  <li>
+    <p><a href="https://stackoverflow.com/questions/58127059/how-to-understand-masked-multi-head-attention-in-transformer">Stack Overflow - How to Understand Masked Multi-head Attention in Transformer</a></p>
+  </li>
+  <li>
+    <p><a href="https://stackoverflow.com/questions/64218678/whats-the-difference-between-self-attention-mechanism-and-full-connection-l">Stack Overflow - Difference between Self-attention and Fully Connection Layer</a></p>
+  </li>
+</ul>]]></content><author><name>Yutian (Mark) Chen</name></author><category term="[&quot;Neural Network&quot;]" /><category term="NLP" /><category term="Neural Network" /><summary type="html"><![CDATA[0 背景知识]]></summary></entry><entry xml:lang="ch"><title type="html">NLP 101: Attention Mechanism</title><link href="https://markchenyutian.github.io//blog/2022/Attention-Mechanism.html" rel="alternate" type="text/html" title="NLP 101: Attention Mechanism" /><published>2022-01-04T00:00:00+00:00</published><updated>2022-01-04T00:00:00+00:00</updated><id>https://markchenyutian.github.io//blog/2022/Attention-Mechanism</id><content type="html" xml:base="https://markchenyutian.github.io//blog/2022/Attention-Mechanism.html"><![CDATA[<h2 id="seq2seq-模型的问题">Seq2Seq 模型的问题</h2>
+
+<p>在之前关于 <code class="language-plaintext highlighter-rouge">Seq2Seq</code> 模型的<a href="/blog/2021/Seq2Seq.html">文章</a>中，我们在最后提到了编码器与解码器之间的信息瓶颈问题</p>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_82F6020DAD92-1.jpeg" alt="IMG_82F6020DAD92-1" /></p>
+  <figcaption>Fig 1. Seq2Seq 模型中编码器与解码器之间的“瓶颈”</figcaption>
+</figure>
+
+<ol>
+  <li>由于编码器与解码器之间只使用总结向量连接，当向编码器输入长序列时，总结向量由于维度限制可能无法包涵输入序列中的所有信息。</li>
+  <li>同时，因为我们只将编码器的最后时刻的隐藏状态作为总结向量传递给了解码器，编码器中间隐藏状态的信息不可避免的被丢失了。</li>
+</ol>
+
+<p>Attention Mechanism 最开始被提出就是为了解决 Seq2Seq 模型的这两个问题。</p>
+
+<h2 id="使用平均隐藏状态作为总结向量">使用平均隐藏状态作为总结向量？</h2>
+
+<figure>
+  <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_95D1E32E6D0D-1.jpeg" alt="IMG_95D1E32E6D0D-1" /></p>
+  <figcaption>Fig 2. 将编码器所有隐藏状态取平均后在每一个时刻作为输入的一部分传递给解码器</figcaption>
+  <figure />
+
+  <p>在这样的一个模型中，我们将编码器的所有隐藏状态取平均后通过与解码器的输入直接拼接将编码器的信息传递给解码器。通过计算编码器所有隐藏状态的平均值，我们解决了问题2 - 现在传递的“总结向量” $h_{avg}$ 包涵了编码器中所有隐藏状态的信息。</p>
+
+  <p>虽然在上图中编码器与解码器中看起来有大量的连接，但是<strong>信息瓶颈的问题并没有在这个模型中得到解决</strong>。因为在编码器与解码器之间所有的信息传递还是由一个单独的向量 $h_{avg}$ 完成的。实际上，由于这个总结向量要现在要传递的信息变得更多了（以前只用传递时刻 $t$ 的隐藏状态中的信息，现在要传递时刻 $0$ 到 $t$ 所有隐藏状态中的信息），在这个模型中<strong>信息瓶颈问题反而变得更加显著了</strong>。</p>
+
+  <p>这个模型还有一个缺陷 - 因为我们直接对所有时刻的隐藏状态取平均值，编码器每个时刻的隐藏状态权重都是一样的。这并不符合实际解决问题时的经验 - 当我们在翻译句子的第 $i$ 个词的时候，我们往往只会关心原句中特定的一两个词。</p>
+
+  <p><strong>总结：</strong></p>
+
+  <p>对于直接将编码器隐藏状态取平均后传递给解码器的模型，有以下这些优缺点：</p>
+
+  <ul>
+    <li>:+1: 解码器接收到了编码器所有隐藏状态的信息</li>
+    <li>:-1: 编码器与解码器之间的信息瓶颈问题变得更加显著</li>
+    <li>:-1: 编码器每个时刻的隐藏状态权重一样，解码器在解码时没有“重点”。</li>
+  </ul>
+
+  <h2 id="attention-mechanism--">Attention Mechanism ｜ 注意力机制</h2>
+
+  <p>既然直接对所有编码器隐藏状态直接取平均会产生新的问题，那么我们有么有可能给解码器在每一时刻都输入一个独特的，所有编码器隐藏状态的加权平均值呢？这种动态加权平均就是 Attention 机制的核心思路</p>
+
+  <figure>
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_485EC646512E-1.jpeg" alt="IMG_485EC646512E-1" /></p>
+    <figcaption>Fig 3. 假如解码器生成的序列长度为$n$，我们生成 $n$ 个不同的总结向量，每一个总结向量都是对编码器所有隐藏状态的加权平均</figcaption>
+  </figure>
+
+  <p>对于解码器的每一个时刻 $t$ ，我们都使用不同的权重计算编码器中所有隐藏状态的加权平均，并将计算结果 $c_t$ 与解码器在 $t - 1$ 时刻的输出 $y_{t-1}$ 拼接 ( concatenate) 后作为解码器在该时刻的输入。</p>
+
+  <p>假设输入序列长度为 $N$，在时刻 $t$ 输入到解码器中的总结向量 $c_t$ 可以这样表示</p>
+
+  <p>$$
+c_t = \sum_{i=0}^{N}{w_i\cdot h_i}
+$$</p>
+
+  <p>其中 $w_i$ 被称为 <strong>注意力权重</strong>（Attention Weight）。因为 $w_i$ 会“帮助”解码器在解码过程中“集中注意”到编码器的特定隐藏状态上。在下面的例子中，我们让模型将 “我昨天吃了一个苹果” 翻译为英文。可以看到，一个良好训练的模型会通过注意力权重帮助解码器将其“注意力”“聚焦”到编码器特定的隐藏状态上。</p>
+
+  <figure>
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_C6C26F5222FB-1.jpeg" alt="IMG_C6C26F5222FB-1" /></p>
+    <figcaption>Fig 4. 注意力权重帮助解码器在编码器所有隐藏状态中“选择性获取”所需的信息</figcaption>
+  </figure>
+
+  <blockquote>
+    <p>上图的一些解释：</p>
+
+    <p><code class="language-plaintext highlighter-rouge">&lt;SOS&gt;</code> 表示 “Start of Sequence” - 我们使用这个 token 向模型表示“可以开始解码了”。</p>
+
+    <p>为了得到英文翻译结果的主语 “I” ，模型获取<strong>只需要中文输入的主语 “我”</strong> 就有足够的信息了，所以 $c_0$ 的注意力权重只在 “我” 输入的隐藏状态 $h_0$ 上有较大权重</p>
+
+    <p>要得到英文翻译结果中的谓语 “ate”，解码器<strong>不但要知道中文的谓语 “吃”</strong> ，还要知道 <strong>中文输入的时态 “昨天”（过去），“了”（动作已经完成）</strong>。所以 $c_1$ 的注意力权重虽然在 $h_2$ - “吃” 上最高，在 $h_1$ （“昨天”）与 $h_3$ （“了”） 也显著大于其它值。</p>
+  </blockquote>
+
+  <p>注意力机制可以同时解决 <code class="language-plaintext highlighter-rouge">Seq2Seq</code> 模型中的两个主要问题：</p>
+
+  <ol>
+    <li>
+      <p><em>信息瓶颈问题</em> - 通过不同的注意力权重，编码器与解码器之间会传递 $n$ 个不同的总结向量。这大大拓宽了编码器与解码器之间的信息通道。</p>
+    </li>
+    <li>
+      <p><em>中间信息丢失问题</em> - 注意力权重机制理论上允许解码器获得编码器中的任意隐藏状态。</p>
+    </li>
+  </ol>
+
+  <p>那么，这个能够帮助解码器“集中注意”的神奇“注意力权重”到底是怎么实现的呢？</p>
+
+  <h2 id="attention-mechanism-q-k-v">Attention Mechanism 的实现与q, K, V表示法</h2>
+
+  <p>虽然在第一个提出注意力机制的论文 <a href="https://arxiv.org/pdf/1409.0473.pdf"><em>Neural Machine Translation by Jointly Learning to Align and Translate</em></a> 中，作者并没有使用 query-Key-Value (q, K, V)的表示方法，将注意力机制真正发扬光大的论文 <a href="https://proceedings.neurips.cc/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf"><em>Attention is All You Need</em></a> 中提出的 q, K, V 表示方法一定程度上成为了事实上的“标准”。</p>
+
+  <p>Fig 4. 中的模型实际上是一种简化的表示方法。在实际实现注意力机制的过程中，我们会让编码器在对每一个输入 $x_t$ 输出一对 Key-value pair $K_t$ 与 $V_t$。对于解码器
+的每一个隐藏状态 $s_t$，我们会让解码器在输出 $y_t$ 的同时输出一个 query 值 $q_{t + 1}$。</p>
+
+  <p>假如我们在解码器输出完第 $t-1$ 个token后有</p>
+
+  <p>$$
+K = \left\langle K_0, K_1, \cdots, K_m \right\rangle
+$$</p>
+
+  <p>$$
+V = \left\langle V_0, V_1, \cdots, V_m \right\rangle
+$$</p>
+
+  <p>$$
+e^t_i = g(K_i, q_t)
+$$</p>
+
+  <p>那么 $c_t$ 可以通过这样的方式计算：</p>
+
+  <p>$$
+e^t = \left\langle g(k_0, q_t), g(k_1, q_t), \cdots, g(k_m, q_t)\right\rangle
+$$</p>
+
+  <p>$$
+w^t = Softmax (e^t)
+$$</p>
+
+  <p>$$
+c_t = w^t\cdot V
+$$</p>
+
+  <p>写成伪代码的形式，我们有</p>
+
+  <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>func compute_context(q: Mat, K: Vec&lt;Mat&gt;, V: Vec&lt;Mat&gt;)
+    e = new Vec&lt;float&gt;(m)
+    for t = 1:m
+        e[t] = raw_attention(q, K[t])   # Function 'g' in math above
+    end
+
+    w = softmax(e)
+
+    c = new Mat&lt;float&gt;  # Initialize c as a zero tensor
+    for t = 1:m
+        c += w[t] * V[t]
+    end
+    return c
+end
+</code></pre></div>  </div>
+  <figure>
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_536CF3684689-1.jpeg" alt="IMG_536CF3684689-1" /></p>
+    <figcaption>Fig 5. 使用 q，K，V 结构实现的 Attention 模型</figcaption>
+  </figure>
+
+  <p>现在我们离完全实现一个注意力结构只剩下一步之遥了 - 在上面的伪代码中有一个神奇的函数 <code class="language-plaintext highlighter-rouge">raw_attention</code> - 给定一个 query 张量与 Key 张量，这个函数会返回一个浮点数表示分配到这个 Key 所对应的 Value 张量上的注意力权重。</p>
+
+  <p>这个函数的实现出人意料的简单：对于两个向量 $K$ 与 $q$，它会返回这两个向量的点乘结果。</p>
+
+  <p>$$
+g(K, q) = \frac{k_i\cdot q}{\sqrt{\dim{k_i}}}
+$$</p>
+
+  <div class="notification">
+    <h4 hide-toc="true" style="margin-top: 0">2021/01/11 Update</h4>
+
+    <p>这里我们在乘法运算完了以后还要对结果进行一个缩放 - i.e. 上面公式中除以 $\sqrt{\dim{k_i}}$ 的步骤。这是为了得到更加平滑的参数梯度。<a href="https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0">Source</a></p>
+
+    <p>对 Raw Attention Score 进行 Softmax 而不是直接正则化 ($w_i = \frac{w_i}{\sum_{w}}$) 则是为了让正则化后的结果“大的值更大，小的值更小”，让模型更加稳定（输出的结果更加确定）。<a href="https://towardsdatascience.com/illustrated-guide-to-transformers-step-by-step-explanation-f74876522bc0">Source</a></p>
+  </div>
+
+  <div class="notification">
+    <h4 hide-toc="true" style="margin-top: 0;">2021/01/09 Update</h4>
+
+    <p>直接将 $K$ 与 $q$ 点乘是最简单的 Attention Weight 计算函数，其它函数包括</p>
+
+    <p>$$
+g(k_i, q) = q^{\top}Wk_i
+$$</p>
+
+    <p>其中，$W$ 是一个可学习的参数权重矩阵。</p>
+  </div>
+
+  <h2 id="section">注意力权重的分布：英语-法语翻译模型中的例子</h2>
+
+  <p>在下图中可以看到注意力权重的值主要分布在对角线上 —— 这是因为英语和法语句子中的语序在很大程度上是相似的。这也证明注意力权重确实可以学习到输入与输出之间的对应关系。</p>
+
+  <figure>
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/20220105120525.png" alt="20220105120525" /></p>
+    <figcaption>Fig 6. 英语-法语 机器翻译模型中的注意力权重</figcaption>
+  </figure>
+</figure>]]></content><author><name>Yutian (Mark) Chen</name></author><category term="[&quot;Neural Network&quot;]" /><category term="NLP" /><category term="Neural Network" /><summary type="html"><![CDATA[Seq2Seq 模型的问题]]></summary></entry><entry xml:lang="ch"><title type="html">NLP 101: Seq2Seq 模型</title><link href="https://markchenyutian.github.io//blog/2021/Seq2Seq.html" rel="alternate" type="text/html" title="NLP 101: Seq2Seq 模型" /><published>2021-12-28T00:00:00+00:00</published><updated>2021-12-28T00:00:00+00:00</updated><id>https://markchenyutian.github.io//blog/2021/Seq2Seq</id><content type="html" xml:base="https://markchenyutian.github.io//blog/2021/Seq2Seq.html"><![CDATA[<h2 id="0-四种时间序列问题">0 四种时间序列问题</h2>
+
+<p>在与时间序列相关的问题中，我们通过“时序对齐（Alignment）”与“时序同步性（Synchronous）”两个维度将所有问题分为四个不同的类型</p>
+
+<table>
+  <tbody>
+    <tr>
+      <td> </td>
+      <td>**对齐**</td>
+      <td>**不对齐**</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>&lt;img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202021-12-29%20at%2011.41.39%20AM.png" style="height: 100px;"/&gt;</td>
+      <td>\</td>
+    </tr>
+    <tr>
+      <td>**同步**</td>
+      <td>输入时同时输出，一帧输入与一帧输出对应（视频标注）</td>
+      <td>\</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>模型：LSTM，Naive RNN</td>
+      <td> </td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>&lt;img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202021-12-29%20at%2011.45.28%20AM.png" style="height: 100px"/&gt;</td>
+      <td>&lt;img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202021-12-29%20at%2011.43.43%20AM.png" style="height: 100px;"/&gt; \</td>
+    </tr>
+    <tr>
+      <td>**不同步**</td>
+      <td>输入与输出的顺序相同，但是没有一一对应的关系（语音识别）</td>
+      <td>输入一个序列，在整个输入完成后输出一个顺序不一定对应的序列 （机器翻译） \</td>
+    </tr>
+    <tr>
+      <td> </td>
+      <td>模型：Connectionist Temporal Classification (CTC)</td>
+      <td>模型：**Seq2Seq**</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>下文提到的 Seq2Seq 模型是处理“不对齐，不同步”序列问题的一种模型。一个典型的不对齐不同步问题是机器翻译。</p>
+
+<p>假如我们要让模型将英语 “I ate an apple” 翻译为德语 “Ich habe einen apfel gegessen”，我们会发现翻译结果中的语序和原来并不相同，同时，一些翻译结果并不能与英语中的词汇一一对应到。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202021-12-29%20at%2011.52.07%20AM.png" alt="Screen Shot 2021-12-29 at 11.52.07 AM" style="zoom:50%;" /></p>
+
+<center>Fig 1. 机器翻译输入与输出并没有简单的一一对应关系 ｜ 图片来源：CMU 11-785 Lecture 18 page 5</center>
+
+<h2 id="1-如何确保模型获得了所需的信息">1 如何确保模型获得了所需的信息？</h2>
+
+<p>在不对齐不同步问题中，我们不能直接使用LSTM这样的模型，因为在时间序列的 $t$ 时刻，我们并不能确定此时的模型是否已经获得了所有输出正确结果所需要的信息。因此，我们的解决方案是：<strong>先处理完所有的输入，将所有输入编码（encode）到一个隐藏状态（Hidden State），然后再逐步对这个隐藏状态进行解码（decode）</strong>。</p>
+
+<p>通过这样的结构，我们能确定在解码过程中模型一定收到了所有所需的信息。</p>
+
+<p>在运行这个模型之前，我们还有两个小问题没有解决</p>
+
+<ol>
+  <li>如何让模型知道当前的输入已经结束了，可以开始解码隐藏状态了</li>
+  <li>一个递归神经网络理论上可以给出无限长的输出序列，我们应该怎样获知模型已经完成了对隐藏状态的解码，并停止接受模型的输出？</li>
+</ol>
+
+<p>实际上这两个问题的解决方案是一致的 - 我们可以在模型的词汇表中添加一个特殊的 token - <code class="language-plaintext highlighter-rouge">&lt;EOS&gt;</code> 这个 token 代表“End Of Sentence”。当我们向模型输入一个 <code class="language-plaintext highlighter-rouge">&lt;EOS&gt;</code> 时，模型就知道当前输入已经结束，并开始输出隐藏状态的解码结果。</p>
+
+<p>当模型在解码阶段输出 <code class="language-plaintext highlighter-rouge">&lt;EOS&gt;</code> 时，我们就可以获知模型已经完成了对隐藏状态的解码。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_46AF89134238-1.jpeg" alt="IMG_46AF89134238-1" /></p>
+
+<center>Fig 2. 一种能够确保模型在输出阶段获得了所有所需信息的模型</center>
+
+<h2 id="2-确保解码结果的上下文相关性">2 确保解码结果的上下文相关性</h2>
+
+<p>上面的模型在解决了输入信息完整性的同时还有一个明显的缺陷：在解码阶段中，<strong>每一个输出只和当前隐藏状态有关，与之前的输出没有联系</strong>。</p>
+
+<p>在现实问题中，模型输出的序列一般都会有上下文相关性 - 也就是说，知道模型在 $t - 1$ 时刻的输出会改变模型在 $t$ 时刻输出的概率分布 - $P(w_t \mid w_{t-1}) \neq P(w_t)$。比如在机器翻译的任务中，如果第 $t - 1$ 个词是 “an”，那么第 $t$ 个词是 $dark$ 的概率就应该很很低。</p>
+
+<p>为了解决这个问题，我们可以将模型在 $t-1$ 时刻的输出作为模型的输入传递到 $t$ 时刻。这样带来的好处非常明显：</p>
+
+<ol>
+  <li>我们可以直接在 $t$ 时刻与 $t - 1$ 时刻建立联系</li>
+  <li>在解码过程中，模型在过去时刻的输出也会被编码到模型的hidden state中，所以模型可以“知道”自己在整个解码阶段中曾经输出过什么内容。</li>
+</ol>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_C2214BB4110E-1.jpeg" alt="IMG_C2214BB4110E-1" /></p>
+
+<center>Fig 3. 一种能够考虑到解码结果上下文相关性的 Encoder-Decoder 模型</center>
+
+<p>在图三这种模型中，接受输入的部分被称为<strong>编码器（Encoder）</strong>。编码器会“总结”输入内容并将结果总结到自己的隐藏状态中。当编码器接受完整个输入后，其隐藏状态被称为 “Summary Vector”，因为这个张量包含了整个输入的语义。</p>
+
+<p>接着，Summary Vector 被传递到了<strong>解码器（Decoder）</strong>的隐藏状态。解码器会解析传入的隐藏状态并（在这个例子中）给出翻译结果。</p>
+
+<p>这样一种由 Encoder 和 Decoder 构成的模型就是我们所说的 Seq2Seq 模型了。</p>
+
+<h2 id="3-seq2seq-模型与词嵌入---我们如何解读解码结果">3 Seq2Seq 模型与词嵌入 - 我们如何解读解码结果？</h2>
+
+<blockquote>
+  <p>Partially Adapted from 11-785 Lec. 18 Notes P45 - P56</p>
+</blockquote>
+
+<blockquote>
+  <p><a href="/blog/2021/Word-Embedding.html">词嵌入 (Word Embedding)</a> 是一种将高维度的，使用 One-hot 编码的词汇表嵌入到低维空间的方法。这里泛指用向量表示自然语言。</p>
+</blockquote>
+
+<p>解码器在运行时会输出向量，我们可以通过“查表”的方法将自然语言转化为向量，但是我们如何去解读解码器输出的结果来将向量转化回自然语言呢？</p>
+
+<p><em>为了方便起见，我们在下文中先假设所有词汇都是通过 one-hot 方式编码的。同时，我们使用 $y_t^{A}$ 描述在时刻模型在时刻 $t$ 输出的向量中表述词汇为 $A$ 的概率</em>。</p>
+
+<p>任意一种解读解码结果的目标都是一样的 - 对于解码器给出的一串向量输出 $y_1, \cdots, y_t$，我们要从中找到对应的词汇 $O_1, \cdots, O_n$ 使得 $P(O_1, \cdots, O_n \mid x_1,\cdots, x_m)$ 最大化。也就是说，我们希望解读方法能够做到下面这样的效果：</p>
+
+<p>$$
+\text{argmax}_{O_1, \cdots, O_n}(y_1^{O_1}\cdots y_n^{O_n})
+$$</p>
+
+<h3 id="31-贪心算法解读解码结果">3.1 贪心算法解读解码结果</h3>
+
+<p>一种简单的思路是使用<strong>贪心算法</strong> - 在每一时刻 $t$，我们都选择当前输出向量 $y_t$ 所代表的，（相似度）概率最高的词向量 $O$ 作为 $O_t$ 的解读结果。</p>
+
+<p>$$
+\DeclareMathOperator*{\argmax}{argmax}
+O_t = \argmax_{O_t}(y_t^{O_t})
+$$</p>
+
+<p>然而，这样的方法有一个弊端：如果在时刻 $t$ 模型的最优输出并不是正确的结果，从 $t + 1$ 开始的每个时刻，模型都会受到这样一个错误输出的影响，最后导致模型“越走越偏”。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_917415594339-1.jpeg" alt="" /></p>
+
+<center>Fig 4.  直接使用贪心算法对解码器输出进行解读可能导致未来的序列被“误导”</center>
+
+<h3 id="32-既然不够信息做选择我全都要">3.2 既然不够信息做选择，我全都要！</h3>
+
+<p>如果因为贪心算法存在上一段描述的缺陷就拒绝使用贪心算法，我们会遇到一个问题：<strong>在 $t$ 时刻做出错误的选择一定会导致整个序列的错误与偏差，但是我们在 $t$ 时刻并不知道哪个选择是错误的</strong>。那么我们怎么解决这个问题呢？</p>
+
+<blockquote>
+  <p>实际上，我们的大脑每时每刻都在处理同样的问题 - 自然语言中充斥着模糊性，这种模糊性来自于词法(Lexical Ambiguity)，结构(Structural Ambiguity) 和 语音(Acoustic Ambiguity) 。而大脑在日常交流中在无时无刻的进行去模糊化的动作。用于去模糊化的信息主要来自于对话的上下文和场景。</p>
+
+  <p>也就是说 - 在日常交流的过程中我们的大脑会先保留时刻 $t$ 的语言模糊性，等到积累了足够的上下文后再对 $t$ 时刻的结果进行去模糊化操作。</p>
+</blockquote>
+
+<p><strong>也许相似的过程也能用在我们对 Seq2Seq 模型的输出解读上！</strong></p>
+
+<p>既然我们在时刻 $t$ 无法得知足够的信息来做出选择，那么我们就<em>不做出选择</em> - 直到我们积累了足够多的信息来做出选择我们再返回来 $t$ 时刻进行决择。在每个时刻，我们选择<strong>概率最高的$n$个词向量</strong>作为对解码器在 $t$ 时刻输出的解读。我们将解码器 “分叉到不同的时间线”上 - 在每个分叉中，我们使用不同的词向量作为 $t + 1$ 时刻的解码器输入。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_3B1063339A5F-1.jpeg" alt="IMG_3B1063339A5F-1" /></p>
+
+<center>Fig 5. 每一个时刻，如果概率最高的两个解读结果概率差距不大，我们可以将解码器“分叉”，在不同的assumption 上继续推理并在未来回溯至该时刻进行选择</center>
+
+<p>当模型在某个分支上输出了 <code class="language-plaintext highlighter-rouge">&lt;EOS&gt;</code> 这个特殊的token时，这个分支就结束了。因为 <code class="language-plaintext highlighter-rouge">&lt;EOS&gt;</code> 是约定的结束解码器输出序列的标志符。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_007491957EB3-1.jpeg" alt="IMG_007491957EB3-1" style="zoom: 25%;" /></p>
+
+<center>Fig 6. 解码器每个时刻因为对解码结果的不同解读产生不同的分叉。每个分叉在输出<code>&lt;EOS&gt;</code>时结束</center>
+
+<p>当解码器所有的分支都结束输出以后，我们可以对每一个分支输出的序列进行评估并在其中选择最优的序列。</p>
+
+<blockquote>
+  <p>因为分支的数量随序列长度成指数上升，这里我们一般会在评估时使用一种叫 <a href="https://en.wikipedia.org/wiki/Beam_search">Beam Search</a> 的启发式搜索算法对需要评估的分支进行剪枝。</p>
+</blockquote>
+
+<h2 id="4-seq2seq-模型的训练">4 Seq2Seq 模型的训练</h2>
+
+<p>在训练 Seq2Seq 模型时，我们不用对模型在编码阶段的输出做任何评估。我们只需要对比模型在解码阶段给出的输出即可。</p>
+
+<p>在训练阶段，我们并不会将解码器在 $t - 1$ 时刻的输出作为输入传输给 $t$ 时刻（我们在模型推理阶段会这么做来建立模型输出的上下文联系）。我们会直接将正确的 ground truth  中的第 $t - 1$ 时刻的内容作为输入传输给 $t$ 时刻。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_58B92A9252D3-1.jpeg" alt="IMG_58B92A9252D3-1" /></p>
+
+<center>Fig 7. 训练阶段的 Seq2Seq 模型，梯度沿紫色箭头路线反向传播</center>
+
+<p>在训练阶段中，如果我们选择 SGD 作为优化方法，我们可以这样训练模型：</p>
+
+<ol>
+  <li>随机在训练集中选择一个 (input, output) 数据</li>
+  <li>使用这个数据让模型进行前向计算</li>
+  <li>随机选择模型在解码阶段的一个输出进行 Loss 计算并进行反向传播</li>
+  <li>更新模型权重参数</li>
+</ol>
+
+<h2 id="5-seq2seq-的缺陷与改进方法">5 Seq2Seq 的缺陷与改进方法</h2>
+
+<p>Seq2Seq 模型到现在依然是解决非同步非对齐序列预测问题的经典模型之一。然而，它的结构存在一个缺陷 - 这个缺陷会在模型接受长输入序列时被暴露无遗。注意到图3中的编码器-解码器模型。在这个模型中，编码器与解码器只通过隐藏状态（总结向量）连接起来。这直接导致了两个问题：</p>
+
+<ol>
+  <li>当输入序列较长时，这个隐藏状态可能无法完全容纳输入中蕴含的所有信息量，从而导致模型接受信息的损失。<strong>【编码器与解码器之间的连接太狭窄，无法传递所有信息】</strong></li>
+  <li>如果输入序列较长，一些信息可能会在编码器接受新信息的过程中被“稀释”，这可能会导致解码器遗漏输入中的关键信息。<strong>【编码器中所有的隐藏状态都含有独特的信息，但是只有最终状态被传递给了解码器】</strong></li>
+</ol>
+
+<p>而这两个问题的解决方案则是目前大有一统 CNN，RNN，多模态学习 之势的 Transformer 模型的底层结构 - 注意力机制（Attention Mechanism）</p>]]></content><author><name>Yutian (Mark) Chen</name></author><category term="[&quot;Neural Network&quot;]" /><category term="NLP" /><category term="Neural Network" /><summary type="html"><![CDATA[0 四种时间序列问题]]></summary></entry><entry xml:lang="ch"><title type="html">Batch Normalization 浅入深出</title><link href="https://markchenyutian.github.io//blog/2021/Batch-Normalization.html" rel="alternate" type="text/html" title="Batch Normalization 浅入深出" /><published>2021-12-26T00:00:00+00:00</published><updated>2021-12-26T00:00:00+00:00</updated><id>https://markchenyutian.github.io//blog/2021/Batch-Normalization</id><content type="html" xml:base="https://markchenyutian.github.io//blog/2021/Batch-Normalization.html"><![CDATA[<h2 id="0-符号表">0 符号表</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>符号</th>
+      <th>意义</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>$\nabla_{W}f$</td>
+      <td>函数 $f$ 关于变量（集合）$W$ 的梯度</td>
+    </tr>
+    <tr>
+      <td>$N$</td>
+      <td>训练集中数据总量</td>
+    </tr>
+    <tr>
+      <td>$C$</td>
+      <td>损失函数（Cost Function），对于给定模型输出 $\hat{y}$ 与目标输出 $y$ 进行差距评估</td>
+    </tr>
+    <tr>
+      <td>$f(x, W)$</td>
+      <td>拥有权重参数 $W$ 神经网络对于输入 $x$ 的输出</td>
+    </tr>
+    <tr>
+      <td>$D$</td>
+      <td>目标函数（Ground Truth）</td>
+    </tr>
+    <tr>
+      <td>$X$</td>
+      <td>训练数据集</td>
+    </tr>
+    <tr>
+      <td>$X’$</td>
+      <td>训练数据集中的一个 mini-batch， $X’\subseteq X$</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="1-mini-batch-增量训练法与协方差问题">1 Mini-Batch 增量训练法与协方差问题</h2>
+
+<p>在进行神经网络训练的过程中，我们使用以下公式计算神经网络的权重参数梯度</p>
+
+<p>$$
+\nabla_{W} L(W) = \frac{1}{N}\sum_{x}{\nabla_{W}C(f(x, W), D(x))}
+$$</p>
+
+<p>对于训练集中的每一个数据 $x$，我们都计算出权重参数的梯度，将他们相加后除以$N$得到一个“平均梯度”。</p>
+
+<p>因为（我们假设）<strong>训练集中的数据分布于生产/测试环境一致</strong>，当使用整个训练集的结果进行梯度计算和参数更新时，网络 $f$ 能够更加准确的拟合到完整的目标函数 $D$ 上，而非目标函数 $D$ 一部分特殊的定义域上。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_B72671CFC736-1.jpeg" alt="IMG_B72671CFC736-1" /></p>
+
+<center>Fig 1. 当训练集数据分布与测试集不同时（右图），模型拟合结果会显著降低</center>
+
+<p>然而，这样的参数更新方法虽然能够最大化模型的拟合准确率，由于每次进行参数更新前必须得知训练集中所有的输入 $x$ 对应的损失函数 $C(f(x, W), D(x))$ 和权重梯度 $\nabla_{W}C$，模型的权重更新速度会非常缓慢。</p>
+
+<p>为了解决这个问题，我们可以使用 Mini-batch 增量训练方法。每次我们从一个拥有 $N$ 个数据的训练集中随机，不重复的选择 $B$ 个数据作为一个 Batch。得到这 $B$ 个数据的损失函数和对应的梯度后，我们马上对模型进行一次参数更新。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_BF395E0F0FEB-1.jpeg" alt="IMG_BF395E0F0FEB-1" /></p>
+
+<center>Fig 2. 使用 mini-batch 方法训练的模型更新参数的频率有显著提升</center>
+
+<p>可惜，天下没有免费的午餐，当我们使用 mini-batch 来训练神经网络的时候实际上我们有一个隐含的假设：<strong>mini-batch 中的数据分布于训练集相同</strong>。</p>
+
+<p>$$
+\text{argmin}<em>{W}{\left(
+	\sum</em>{x\in X’}{C(f(x, W), D(x))}
+\right)}</p>
+
+<p>\Leftrightarrow</p>
+
+<p>\text{argmin}<em>{W}{\left(
+	\sum</em>{x\in X}{C(f(x, W), D(x))}
+\right)}
+$$</p>
+
+<p>上面这两个最优化目标只有在 $X’$ （Mini-batch 中的数据） 与 $X$ （Training Set 中的数据） 的数据分布一致时才是一致的。</p>
+
+<p><strong>然而这个假设在很多情况下是不成立的</strong>。mini-batch 中的数据可能会有较大的协方差 (Covariance) - 也就是说，当前 mini-batch 的数据分布与训练集的数据分布并不相同。</p>
+
+<p>数据分布的差异会导致模型在优化权重参数时的目标 “最优化模型在当前 mini-batch 上的表现” 这个目标与我们真正的目标 —— “最优化模型在训练集上的表现”之间的偏差。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_FD5CF492EE8A-1.jpeg" alt="IMG_FD5CF492EE8A-1" /></p>
+
+<center>Fig 3. 当我们训练模型时，我们构建的逻辑链条</center>
+
+<h2 id="2-batch-normalization-理论">2 Batch Normalization 理论</h2>
+
+<p>为了解决这个问题，Sergey Ioffe 和 Christian Szegedy 在 2015 年提出了 Batch Normalization （下文简称BN）的方法。BN 的理解实际上很简单 - 我们可以将所有的 mini-batch 移动到一个特殊的位置 ($\mu = 0$, $\sigma =1$)，来“正则化（Normalize）” mini-batch，让所有的 mini-batch 拥有一致的数据分布。</p>
+
+<p>然而，如果 BN 只有这一步，我们会不可避免的丢失数据本身的部分信息 - 训练集本身的平均值与方差。对于一个训练集 $X$，我们可以求出其平均值 $\mu_X$ 与方差 $\sigma_X$。这两个数据本身也是数据集的信息之一。</p>
+
+<p>为了解决这个问题，我们要向BN中添加两个<strong>可训练的参数</strong> $\gamma$ 与 $\beta$。在将mini-batch正则化后，我们通过计算 $\gamma x + \beta$ 把所有的 batch 统一移动到 $\mu = \beta$，$\sigma = \gamma$ 的位置。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211227115058717.png" alt="image-20211227115058717" /></p>
+
+<center>Fig 4. Batch Normalization 的正则化过程可以分为三步：1. Centering （$\mu=0$）2. Scaling ($\sigma = 1$) 3. Moving （$\mu = \beta$, $\sigma = \gamma$)
+</center>
+
+<p>通过BN的操作，我们可以尽可能减小 mini-batch 中数据分布与训练集的不一致性，a.k.a mini-batch 的协方差。</p>
+
+<h2 id="3-batch-normalization-实现">3 Batch Normalization 实现</h2>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211227123210186.png" alt="image-20211227123210186" /></p>
+
+<center>Fig 5. 一个使用了BN的神经元，可以看到BN实际上是在每个神经元中对输入加权&amp;偏置的值进行正则化</center>
+
+<p>可以将 BN 看作插入在神经元中的一个中间件。图5中的蓝色变量都是神经网络 $f(x, W)$ 中可训练的参数集合 $W$ 中的变量。如果我们用计算图的形式表现变量之间相互依赖的关系，我们会得到下面这样一张计算图：</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_4E0BC0496AB3-1.jpeg" alt="IMG_4E0BC0496AB3-1" style="zoom: 33%;" /></p>
+
+<p>其中，我们有</p>
+
+<p>$$
+\mu_B = \frac{1}{B}\sum_{i=1}^B{z_i}
+$$</p>
+
+<p>$$
+\sigma^2<em>B = \frac{1}{B}\sum</em>{i=1}^B{(z_i - \mu_B)^2}
+$$</p>
+
+<p>$$
+u_i = \frac{z_i - u_B}{\sqrt{\sigma^2_B + \epsilon}},\quad\text{Where }\epsilon\text{ is a smooth factor}
+$$</p>
+
+<p>$$
+\hat{z}_i = \gamma u_i + \beta
+$$</p>
+
+<h2 id="4-batch-normalization-反向传播数学推导">4 Batch Normalization 反向传播数学推导</h2>
+
+<blockquote>
+  <p>Adapted from CMU 11785 Lecture 8 Notes</p>
+</blockquote>
+
+<p>假设我们现在已知 $\nabla_{\hat{z}} C(f(x, W), D(x))$，我们希望让这个梯度通过含有 Batch Normalization 的神经元，反向传播到 $\nabla_x C(f(x, W), D(x))$，那么我们需要计算 $\frac{\partial C}{\partial x_1}$，… ，$\frac{\partial C}{\partial x_n}$。</p>
+
+<p>根据偏微分的链式法则，我们知道</p>
+
+<p>$$
+\frac{\partial C}{\partial x_1} = \sum_{i=1}^{n}{\frac{\partial C}{\partial \hat{z}_i}\frac{\partial \hat{z}_i}{\partial x_1}}
+$$</p>
+
+<p>不失一般性的，因为在神经元的计算中，每一个 $x$ 分量的计算都是相同的，我们可以通过计算 $\frac{\partial C}{\partial x_1}$得出计算 $\frac{\partial C}{\partial x_i}$ 的通项公式。所以在下文中，我们会以计算 $x_1$ 的梯度为例子进行计算与推导。</p>
+
+<p>因为从 $u_i$ 开始，向量中的每个分量都是单独计算的，我们可以得知对于任意 $i\neq j$，我们有 $\partial \hat{z}_i /\partial u_j = 0$：</p>
+
+<p>$$
+\frac{\partial C}{\partial u_i} = \sum_{j=1}^n{\frac{\partial C}{\partial \hat z_j}\frac{\partial \hat z_j}{\partial u_i}} = \frac{\partial C}{\partial \hat z_i}\frac{\partial \hat z_i}{\partial u_i} = \frac{\partial C}{\partial \hat z_i}\cdot \gamma
+$$</p>
+
+<h3 id="41--bn中的直接连接反向传播公式推导">4.1  BN中的直接连接反向传播公式推导</h3>
+
+<p>重新回顾一下之前的BN计算图，我们不难发现 $z_1$ 的值计算到 $u_1$ 有三条不同的路线。我们需要计算 $\partial {u_i}/{\partial z_i}$ 时，需要计算三条路线上的微分并相加起来。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_614F94CA4D21-1.jpeg" alt="IMG_614F94CA4D21-1" style="zoom:25%;" /></p>
+
+<p>$$
+\frac{\partial u_1}{\partial z_1} = \frac{\partial u_1}{\partial z_1} + \frac{\partial u_1}{\partial \mu_B}\frac{\partial \mu_B}{\partial z_1} + \frac{\partial u_1}{\partial \sigma^2_B}\frac{\partial \sigma^2_B}{\partial z_1}
+$$</p>
+
+<p>对于上式<strong>第一项（计算图中的黑色路线）</strong>，$\partial u_1/\partial z_1$，这里的直接连接来自于公式</p>
+
+<p>$$
+u_i = \frac{z_i - u_B}{\sqrt{\sigma^2_B + \epsilon}}
+$$</p>
+
+<p>所以我们可以直接计算出</p>
+
+<p>$$
+\frac{\partial u_1}{\partial z_1} = \frac{1}{\sqrt{\sigma^2_B + \epsilon}}
+$$</p>
+
+<p>对于<strong><font color="blue">第二项（计算图中的蓝色路线）</font></strong>，我们需要分别计算单独一个 $z_1$ 对整个 Mini-batch 的平均数 $\mu_B$ 的偏导数以及平均数 $\mu_B$ 对于BN结果 $u_1$ 的偏导数。</p>
+
+<p>因为我们有</p>
+
+<p>$$
+\mu_B = \frac{1}{B}\sum_{i=1}^B{z_i}
+$$</p>
+
+<p>不难得出</p>
+
+<p>$$
+\frac{\partial \mu_B}{\partial z_1} = \frac{1}{B}
+$$</p>
+
+<p>同时，对于 $\partial \mu_B/\partial u_1$，我们有</p>
+
+<p>$$
+u_i = \frac{z_i - u_B}{\sqrt{\sigma^2_B + \epsilon}}
+$$</p>
+
+<p>所以有</p>
+
+<p>$$
+\frac{\partial u_1}{\partial \mu_B} = -\frac{1}{\sqrt{\sigma_B^2 + \epsilon}}
+$$</p>
+
+<p>将两个偏导数乘起来，我们就能得到计算图中蓝色路线的反向传播公式：</p>
+
+<p>$$
+-\frac{1}{B\sqrt{\sigma_B^2 + \epsilon}}
+$$</p>
+
+<p>对于<strong><font color="purple">第三项（计算图中的紫色路线）</font></strong>，我们需要分别计算两条“支路”的偏微分之和</p>
+
+<p>$$
+\frac{\partial u_i}{\partial \sigma^2_B}\frac{\partial \sigma^2_B}{\partial z_1} = \frac{\partial u_i}{\partial \sigma^2_B}\left(
+	\frac{\partial \sigma^2_B}{\partial z_1} + \frac{\partial \sigma^2_B}{\partial \mu_B}\frac{\partial \mu_B}{\partial z_1}
+\right)
+$$</p>
+
+<p>从 $u_i$ 的计算公式，我们可以得知</p>
+
+<p>$$
+\frac{\partial u_1}{\partial \sigma^2B} = \frac{\partial }{\partial \sigma^2_B}\frac{z_1 - u_B}{\sqrt{\sigma^2_B + \epsilon}} = -\frac{z_1 - \mu_B}{2(\sigma_B^2 + \epsilon)^{3/2}}
+$$</p>
+
+<p>因为有方差$\sigma_B^2$的计算公式</p>
+
+<p>$$
+\sigma^2<em>B = \frac{1}{B}\sum</em>{i=1}^B{(z_i - \mu_B)^2}
+$$</p>
+
+<p>我们可以得知 $\partial \sigma_B^2 / \partial z_1$</p>
+
+<p>$$
+\frac{\partial \sigma_B^2}{\partial z_1} = \frac{\partial }{\partial z_1}\frac{(z_1 - \mu_B)^2}{B} = 2\frac{z_1 - \mu_B}{B}
+$$</p>
+
+<p>同时，我们有</p>
+
+<p>$$
+\frac{\partial \sigma_B^2}{\partial \mu_B}
+ = \frac{1}{B}\sum_{i=1}^B{-2(z_i - \mu_B) = -\frac{2}{B}\left(\sum_{i=1}^B{z_i} - \sum_{i=1}^B{\mu_B}\right)} = 0
+$$</p>
+
+<p>因此，计算图中的紫色路线的反向传播公式是：</p>
+
+<p>$$
+-\frac{z_1 - \mu_B}{2(\sigma_B^2 + \epsilon)^{3/2}} \cdot 2\frac{z_1 - \mu_B}{B} = -\frac{(z_1 - \mu_B)^2}{(\sigma_B^2 + \epsilon)^{3/2}B}
+$$</p>
+
+<p>将三条路线的反向传播公式相加，我们就能得到“直接连接“的反向传播公式</p>
+
+<p>$$
+\frac{\partial u_i}{\partial z_i} = \frac{1}{\sqrt{\sigma^2_B + \epsilon}} -\frac{1}{B\sqrt{\sigma_B^2 + \epsilon}} -\frac{(z_1 - \mu_B)^2}{B(\sigma_B^2 + \epsilon)^{3/2}}
+$$</p>
+
+<h3 id="42-bn-中的跨越连接反向传播公式推导">4.2 BN 中的跨越连接反向传播公式推导</h3>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211227162304898.png" alt="image-20211227162304898" style="zoom:25%;" /></p>
+
+<p>对于跨越连接（$\partial u_i/\partial z_j$, where $i\neq j$），计算图中只有蓝色与紫色两条路径，所以我们有</p>
+
+<p>$$
+\frac{\partial u_i}{\partial z_j} = \begin{cases}
+\frac{1}{\sqrt{\sigma^2_B + \epsilon}} -\frac{1}{B\sqrt{\sigma_B^2 + \epsilon}} -\frac{(z_1 - \mu_B)^2}{B(\sigma_B^2 + \epsilon)^{3/2}} &amp; i=j<br />
+-\frac{1}{B\sqrt{\sigma_B^2 + \epsilon}} -\frac{(z_1 - \mu_B)^2}{B(\sigma_B^2 + \epsilon)^{3/2}} &amp; i\neq j
+\end{cases}
+$$</p>]]></content><author><name>Yutian (Mark) Chen</name></author><category term="[&quot;Neural Network&quot;]" /><category term="Neural Network" /><summary type="html"><![CDATA[0 符号表]]></summary></entry><entry xml:lang="ch"><title type="html">NLP 101: Word Embedding 词嵌入</title><link href="https://markchenyutian.github.io//blog/2021/Word-Embedding.html" rel="alternate" type="text/html" title="NLP 101: Word Embedding 词嵌入" /><published>2021-11-24T00:00:00+00:00</published><updated>2021-11-24T00:00:00+00:00</updated><id>https://markchenyutian.github.io//blog/2021/Word-Embedding</id><content type="html" xml:base="https://markchenyutian.github.io//blog/2021/Word-Embedding.html"><![CDATA[<h2 id="什么是词嵌入">什么是词嵌入</h2>
+
+<p>在处理自然语言时，模型的输入是文本字符串，然而，我们并不能对字符串进行运算操作。为了解决这个问题，我们尝试将自然语言的词汇转换为一个连续向量空间中的向量。这个过程被称为“<strong>词嵌入</strong>“。用更加形式化的语言来描述，词嵌入的过程可以这样表达：</p>
+
+<p>$$
+\text{Natural Language} \rightarrow \mathbb{R}^n
+$$</p>
+
+<h2 id="用-one-hot-编码进行词嵌入">用 One-hot 编码进行词嵌入？</h2>
+
+<p>一种符合直觉，也是最简单的词嵌入方法是使用 One-hot 编码。One-hot 编码指一个 $1\times n$ 向量中只有一个分量为1，其它分量都是0。比如说我们现在想将四个单词构成的词汇表转化为向量空间，我们可以这样做：</p>
+
+<p>$$
+\begin{aligned}
+\text{Nice} &amp;\rightarrow [1, 0, 0, 0]\<br />
+\text{to} &amp;\rightarrow [0, 1, 0, 0]\<br />
+\text{meet} &amp;\rightarrow [0, 0, 1, 0]\<br />
+\text{you} &amp;\rightarrow [0, 0, 0, 1]
+\end{aligned}
+$$</p>
+
+<p>但是这样有几个很明显的坏处：</p>
+
+<ul>
+  <li>如果我们的词汇表中有 10,000 个单词，作为映射目标的向量空间会拥有 10,000 个维度。这会导致任何试图对词向量进行运算的尝试都需要极大的计算量，也就是常说的“维度灾难”问题</li>
+  <li>在进行完词嵌入后，词语的“意思”被完全丢失了。在进行完映射后，任何词语之间的向量距离都是相同的。一个理想的映射应该在进行完词嵌入后尽可能的保留词汇本身的信息。比如我们会希望代表 “my” 和 “me” 的词向量之间的距离小于代表 “me” 和 “sun” 的词向量之间的距离。</li>
+</ul>
+
+<h2 id="使用神经网络拟合词嵌入函数">使用神经网络“拟合”词嵌入函数</h2>
+
+<p>为了解决这些问题，我们可以使用一种新的 approach。<strong>假设存在一个理想的函数 $f$ 能够将自然词汇映射为一个有意义的词向量。我们可以训练一个神经网络来拟合这个函数</strong></p>
+
+<p>但是这引入了一个新的问题 - 神经网络在训练过程中需要一个明确定义的损失函数来进行反向传播与参数更新。然而<strong>我们是不知道最佳词嵌入函数的输出的，也就是说如果直接拟合词嵌入函数的话我们没有 Ground Truth / Labeled Data</strong></p>
+
+<p>解决这个问题的方法非常简单：我们<strong>先给神经网络一个已经 well-defined 的问题来进行训练，然后使用训练好的模型在推理阶段来创建自然语言到词向量空间之间的映射</strong>。在寻找词嵌入这个问题上，我们可以在训练阶段给定模型上下文（context）让模型预测在一个特定位置的词的概率分布。</p>
+
+<h2 id="nnlm---第一批试图解决nlp问题的神经网络">NNLM - 第一批试图解决NLP问题的神经网络</h2>
+
+<h3 id="用nnlm预测词汇序列">用NNLM预测词汇序列</h3>
+
+<p>NNLM 是 “Neural Net Language Model” 的缩写。这是第一批用来解决自然语言处理问题的神经网络模型之一。NNLM 一开始的目的是<strong>给定第$n$个到第$n + k - 1$个词汇 ，预测第 $n + k$ 个词汇的概率分布</strong>。</p>
+
+<p>一个NNLM模型由三个部分组成：</p>
+
+<ol>
+  <li>
+    <p>使用一个参数矩阵 $C$ 将 One-hot 编码的词向量转换为 $\mathbb{R}^n$ 向量空间中的一个向量</p>
+
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211125121222905.png" alt="image-20211125121222905" style="width:500px" /></p>
+  </li>
+  <li>
+    <p>将上一步得到的词向量拼接起来，我们可以得到一个“上下文”向量 $x$。通过一个非线性的隐藏层 $b + Wx + \tanh{(b_2 + W_2x)}$的计算，我们会得到在 $n + k$ 位置的词汇“概率分布”。这里的“概率分布”打了引号因为这时候的向量并不满足一些概率分布的特征：比如各个分量都为非负数且相加之和为1。</p>
+
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211125121235835.png" alt="image-20211125121235835" /></p>
+  </li>
+  <li>
+    <p>为了将最后输出的向量变成真正的概率分布，我们需要用 Softmax 函数处理（正则化）这个向量</p>
+
+    <p><img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211125121729274.png" alt="image-20211125121729274" /></p>
+  </li>
+</ol>
+
+<h3 id="nnlm-构建词嵌入">NNLM 构建词嵌入</h3>
+
+<p>然而，正如在前文所说的一样，<strong>训练好的NNLM 实际上表示着一种创建词嵌入的函数</strong>。假如我们的词汇表只有四个单词 “Once”, “upon”, “a”, “time”，我们现在给定 “upon” “a” “time”，想预测 “there” 这个位置的词汇。</p>
+
+<p>“Once upon a time <strong>there</strong> …”</p>
+
+<p>这个词汇并不在我们的词汇表中，这种情况下，我们可以将这个词的词向量以“预测结果的词向量的加权和”来定义：</p>
+
+<p>$$
+C(j) \leftarrow \sum_{i\in V}{C(i)P(i \mid w_{t-n+1}^{t-1})}
+$$</p>
+
+<p>下面是一个描述这种构建方法的 toy demo</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/image-20211125191009240.png" alt="image-20211125191009240" /></p>
+
+<h2 id="word2vec-模型">Word2Vec 模型</h2>
+
+<p>在<a href="https://arxiv.org/pdf/1301.3781.pdf">Word2Vec 论文</a>中，作者建立了两种不同的神经网络模型来进行词嵌入。</p>
+
+<h3 id="word2vec-cbow-模型">Word2Vec CBOW 模型</h3>
+
+<p>CBOW 是 “Continuous Bag of Words” 的缩写。这是一种用目标词汇周围的单词进行采样的词嵌入模型。</p>
+
+<p>这个模型是基于 NNLM 的基础上进行改进得到的，它与NNLM不一样的地方主要有两点：</p>
+
+<ul>
+  <li>
+    <p>CBOW为了预测 $t$ 位置的单词，这个模型会接受 $t$ 周围的单词 - $t-1$, $t-2$,…, $t+2$ 位置的词汇，而 NNLM 只会接受 $t$ 之前的单词。</p>
+  </li>
+  <li>
+    <p>NNLM 中在第二部里面会将所有的词向量拼接起来，而 CBOW 会对这些词向量进行按位相加。因为加法是满足交换律的，所以这些输入的词汇的顺序是无关紧要的。这也是为什么这个模型叫做 “Bag of Word” - 词汇的顺序是无关紧要的。</p>
+  </li>
+</ul>
+
+<p>通过和 NNLM 一样的方法，我们可以从训练好的 CBOW 模型中获得自然语言与词向量空间之间的映射关系。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_EAF813800A83-1.jpeg" alt="IMG_EAF813800A83-1" /></p>
+
+<h3 id="word2vec-skip-gram-模型">Word2Vec Skip Gram 模型</h3>
+
+<p>Skip Gram 是一种和 CBOW 完全相反的模型 - 给定第 $k$ 个词，Skip gram 模型会预测这个词周边的词的概率分布。</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_E465C9E1EBF7-1.jpeg" alt="IMG_E465C9E1EBF7-1" /></p>
+
+<h3 id="cbow-还是-skip-gram">CBOW 还是 Skip Gram?</h3>
+
+<p>在论文中，作者表示 Skip-gram 模型在小数据集上表现更好，而且对于词频较低的词汇依然能够较好的提取词向量。而 CBOW 的训练速度普遍高于 Skip-gram 并且对于高词频词汇的词向量估计质量更高。</p>
+
+<h2 id="词嵌入真的能够保留词汇的意思吗">词嵌入真的能够保留词汇的意思吗？</h2>
+
+<p>我认为是可以的！这里是一个论文中举的很神奇的demo：</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vec("king") - vec("man") + vec("woman") = vec("queen")
+</code></pre></div></div>
+
+<p>也就是说，当你将 “king” 的词向量与 “man”的词向量相减后，你会得到一种表示类似”王权“语义的词向量，当在这个语义的基础上加上表示女性的词向量你就会得到 “queen”。</p>
+
+<h2 id="参考材料">参考材料</h2>
+
+<p>https://arxiv.org/pdf/1301.3781.pdf</p>
+
+<p>https://towardsdatascience.com/nlp-101-word2vec-skip-gram-and-cbow-93512ee24314</p>
+
+<p>https://www.baeldung.com/cs/word-embeddings-cbow-vs-skip-gram</p>
+
+<p>https://zhuanlan.zhihu.com/p/206878986</p>
+
+<p>https://www.youtube.com/watch?v=kEMJRjEdNzM&amp;list=PLoROMvodv4rOhcuXMZkNm7j3fVwBBY42z</p>]]></content><author><name>Yutian (Mark) Chen</name></author><category term="[&quot;Neural Network&quot;]" /><category term="Machine Learning" /><category term="NLP" /><category term="Neural Network" /><summary type="html"><![CDATA[什么是词嵌入]]></summary></entry></feed>

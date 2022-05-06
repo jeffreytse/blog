@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>A* Search and its Variants | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="A* Search and its Variants">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Let $g(s)$ denote the cost of a least-cost path from $s_{start}$ to $s$, we then have \(g(s) = \min_{s'\in pred(s)}{(g(s') + c(s', s))}\) That is, the minimum cost from $s_{start}$ to $s$ equals to the min cost to get to the predecessor of $s$ (a.k.a. $s’$ in the formula above) add the actual cost from $s’$ to $s$. A* Search :package: A* Search is guaranteed to Return an optimal path Perform minimal number of state expansions required to guarantee optimality. The predicted cost to get from $s_{start}$ to $s_{goal}$ through state $s$ can be estimated through \(f(s_{start}, s, s_{goal}) = g(s_{start}, s) + h(s, s_{goal})\) $g$ represents the actual minimum cost of getting to $s$ from the starting state. $h$ represents a heuristic estimation of cost to get to $s_{goal}$ from $s$. Requirement of Heuristic Function Heuristic function must be Admissible - The heuristic function must underestimate / accurately predict the cost. \(h(s) \leq \min{c(s, s_{goal})}\) Consistent - the function $h$ should satisfy the triangle inequality. \(h(s_{goal}, s_{goal}) = 0,\quad h(S) \leq c(s, s') + h(s')\) A consistent heuristic function $h$ must be admissible. Multi-goal A* Search (With Imaginary Goal State) When there are multiple goals, we can construct an imaginary goal in the graph that connects all goals. If goals have different weights (we have preference to certain goal over others), we can adjust the weights of edge between each goal state to Imaginary Goal state. Weighted A* Search :package: The weighted A* allow us to get sub-optimal result with less state expansion, which consumes less memory and computation time. The scale of explored nodes in A* search is much smaller than in the dijkastra algorithm. This is because $f(s) = h(s) + g(s)$ provides two constraints on the nodes to explore. However, for high dimensional graph, the algorithm will soon out of memory. We need some stronger constraint to the expansion of nodes. Weighted A*, is one of the algorithm that apply a stronger constraint on expansion, with the cost of losing optimality of A* search. Instead of using $f(s) = h(s) + g(s)$, the weighted A* puts a weight $\epsilon$ on heuristic function \(f(s) = g(s) + \epsilon h(s)\) This will make the algorithm has more bias towards states that are closer to goal. Definition ($\varepsilon$-suboptimal) $cost(solution) \leq \varepsilon\cdot cost(optimal\;solution)$ Common Heuristic Functions Heuristic Function Equation Euclidean Distance $h(x, y) = \sqrt{(x - x_{goal})^2 + (y - y_{goal})^2}$ Manhattan Distance $h(x, y) = abs(x - x_{goal}) + abs(y - y_{goal})$ Diagonal Distance $h(x, y) = max(abs(x - x_{goal}), abs(y - y_{goal}))$ These heuristic functions are both consistent and admissible. :zap: Useful Properties of Heuristic Functions If $h_1(s)$, $h_2(s)$ are consistent, then - $h(s) = \max(h_1(s), h_2(s))$ is also consistent. If A* uses $\varepsilon$-consistent heuristics \(\forall s\neq s_{goal}\quad h(s_{goal}) = 0 \wedge h(s) \leq \varepsilon c(s, succ(s)) + h(succ(s))\) then A* is $\varepsilon$-suboptimal \(Cost(solution) \leq \varepsilon \cdot Cost(optimal\;solution)\) Weighted A* with $f(s) = g(s) + \varepsilon h(s)$ is A* with $\varepsilon$ -consistent heuristics. $h_1(s)$, $h_2(s)$ are both consistent, then $h_1(s) + h_2(s)$ is $\varepsilon$-consistent. :question: what is $\varepsilon$ here? There is no such variable in the $h_1$ and $h_2$… Why we Need Multiple Heuristic? :package: Can we use a bunch of inadmissible heuristics simultaneously while preserving guarantees on completeness and bounded sub-optimality? To solve real-world problem with high DoF robots, we need to use a series of arbitrary, inadmissible heuristic functions! How can we reach this result …? :drum::drum::drum: Multi-heuristic A*! Why not taking max directly? Information is lost when using max function Creates local minima inside the search space Requires all heuristics to be admissible :arrow_left: this is a real problem Multi-Heuristic A* Search Version 1 - Parallel A* Run $N$ independent, inadmissible A* searches. If one of them find the solution, then the whole algorithm finds the solution. Version 2 - Shared A* Search Share information between searches Share the Open and Closed between algorithms. When one search algorithm adds a node into Open, add to other algorithm’s Open as well. Such shared information have several advantages: Different inadmissive A* search algorithms can help each other to get out the local minimas. Since the Closed are also shared between algorithms, states are expanded at most once across ALL searches Yet, there are still some problems: No completeness guarantees or bounds on solution quality. Version 3 - Anchor Search Search with admissible heuristic function to control expansions. :package: In this way, the algorithm is complete and provide bounds on solution quality. The A* that use admissible heuristic function is called Anchor Search. The Anchor search can help ensure the completness of multi-heuristic A*.">
+<meta property="og:description" content="Let $g(s)$ denote the cost of a least-cost path from $s_{start}$ to $s$, we then have \(g(s) = \min_{s'\in pred(s)}{(g(s') + c(s', s))}\) That is, the minimum cost from $s_{start}$ to $s$ equals to the min cost to get to the predecessor of $s$ (a.k.a. $s’$ in the formula above) add the actual cost from $s’$ to $s$. A* Search :package: A* Search is guaranteed to Return an optimal path Perform minimal number of state expansions required to guarantee optimality. The predicted cost to get from $s_{start}$ to $s_{goal}$ through state $s$ can be estimated through \(f(s_{start}, s, s_{goal}) = g(s_{start}, s) + h(s, s_{goal})\) $g$ represents the actual minimum cost of getting to $s$ from the starting state. $h$ represents a heuristic estimation of cost to get to $s_{goal}$ from $s$. Requirement of Heuristic Function Heuristic function must be Admissible - The heuristic function must underestimate / accurately predict the cost. \(h(s) \leq \min{c(s, s_{goal})}\) Consistent - the function $h$ should satisfy the triangle inequality. \(h(s_{goal}, s_{goal}) = 0,\quad h(S) \leq c(s, s') + h(s')\) A consistent heuristic function $h$ must be admissible. Multi-goal A* Search (With Imaginary Goal State) When there are multiple goals, we can construct an imaginary goal in the graph that connects all goals. If goals have different weights (we have preference to certain goal over others), we can adjust the weights of edge between each goal state to Imaginary Goal state. Weighted A* Search :package: The weighted A* allow us to get sub-optimal result with less state expansion, which consumes less memory and computation time. The scale of explored nodes in A* search is much smaller than in the dijkastra algorithm. This is because $f(s) = h(s) + g(s)$ provides two constraints on the nodes to explore. However, for high dimensional graph, the algorithm will soon out of memory. We need some stronger constraint to the expansion of nodes. Weighted A*, is one of the algorithm that apply a stronger constraint on expansion, with the cost of losing optimality of A* search. Instead of using $f(s) = h(s) + g(s)$, the weighted A* puts a weight $\epsilon$ on heuristic function \(f(s) = g(s) + \epsilon h(s)\) This will make the algorithm has more bias towards states that are closer to goal. Definition ($\varepsilon$-suboptimal) $cost(solution) \leq \varepsilon\cdot cost(optimal\;solution)$ Common Heuristic Functions Heuristic Function Equation Euclidean Distance $h(x, y) = \sqrt{(x - x_{goal})^2 + (y - y_{goal})^2}$ Manhattan Distance $h(x, y) = abs(x - x_{goal}) + abs(y - y_{goal})$ Diagonal Distance $h(x, y) = max(abs(x - x_{goal}), abs(y - y_{goal}))$ These heuristic functions are both consistent and admissible. :zap: Useful Properties of Heuristic Functions If $h_1(s)$, $h_2(s)$ are consistent, then - $h(s) = \max(h_1(s), h_2(s))$ is also consistent. If A* uses $\varepsilon$-consistent heuristics \(\forall s\neq s_{goal}\quad h(s_{goal}) = 0 \wedge h(s) \leq \varepsilon c(s, succ(s)) + h(succ(s))\) then A* is $\varepsilon$-suboptimal \(Cost(solution) \leq \varepsilon \cdot Cost(optimal\;solution)\) Weighted A* with $f(s) = g(s) + \varepsilon h(s)$ is A* with $\varepsilon$ -consistent heuristics. $h_1(s)$, $h_2(s)$ are both consistent, then $h_1(s) + h_2(s)$ is $\varepsilon$-consistent. :question: what is $\varepsilon$ here? There is no such variable in the $h_1$ and $h_2$… Why we Need Multiple Heuristic? :package: Can we use a bunch of inadmissible heuristics simultaneously while preserving guarantees on completeness and bounded sub-optimality? To solve real-world problem with high DoF robots, we need to use a series of arbitrary, inadmissible heuristic functions! How can we reach this result …? :drum::drum::drum: Multi-heuristic A*! Why not taking max directly? Information is lost when using max function Creates local minima inside the search space Requires all heuristics to be admissible :arrow_left: this is a real problem Multi-Heuristic A* Search Version 1 - Parallel A* Run $N$ independent, inadmissible A* searches. If one of them find the solution, then the whole algorithm finds the solution. Version 2 - Shared A* Search Share information between searches Share the Open and Closed between algorithms. When one search algorithm adds a node into Open, add to other algorithm’s Open as well. Such shared information have several advantages: Different inadmissive A* search algorithms can help each other to get out the local minimas. Since the Closed are also shared between algorithms, states are expanded at most once across ALL searches Yet, there are still some problems: No completeness guarantees or bounds on solution quality. Version 3 - Anchor Search Search with admissible heuristic function to control expansions. :package: In this way, the algorithm is complete and provide bounds on solution quality. The A* that use admissible heuristic function is called Anchor Search. The Anchor search can help ensure the completness of multi-heuristic A*.">
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2022/Multi-heuristic-Astar.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2022/Multi-heuristic-Astar.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-04-20T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="A* Search and its Variants">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2022-04-20T00:00:00+00:00","datePublished":"2022-04-20T00:00:00+00:00","description":"Let $g(s)$ denote the cost of a least-cost path from $s_{start}$ to $s$, we then have \\(g(s) = \\min_{s&#39;\\in pred(s)}{(g(s&#39;) + c(s&#39;, s))}\\) That is, the minimum cost from $s_{start}$ to $s$ equals to the min cost to get to the predecessor of $s$ (a.k.a. $s’$ in the formula above) add the actual cost from $s’$ to $s$. A* Search :package: A* Search is guaranteed to Return an optimal path Perform minimal number of state expansions required to guarantee optimality. The predicted cost to get from $s_{start}$ to $s_{goal}$ through state $s$ can be estimated through \\(f(s_{start}, s, s_{goal}) = g(s_{start}, s) + h(s, s_{goal})\\) $g$ represents the actual minimum cost of getting to $s$ from the starting state. $h$ represents a heuristic estimation of cost to get to $s_{goal}$ from $s$. Requirement of Heuristic Function Heuristic function must be Admissible - The heuristic function must underestimate / accurately predict the cost. \\(h(s) \\leq \\min{c(s, s_{goal})}\\) Consistent - the function $h$ should satisfy the triangle inequality. \\(h(s_{goal}, s_{goal}) = 0,\\quad h(S) \\leq c(s, s&#39;) + h(s&#39;)\\) A consistent heuristic function $h$ must be admissible. Multi-goal A* Search (With Imaginary Goal State) When there are multiple goals, we can construct an imaginary goal in the graph that connects all goals. If goals have different weights (we have preference to certain goal over others), we can adjust the weights of edge between each goal state to Imaginary Goal state. Weighted A* Search :package: The weighted A* allow us to get sub-optimal result with less state expansion, which consumes less memory and computation time. The scale of explored nodes in A* search is much smaller than in the dijkastra algorithm. This is because $f(s) = h(s) + g(s)$ provides two constraints on the nodes to explore. However, for high dimensional graph, the algorithm will soon out of memory. We need some stronger constraint to the expansion of nodes. Weighted A*, is one of the algorithm that apply a stronger constraint on expansion, with the cost of losing optimality of A* search. Instead of using $f(s) = h(s) + g(s)$, the weighted A* puts a weight $\\epsilon$ on heuristic function \\(f(s) = g(s) + \\epsilon h(s)\\) This will make the algorithm has more bias towards states that are closer to goal. Definition ($\\varepsilon$-suboptimal) $cost(solution) \\leq \\varepsilon\\cdot cost(optimal\\;solution)$ Common Heuristic Functions Heuristic Function Equation Euclidean Distance $h(x, y) = \\sqrt{(x - x_{goal})^2 + (y - y_{goal})^2}$ Manhattan Distance $h(x, y) = abs(x - x_{goal}) + abs(y - y_{goal})$ Diagonal Distance $h(x, y) = max(abs(x - x_{goal}), abs(y - y_{goal}))$ These heuristic functions are both consistent and admissible. :zap: Useful Properties of Heuristic Functions If $h_1(s)$, $h_2(s)$ are consistent, then - $h(s) = \\max(h_1(s), h_2(s))$ is also consistent. If A* uses $\\varepsilon$-consistent heuristics \\(\\forall s\\neq s_{goal}\\quad h(s_{goal}) = 0 \\wedge h(s) \\leq \\varepsilon c(s, succ(s)) + h(succ(s))\\) then A* is $\\varepsilon$-suboptimal \\(Cost(solution) \\leq \\varepsilon \\cdot Cost(optimal\\;solution)\\) Weighted A* with $f(s) = g(s) + \\varepsilon h(s)$ is A* with $\\varepsilon$ -consistent heuristics. $h_1(s)$, $h_2(s)$ are both consistent, then $h_1(s) + h_2(s)$ is $\\varepsilon$-consistent. :question: what is $\\varepsilon$ here? There is no such variable in the $h_1$ and $h_2$… Why we Need Multiple Heuristic? :package: Can we use a bunch of inadmissible heuristics simultaneously while preserving guarantees on completeness and bounded sub-optimality? To solve real-world problem with high DoF robots, we need to use a series of arbitrary, inadmissible heuristic functions! How can we reach this result …? :drum::drum::drum: Multi-heuristic A*! Why not taking max directly? Information is lost when using max function Creates local minima inside the search space Requires all heuristics to be admissible :arrow_left: this is a real problem Multi-Heuristic A* Search Version 1 - Parallel A* Run $N$ independent, inadmissible A* searches. If one of them find the solution, then the whole algorithm finds the solution. Version 2 - Shared A* Search Share information between searches Share the Open and Closed between algorithms. When one search algorithm adds a node into Open, add to other algorithm’s Open as well. Such shared information have several advantages: Different inadmissive A* search algorithms can help each other to get out the local minimas. Since the Closed are also shared between algorithms, states are expanded at most once across ALL searches Yet, there are still some problems: No completeness guarantees or bounds on solution quality. Version 3 - Anchor Search Search with admissible heuristic function to control expansions. :package: In this way, the algorithm is complete and provide bounds on solution quality. The A* that use admissible heuristic function is called Anchor Search. The Anchor search can help ensure the completness of multi-heuristic A*.","headline":"A* Search and its Variants","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2022/Multi-heuristic-Astar.html"},"url":"https://markchenyutian.github.io//blog/2022/Multi-heuristic-Astar.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">A* Search and its Variants</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-04-20T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Apr 20, 2022
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 14 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/blog/tags.html#Machine%20Learning">#Machine Learning</a><a class="post-tag" href="/blog/tags.html#Notes">#Notes</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>Let $g(s)$ denote the cost of a least-cost path from $s_{start}$ to $s$, we then have
+$$
+g(s) = \min_{s’\in pred(s)}{(g(s’) + c(s’, s))}
+$$
+That is, the minimum cost from $s_{start}$ to $s$ equals to the min cost to get to the predecessor of $s$ (a.k.a. $s’$ in the formula above) add the actual cost from $s’$ to $s$.</p>
+
+<h2 id="a-search">A* Search</h2>
+
+<blockquote>
+  <p><img class="emoji" title=":package:" alt=":package:" raw="📦" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4e6.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">A* Search is guaranteed to <strong>Return an optimal path</strong></p>
+
+  <p>Perform <strong>minimal number of state expansions</strong> required to guarantee optimality.</p>
+</blockquote>
+
+<p>The predicted cost to get from $s_{start}$ to $s_{goal}$ through state $s$ can be estimated through
+$$
+f(s_{start}, s, s_{goal}) = g(s_{start}, s) + h(s, s_{goal})
+$$
+$g$ represents the <strong>actual</strong> minimum cost of getting to $s$ from the starting state. $h$ represents a <strong>heuristic estimation</strong> of cost to get to $s_{goal}$ from $s$.</p>
+
+<h3 id="requirement-of-heuristic-function">Requirement of Heuristic Function</h3>
+
+<p>Heuristic function must be</p>
+
+<p><strong>Admissible</strong> - The heuristic function must <em>underestimate / accurately predict the cost</em>.
+$$
+h(s) \leq \min{c(s, s_{goal})}
+$$
+<strong>Consistent</strong> - the function $h$ should satisfy the triangle inequality.
+$$
+h(s_{goal}, s_{goal}) = 0,\quad h(S) \leq c(s, s’) + h(s’)
+$$</p>
+
+<p><mark>A consistent heuristic function $h$ must be admissible.</mark></p>
+
+<h2 id="multi-goal-a-search-with-imaginary-goal-state">Multi-goal A* Search (With Imaginary Goal State)</h2>
+
+<p>When there are multiple goals, we can construct an <em>imaginary goal</em> in the graph that connects all goals.</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/IMG_C066319B49CB-1.jpeg" alt="IMG_C066319B49CB-1"></p>
+
+<p>If goals have different weights (we have preference to certain goal over others), we can adjust the weights of edge between each goal state to <code class="language-plaintext highlighter-rouge">Imaginary Goal</code> state.</p>
+
+<h2 id="weighted-a-search">Weighted A* Search</h2>
+
+<blockquote>
+  <p><img class="emoji" title=":package:" alt=":package:" raw="📦" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4e6.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">The weighted A* allow us to get sub-optimal result with less state expansion, which consumes less memory and computation time.</p>
+</blockquote>
+
+<p>The scale of explored nodes in A* search is much smaller than in the dijkastra algorithm. This is because $f(s) = h(s) + g(s)$ provides two constraints on the nodes to explore.</p>
+
+<p>However, for high dimensional graph, the algorithm will soon out of memory. We need some stronger constraint to the expansion of nodes. <strong>Weighted A*</strong>, is one of the algorithm that apply a stronger constraint on expansion, with the cost of losing optimality of A* search.</p>
+
+<p>Instead of using $f(s) = h(s) + g(s)$, the weighted A* puts a weight $\epsilon$ on heuristic function
+$$
+f(s) = g(s) + \epsilon h(s)
+$$
+This will make the algorithm has more <strong>bias towards states that are closer to goal.</strong></p>
+
+<p><strong>Definition ($\varepsilon$-suboptimal)</strong> $cost(solution) \leq \varepsilon\cdot cost(optimal\;solution)$</p>
+
+<h2 id="common-heuristic-functions">Common Heuristic Functions</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Heuristic Function</th>
+      <th>Equation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Euclidean Distance</td>
+      <td>$h(x, y) = \sqrt{(x - x_{goal})^2 + (y - y_{goal})^2}$</td>
+    </tr>
+    <tr>
+      <td>Manhattan Distance</td>
+      <td>$h(x, y) = abs(x - x_{goal}) + abs(y - y_{goal})$</td>
+    </tr>
+    <tr>
+      <td>Diagonal Distance</td>
+      <td>$h(x, y) = max(abs(x - x_{goal}), abs(y - y_{goal}))$</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>These heuristic functions are both <strong>consistent</strong> and <strong>admissible</strong>.</p>
+</blockquote>
+
+<hr>
+
+<h2 id="zap-useful-properties-of-heuristic-functions">
+<img class="emoji" title=":zap:" alt=":zap:" raw="⚡️" src="https://github.githubassets.com/images/icons/emoji/unicode/26a1.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">Useful Properties of Heuristic Functions</h2>
+
+<ol>
+  <li>
+    <p>If $h_1(s)$, $h_2(s)$ are consistent, then - $h(s) = \max(h_1(s), h_2(s))$ is also consistent.</p>
+  </li>
+  <li>
+    <p>If A* uses $\varepsilon$-consistent heuristics
+ $$
+ \forall s\neq s_{goal}\quad h(s_{goal}) = 0 \wedge h(s) \leq \varepsilon c(s, succ(s)) + h(succ(s))
+ $$
+ then A* is $\varepsilon$-suboptimal
+ $$
+ Cost(solution) \leq \varepsilon \cdot Cost(optimal\;solution)
+ $$</p>
+  </li>
+  <li>
+    <p>Weighted A* with $f(s) = g(s) + \varepsilon h(s)$ is A* with $\varepsilon$ -consistent heuristics.</p>
+  </li>
+  <li>
+    <p>$h_1(s)$, $h_2(s)$ are both consistent, then $h_1(s) + h_2(s)$ is $\varepsilon$-consistent.</p>
+
+    <p><img class="emoji" title=":question:" alt=":question:" raw="❓" src="https://github.githubassets.com/images/icons/emoji/unicode/2753.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">what is $\varepsilon$ here? There is no such variable in the $h_1$ and $h_2$…</p>
+  </li>
+</ol>
+
+<h2 id="why-we-need-multiple-heuristic">Why we Need Multiple Heuristic?</h2>
+
+<blockquote>
+  <p><img class="emoji" title=":package:" alt=":package:" raw="📦" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4e6.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">Can we use a bunch of <strong>inadmissible heuristics simultaneously</strong> while preserving guarantees on completeness and bounded sub-optimality?</p>
+</blockquote>
+
+<p>To solve real-world problem with high DoF robots, we need to use a series of <strong>arbitrary, inadmissible</strong> heuristic functions! How can we reach this result …?<img class="emoji" title=":drum:" alt=":drum:" raw="🥁" src="https://github.githubassets.com/images/icons/emoji/unicode/1f941.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))"><img class="emoji" title=":drum:" alt=":drum:" raw="🥁" src="https://github.githubassets.com/images/icons/emoji/unicode/1f941.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))"><img class="emoji" title=":drum:" alt=":drum:" raw="🥁" src="https://github.githubassets.com/images/icons/emoji/unicode/1f941.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))"><strong><em>Multi-heuristic A*!</em></strong></p>
+
+<p><strong>Why not taking <code class="language-plaintext highlighter-rouge">max</code> directly?</strong></p>
+
+<ol>
+  <li>Information is lost when using <code class="language-plaintext highlighter-rouge">max</code> function</li>
+  <li>Creates local minima inside the search space</li>
+  <li>Requires all heuristics to be admissible<img class="emoji" title=":arrow_left:" alt=":arrow_left:" raw="⬅️" src="https://github.githubassets.com/images/icons/emoji/unicode/2b05.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))"><em>this is a real problem</em>
+</li>
+</ol>
+
+<h2 id="multi-heuristic-a-search">Multi-Heuristic A* Search</h2>
+
+<h3 id="version-1---parallel-a">Version 1 - Parallel A*</h3>
+
+<p>Run $N$ independent, inadmissible A* searches. If one of them find the solution, then the whole algorithm finds the solution.</p>
+
+<h3 id="version-2---shared-a-search">Version 2 - Shared A* Search</h3>
+
+<p>Share information between searches</p>
+
+<blockquote>
+  <p>Share the <code class="language-plaintext highlighter-rouge">Open</code> and <code class="language-plaintext highlighter-rouge">Closed</code> between algorithms. When one search algorithm adds a node into <code class="language-plaintext highlighter-rouge">Open</code>, add to other algorithm’s <code class="language-plaintext highlighter-rouge">Open</code> as well.</p>
+</blockquote>
+
+<p>Such shared information have several advantages:</p>
+
+<ol>
+  <li>Different inadmissive A* search algorithms can <em>help each other</em> to get out the local minimas.</li>
+  <li>Since the <code class="language-plaintext highlighter-rouge">Closed</code> are also shared between algorithms, states are expanded at most <strong>once</strong> across ALL searches</li>
+</ol>
+
+<p>Yet, there are still some problems:</p>
+
+<ol>
+  <li>No completeness guarantees or bounds on solution quality.</li>
+</ol>
+
+<h3 id="version-3---anchor-search">Version 3 - Anchor Search</h3>
+
+<p>Search with admissible heuristic function to <strong>control expansions</strong>.</p>
+
+<blockquote>
+  <p><img class="emoji" title=":package:" alt=":package:" raw="📦" src="https://github.githubassets.com/images/icons/emoji/unicode/1f4e6.png" style="vertical-align: middle; display: inline; max-width: 1em; visibility: hidden;" onload="this.style.visibility='visible'" onerror="this.replaceWith(this.getAttribute('raw'))">In this way, the algorithm is <strong>complete</strong> and <strong>provide bounds on solution quality</strong>.</p>
+</blockquote>
+
+<p>The A* that use admissible heuristic function is called <code class="language-plaintext highlighter-rouge">Anchor Search</code>.</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/Screen%20Shot%202022-03-15%20at%2022.49.22.png" alt="Screen Shot 2022-03-15 at 22.49.22" style="zoom: 25%;"></p>
+
+<p>The <code class="language-plaintext highlighter-rouge">Anchor</code> search can help ensure the completness of multi-heuristic A*.</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2022/clac-embeddable.html" title="Embeddable Clac Execution Environment">Embeddable Clac Execution Environment</a><span></span>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2022/the-fences.html" title="">The Fences | AR Web Application</a></li><li><a class="post-link" href="/blog/2021/magc-map-intro.html" title="">MAGC Map Structural Design</a></li><li><a class="post-link" href="/blog/2021/Seq2Seq.html" title="">NLP 101: Seq2Seq 模型</a></li><li><a class="post-link" href="/blog/2022/Attention-Mechanism.html" title="">NLP 101: Attention Mechanism</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/type-LaTeX-fast.html" title="">How to Type LaTeX Fast &amp; Elegant - A Guide from &amp;...</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="">NLP 101: Word Embedding 词嵌入</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/sql-lecture-1.html" title="">SQL - Basic Query, Union and Inner Join</a></li>
+            
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2021/2048-Project-1.html" title="">2048 Project (1)</a></li>
+            
+          
+          
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

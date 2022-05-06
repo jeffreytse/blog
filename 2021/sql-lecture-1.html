@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--<meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c"></meta>--><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>SQL - Basic Query, Union and Inner Join | Yutian’s Blog</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="SQL - Basic Query, Union and Inner Join">
+<meta name="author" content="Yutian (Mark) Chen">
+<meta property="og:locale" content="en_US">
+<meta name="description" content='SQL = Structured Query Language We use query to poll data from database Query and Select with SQL SQL - just write the query in SQL, we usually use CAPITAL to distinct SQL keyword out. Generally, we put a newline before each KEYWORD to make query easier to read SELECT Query SELECT [data] FROM [tableName]; Select all columns SELECT * FROM cs_data; This will return the whole table (all columns) Select Multiple Columns SELECT Col1, Col2 FROM table_name; Use ORDER to Sort the Data SELECT [colName] FROM [DataTableName] ORDER BY [colName2] {ASC, DESC}; database will return the columns given by [colName] from [DataTableName]. Then, sort all rows by the value on [colName2] in Ascending Rank if ASC Descending Rank if DESC Example SELECT * FROM cs_data ORDER BY Language ASC; We can sort the data and introduce “tie breaker” by appending several sorting conditions SELECT [colName] FROM [DataTableName] ORDER BY [colName2] ASC, [colName3] DESC; Get colName from DataTableName, then sort with colName2 in ascending order. If there are rows with same rank, sort them with value of colName3 in descending order. Limit the Rows returned with LIMIT keyword SELECT * FROM cs_data ORDER BY Rating DESC LIMIT 3; The above code will get the top 3 CS courses Get all Distinct values in database with DISTINCT keyword SELECT DISTINCT Language FROM cs_data; SELECT DISTINCT [col1], [col2] FROM [table_name]; SELECT DISTINCT Type, Color FROM food_data ORDER BY Type ASC; Get all the possible values of Type and Color and arrange them in Ascending order with respect of value of Type. Filter rows using WHERE Keyword SELECT * FROM [table_name] WHERE [col_name]=[value]; Besides WHERE, there are also boolean operations between conditions - for instance AND, OR and NOT. Example SELECT * FROM cs_data WHERE Language="C" AND Rating &gt;= 4; Conditioning with LIKE Keyword % Pattern Matching (“Star”) %STR Represents the condition that String that end with “STR” 123% Represent the condition that String that start with “123” %ABC% Represent the condition that String contain “ABC” inside it _ Pattern Matching (“Wildcard”) a_c represent a pattern that some string that start with a and ends with c with a single char between them a_c -&gt; abc, a+c, … Get all the vegetables that name doesn’t start with c: SELECT * FROM food_data WHERE Type="vegetables" AND NOT Name LIKE "c%"; Operations with SQL Algorithmic Operations SELECT Number % 1000, ROUND(Hours) FROM cs_data; Return the rows where Number property is mod 1000 and Hours property is rounded Alias in SQL using AS keyword Using AS, we can give column a ‘nickname’ SELECT Number % 1000 AS ShortNumber FROM cs_data; Getting Sum and Avg with SUM, AVG and COUNT Keyword SELECT COUNT(*), SUM(Hours), AVG(Rating) FROM cs_data WHERE language = "Python"; COUNT(*) - counting rows Grouping Rows with GROUP Keyword SELECT Language, Count(*), SUM(Hours), AVG(Rating) FROM cs_data GROUP BY Language; Use JOIN and UNION Combine SELECT Results with UNION SELECT a FROM cs_table UNION SELECT b FROM cs_table If using UNION, the repeated result will be removed If using UNION ALL, the repeated result will be reserved Combine Data from Different Table with JOIN INNER JOIN ... ON... will combine the rows in condition SELECT NAME, SUM(CostPerPound * Pounds) AS TotalCost FROM order_data INNER JOIN price_data ON order_data.OrderID = price_data.FoodID GROUP BY Name; Creating variables using CREATE VIEW You can create a variable as a specific view of table using CREATE VIEW command.'>
+<meta property="og:description" content='SQL = Structured Query Language We use query to poll data from database Query and Select with SQL SQL - just write the query in SQL, we usually use CAPITAL to distinct SQL keyword out. Generally, we put a newline before each KEYWORD to make query easier to read SELECT Query SELECT [data] FROM [tableName]; Select all columns SELECT * FROM cs_data; This will return the whole table (all columns) Select Multiple Columns SELECT Col1, Col2 FROM table_name; Use ORDER to Sort the Data SELECT [colName] FROM [DataTableName] ORDER BY [colName2] {ASC, DESC}; database will return the columns given by [colName] from [DataTableName]. Then, sort all rows by the value on [colName2] in Ascending Rank if ASC Descending Rank if DESC Example SELECT * FROM cs_data ORDER BY Language ASC; We can sort the data and introduce “tie breaker” by appending several sorting conditions SELECT [colName] FROM [DataTableName] ORDER BY [colName2] ASC, [colName3] DESC; Get colName from DataTableName, then sort with colName2 in ascending order. If there are rows with same rank, sort them with value of colName3 in descending order. Limit the Rows returned with LIMIT keyword SELECT * FROM cs_data ORDER BY Rating DESC LIMIT 3; The above code will get the top 3 CS courses Get all Distinct values in database with DISTINCT keyword SELECT DISTINCT Language FROM cs_data; SELECT DISTINCT [col1], [col2] FROM [table_name]; SELECT DISTINCT Type, Color FROM food_data ORDER BY Type ASC; Get all the possible values of Type and Color and arrange them in Ascending order with respect of value of Type. Filter rows using WHERE Keyword SELECT * FROM [table_name] WHERE [col_name]=[value]; Besides WHERE, there are also boolean operations between conditions - for instance AND, OR and NOT. Example SELECT * FROM cs_data WHERE Language="C" AND Rating &gt;= 4; Conditioning with LIKE Keyword % Pattern Matching (“Star”) %STR Represents the condition that String that end with “STR” 123% Represent the condition that String that start with “123” %ABC% Represent the condition that String contain “ABC” inside it _ Pattern Matching (“Wildcard”) a_c represent a pattern that some string that start with a and ends with c with a single char between them a_c -&gt; abc, a+c, … Get all the vegetables that name doesn’t start with c: SELECT * FROM food_data WHERE Type="vegetables" AND NOT Name LIKE "c%"; Operations with SQL Algorithmic Operations SELECT Number % 1000, ROUND(Hours) FROM cs_data; Return the rows where Number property is mod 1000 and Hours property is rounded Alias in SQL using AS keyword Using AS, we can give column a ‘nickname’ SELECT Number % 1000 AS ShortNumber FROM cs_data; Getting Sum and Avg with SUM, AVG and COUNT Keyword SELECT COUNT(*), SUM(Hours), AVG(Rating) FROM cs_data WHERE language = "Python"; COUNT(*) - counting rows Grouping Rows with GROUP Keyword SELECT Language, Count(*), SUM(Hours), AVG(Rating) FROM cs_data GROUP BY Language; Use JOIN and UNION Combine SELECT Results with UNION SELECT a FROM cs_table UNION SELECT b FROM cs_table If using UNION, the repeated result will be removed If using UNION ALL, the repeated result will be reserved Combine Data from Different Table with JOIN INNER JOIN ... ON... will combine the rows in condition SELECT NAME, SUM(CostPerPound * Pounds) AS TotalCost FROM order_data INNER JOIN price_data ON order_data.OrderID = price_data.FoodID GROUP BY Name; Creating variables using CREATE VIEW You can create a variable as a specific view of table using CREATE VIEW command.'>
+<link rel="canonical" href="https://markchenyutian.github.io//blog/2021/sql-lecture-1.html">
+<meta property="og:url" content="https://markchenyutian.github.io//blog/2021/sql-lecture-1.html">
+<meta property="og:site_name" content="Yutian’s Blog">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-09-21T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="SQL - Basic Query, Union and Inner Join">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Yutian (Mark) Chen"},"dateModified":"2021-09-21T00:00:00+00:00","datePublished":"2021-09-21T00:00:00+00:00","description":"SQL = Structured Query Language We use query to poll data from database Query and Select with SQL SQL - just write the query in SQL, we usually use CAPITAL to distinct SQL keyword out. Generally, we put a newline before each KEYWORD to make query easier to read SELECT Query SELECT [data] FROM [tableName]; Select all columns SELECT * FROM cs_data; This will return the whole table (all columns) Select Multiple Columns SELECT Col1, Col2 FROM table_name; Use ORDER to Sort the Data SELECT [colName] FROM [DataTableName] ORDER BY [colName2] {ASC, DESC}; database will return the columns given by [colName] from [DataTableName]. Then, sort all rows by the value on [colName2] in Ascending Rank if ASC Descending Rank if DESC Example SELECT * FROM cs_data ORDER BY Language ASC; We can sort the data and introduce “tie breaker” by appending several sorting conditions SELECT [colName] FROM [DataTableName] ORDER BY [colName2] ASC, [colName3] DESC; Get colName from DataTableName, then sort with colName2 in ascending order. If there are rows with same rank, sort them with value of colName3 in descending order. Limit the Rows returned with LIMIT keyword SELECT * FROM cs_data ORDER BY Rating DESC LIMIT 3; The above code will get the top 3 CS courses Get all Distinct values in database with DISTINCT keyword SELECT DISTINCT Language FROM cs_data; SELECT DISTINCT [col1], [col2] FROM [table_name]; SELECT DISTINCT Type, Color FROM food_data ORDER BY Type ASC; Get all the possible values of Type and Color and arrange them in Ascending order with respect of value of Type. Filter rows using WHERE Keyword SELECT * FROM [table_name] WHERE [col_name]=[value]; Besides WHERE, there are also boolean operations between conditions - for instance AND, OR and NOT. Example SELECT * FROM cs_data WHERE Language=&quot;C&quot; AND Rating &gt;= 4; Conditioning with LIKE Keyword % Pattern Matching (“Star”) %STR Represents the condition that String that end with “STR” 123% Represent the condition that String that start with “123” %ABC% Represent the condition that String contain “ABC” inside it _ Pattern Matching (“Wildcard”) a_c represent a pattern that some string that start with a and ends with c with a single char between them a_c -&gt; abc, a+c, … Get all the vegetables that name doesn’t start with c: SELECT * FROM food_data WHERE Type=&quot;vegetables&quot; AND NOT Name LIKE &quot;c%&quot;; Operations with SQL Algorithmic Operations SELECT Number % 1000, ROUND(Hours) FROM cs_data; Return the rows where Number property is mod 1000 and Hours property is rounded Alias in SQL using AS keyword Using AS, we can give column a ‘nickname’ SELECT Number % 1000 AS ShortNumber FROM cs_data; Getting Sum and Avg with SUM, AVG and COUNT Keyword SELECT COUNT(*), SUM(Hours), AVG(Rating) FROM cs_data WHERE language = &quot;Python&quot;; COUNT(*) - counting rows Grouping Rows with GROUP Keyword SELECT Language, Count(*), SUM(Hours), AVG(Rating) FROM cs_data GROUP BY Language; Use JOIN and UNION Combine SELECT Results with UNION SELECT a FROM cs_table UNION SELECT b FROM cs_table If using UNION, the repeated result will be removed If using UNION ALL, the repeated result will be reserved Combine Data from Different Table with JOIN INNER JOIN ... ON... will combine the rows in condition SELECT NAME, SUM(CostPerPound * Pounds) AS TotalCost FROM order_data INNER JOIN price_data ON order_data.OrderID = price_data.FoodID GROUP BY Name; Creating variables using CREATE VIEW You can create a variable as a specific view of table using CREATE VIEW command.","headline":"SQL - Basic Query, Union and Inner Join","mainEntityOfPage":{"@type":"WebPage","@id":"https://markchenyutian.github.io//blog/2021/sql-lecture-1.html"},"url":"https://markchenyutian.github.io//blog/2021/sql-lecture-1.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/blog/assets/css/main.css">
+  <script src="/blog/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="https://markchenyutian.github.io//blog/feed.xml" title="Yutian's Blog">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      skipTags:['script', 'noscript', 'style', 'textarea', 'pre'],
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+</script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<!-- | default: default_paths - --><span class="site-brand"><a class="site-brand-inner" rel="author" href="/blog/">
+  <img class="site-favicon" title="Yutian's Blog" src="" onerror="this.style.display='none'">
+  Yutian's Blog
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/blog/about.html">ABOUT</a><a class="page-link" href="/blog/posts.html">POSTS</a><a class="page-link" href="/blog/files.html">FILES</a>
+
+
+
+
+<span class="page-link">
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="Franch">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: '',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  (function() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  })();
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <section class="page-banner">
+    <div class="page-banner-img">
+      <div style="background-image: url(/blog/assets/images/banners/SQLBackground.jpg)"></div>
+    </div>
+    <div class="wrapper">
+      <div class="page-banner-inner">
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">SQL - Basic Query, Union and Inner Join</h1>
+  <h3 class="post-subtitle"></h3>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-09-21T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Sep 21, 2021
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 17 mins</span>
+
+    <!-- Read Count Insert Here -->
+  </p>
+<div class="post-tags"><a class="post-tag" href="/blog/tags.html#Notes">#Notes</a></div></header>
+</div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <p>SQL = Structured Query Language</p>
+
+<p>We use <code class="language-plaintext highlighter-rouge">query</code> to poll data from <code class="language-plaintext highlighter-rouge">database</code></p>
+
+<h2 id="query-and-select-with-sql">Query and Select with SQL</h2>
+
+<p>SQL - just write the query</p>
+
+<p>in SQL, we usually use CAPITAL to distinct SQL keyword out.</p>
+
+<blockquote>
+  <p>Generally, we put a newline before each KEYWORD to make query easier to read</p>
+</blockquote>
+
+<h3 id="select-query">
+<code class="language-plaintext highlighter-rouge">SELECT</code> Query</h3>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="p">[</span><span class="k">data</span><span class="p">]</span> <span class="k">FROM</span> <span class="p">[</span><span class="n">tableName</span><span class="p">];</span>
+</code></pre></div></div>
+
+<h4 id="select-all-columns">Select all columns</h4>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">cs_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>This will return the whole table (all columns)</p>
+
+<h4 id="select-multiple-columns">Select Multiple Columns</h4>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">Col1</span><span class="p">,</span> <span class="n">Col2</span> 
+<span class="k">FROM</span> <span class="k">table_name</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="use-order-to-sort-the-data">Use <code class="language-plaintext highlighter-rouge">ORDER</code> to Sort the Data</h3>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="p">[</span><span class="n">colName</span><span class="p">]</span>
+<span class="k">FROM</span> <span class="p">[</span><span class="n">DataTableName</span><span class="p">]</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="p">[</span><span class="n">colName2</span><span class="p">]</span> <span class="p">{</span><span class="k">ASC</span><span class="p">,</span> <span class="k">DESC</span><span class="p">};</span>
+</code></pre></div></div>
+
+<p>database will return the columns given by <code class="language-plaintext highlighter-rouge">[colName]</code> from <code class="language-plaintext highlighter-rouge">[DataTableName]</code>. Then, sort all rows by the value on <code class="language-plaintext highlighter-rouge">[colName2]</code> in</p>
+
+<ul>
+  <li>Ascending Rank if <code class="language-plaintext highlighter-rouge">ASC</code>
+</li>
+  <li>Descending Rank if <code class="language-plaintext highlighter-rouge">DESC</code>
+</li>
+</ul>
+
+<blockquote>
+  <p>Example</p>
+
+  <div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">cs_data</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="k">Language</span> <span class="k">ASC</span><span class="p">;</span>
+</code></pre></div>  </div>
+</blockquote>
+
+<p>We can sort the data and introduce “tie breaker” by appending several sorting conditions</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="p">[</span><span class="n">colName</span><span class="p">]</span>
+<span class="k">FROM</span> <span class="p">[</span><span class="n">DataTableName</span><span class="p">]</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="p">[</span><span class="n">colName2</span><span class="p">]</span> <span class="k">ASC</span><span class="p">,</span> <span class="p">[</span><span class="n">colName3</span><span class="p">]</span> <span class="k">DESC</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Get <code class="language-plaintext highlighter-rouge">colName</code> from <code class="language-plaintext highlighter-rouge">DataTableName</code>, then sort with <code class="language-plaintext highlighter-rouge">colName2</code> in ascending order. If there are rows with same rank, sort them with value of <code class="language-plaintext highlighter-rouge">colName3</code> in descending order.</p>
+
+<h3 id="limit-the-rows-returned-with-limit-keyword">Limit the Rows returned with <code class="language-plaintext highlighter-rouge">LIMIT</code> keyword</h3>
+
+<pre><code class="language-sqlite">SELECT *
+FROM cs_data
+ORDER BY Rating DESC
+LIMIT 3;
+</code></pre>
+
+<p>The above code will get the top 3 CS courses</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210924203529.png" alt="image-20210924203522620"></p>
+
+<h3 id="get-all-distinct-values-in-database-with-distinct-keyword">Get all Distinct values in database with <code class="language-plaintext highlighter-rouge">DISTINCT</code> keyword</h3>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="k">Language</span>
+<span class="k">FROM</span> <span class="n">cs_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210924203551.png" alt="image-20210924203551834" style="zoom:50%;"></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="p">[</span><span class="n">col1</span><span class="p">],</span> <span class="p">[</span><span class="n">col2</span><span class="p">]</span>
+<span class="k">FROM</span> <span class="p">[</span><span class="k">table_name</span><span class="p">];</span>
+</code></pre></div></div>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210924203740.png" alt="image-20210924203740595" style="zoom:50%;"></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="k">Type</span><span class="p">,</span> <span class="n">Color</span>
+<span class="k">FROM</span> <span class="n">food_data</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="k">Type</span> <span class="k">ASC</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Get all the possible values of <code class="language-plaintext highlighter-rouge">Type</code> and <code class="language-plaintext highlighter-rouge">Color</code> and arrange them in Ascending order with respect of value of <code class="language-plaintext highlighter-rouge">Type</code>.</p>
+
+<h3 id="filter-rows-using-where-keyword">Filter rows using <code class="language-plaintext highlighter-rouge">WHERE</code> Keyword</h3>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="p">[</span><span class="k">table_name</span><span class="p">]</span>
+<span class="k">WHERE</span> <span class="p">[</span><span class="n">col_name</span><span class="p">]</span><span class="o">=</span><span class="p">[</span><span class="n">value</span><span class="p">];</span>
+</code></pre></div></div>
+
+<p>Besides <code class="language-plaintext highlighter-rouge">WHERE</code>, there are also boolean operations between conditions - for instance <code class="language-plaintext highlighter-rouge">AND</code>, <code class="language-plaintext highlighter-rouge">OR</code> and <code class="language-plaintext highlighter-rouge">NOT</code>.</p>
+
+<p>Example</p>
+
+<blockquote>
+  <div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">cs_data</span>
+<span class="k">WHERE</span> <span class="k">Language</span><span class="o">=</span><span class="nv">"C"</span> <span class="k">AND</span> <span class="n">Rating</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">;</span>
+</code></pre></div>  </div>
+</blockquote>
+
+<h3 id="conditioning-with-like-keyword">Conditioning with <code class="language-plaintext highlighter-rouge">LIKE</code> Keyword</h3>
+
+<h4 id="-pattern-matching-star">
+<code class="language-plaintext highlighter-rouge">%</code> Pattern Matching (“Star”)</h4>
+
+<p><code class="language-plaintext highlighter-rouge">%STR</code> Represents the condition that</p>
+
+<blockquote>
+  <p>String that end with “STR”</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">123%</code> Represent the condition that</p>
+
+<blockquote>
+  <p>String that start with “123”</p>
+</blockquote>
+
+<p><code class="language-plaintext highlighter-rouge">%ABC%</code> Represent the condition that</p>
+
+<blockquote>
+  <p>String contain “ABC” inside it</p>
+</blockquote>
+
+<h4 id="_-pattern-matching-wildcard">
+<code class="language-plaintext highlighter-rouge">_</code> Pattern Matching (“Wildcard”)</h4>
+
+<p><code class="language-plaintext highlighter-rouge">a_c</code> represent a pattern that some string that start with <code class="language-plaintext highlighter-rouge">a</code> and ends with <code class="language-plaintext highlighter-rouge">c</code> with a single char between them</p>
+
+<p><code class="language-plaintext highlighter-rouge">a_c</code> -&gt; <code class="language-plaintext highlighter-rouge">abc</code>, <code class="language-plaintext highlighter-rouge">a+c</code>, …</p>
+
+<p>Get all the vegetables that name doesn’t start with <code class="language-plaintext highlighter-rouge">c</code>:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span>
+<span class="k">FROM</span> <span class="n">food_data</span>
+<span class="k">WHERE</span> <span class="k">Type</span><span class="o">=</span><span class="nv">"vegetables"</span> <span class="k">AND</span> <span class="k">NOT</span> <span class="n">Name</span> <span class="k">LIKE</span> <span class="nv">"c%"</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h2 id="operations-with-sql">Operations with SQL</h2>
+
+<h3 id="algorithmic-operations">Algorithmic Operations</h3>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">Number</span> <span class="o">%</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">ROUND</span><span class="p">(</span><span class="n">Hours</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">cs_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Return the rows where <code class="language-plaintext highlighter-rouge">Number</code> property is mod 1000 and <code class="language-plaintext highlighter-rouge">Hours</code> property is rounded</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210924210803.png" alt="image-20210924210803229" style="zoom:50%;"></p>
+
+<h3 id="alias-in-sql-using-as-keyword">Alias in SQL using <code class="language-plaintext highlighter-rouge">AS</code> keyword</h3>
+
+<p>Using <code class="language-plaintext highlighter-rouge">AS</code>, we can give column a ‘nickname’</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">Number</span> <span class="o">%</span> <span class="mi">1000</span> <span class="k">AS</span> <span class="n">ShortNumber</span>
+<span class="k">FROM</span> <span class="n">cs_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="getting-sum-and-avg-with-sum-avg-and-count-keyword">Getting Sum and Avg with <code class="language-plaintext highlighter-rouge">SUM</code>, <code class="language-plaintext highlighter-rouge">AVG</code> and <code class="language-plaintext highlighter-rouge">COUNT</code> Keyword</h3>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210924211130.png" alt="image-20210924211130609" style="zoom:50%;"></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">COUNT</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">SUM</span><span class="p">(</span><span class="n">Hours</span><span class="p">),</span> <span class="k">AVG</span><span class="p">(</span><span class="n">Rating</span><span class="p">)</span>
+<span class="k">FROM</span> <span class="n">cs_data</span>
+<span class="k">WHERE</span> <span class="k">language</span> <span class="o">=</span> <span class="nv">"Python"</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210924211123.png" alt="image-20210924211123382" style="zoom:50%;"></p>
+
+<p><code class="language-plaintext highlighter-rouge">COUNT(*)</code> - counting rows</p>
+
+<h3 id="grouping-rows-with-group-keyword">Grouping Rows with <code class="language-plaintext highlighter-rouge">GROUP</code> Keyword</h3>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">Language</span><span class="p">,</span> <span class="k">Count</span><span class="p">(</span><span class="o">*</span><span class="p">),</span> <span class="k">SUM</span><span class="p">(</span><span class="n">Hours</span><span class="p">),</span> <span class="k">AVG</span><span class="p">(</span><span class="n">Rating</span><span class="p">)</span>
+<span class="k">FROM</span> <span class="n">cs_data</span>
+<span class="k">GROUP</span> <span class="k">BY</span> <span class="k">Language</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210924211249.png" alt="image-20210924211249664"></p>
+
+<h2 id="use-join-and-union">Use <code class="language-plaintext highlighter-rouge">JOIN</code> and <code class="language-plaintext highlighter-rouge">UNION</code>
+</h2>
+
+<h3 id="combine-select-results-with-union">Combine <code class="language-plaintext highlighter-rouge">SELECT</code> Results with <code class="language-plaintext highlighter-rouge">UNION</code>
+</h3>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">a</span> <span class="k">FROM</span> <span class="n">cs_table</span>
+<span class="k">UNION</span>
+<span class="k">SELECT</span> <span class="n">b</span> <span class="k">FROM</span> <span class="n">cs_table</span>
+</code></pre></div></div>
+
+<p>If using <code class="language-plaintext highlighter-rouge">UNION</code>, the repeated result will be removed</p>
+
+<p>If using <code class="language-plaintext highlighter-rouge">UNION ALL</code>, the repeated result will be reserved</p>
+
+<h3 id="combine-data-from-different-table-with-join">Combine Data from Different Table with <code class="language-plaintext highlighter-rouge">JOIN</code>
+</h3>
+
+<p><code class="language-plaintext highlighter-rouge">INNER JOIN ... ON...</code> will combine the rows in condition</p>
+
+<p><img src="https://markdown-img-1304853431.file.myqcloud.com/20210924212111.png" alt="image-20210924212111512" style="zoom:50%;"></p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">NAME</span><span class="p">,</span> <span class="k">SUM</span><span class="p">(</span><span class="n">CostPerPound</span> <span class="o">*</span> <span class="n">Pounds</span><span class="p">)</span> <span class="k">AS</span> <span class="n">TotalCost</span>
+<span class="k">FROM</span> <span class="n">order_data</span>
+<span class="k">INNER</span> <span class="k">JOIN</span> <span class="n">price_data</span>
+<span class="k">ON</span> <span class="n">order_data</span><span class="p">.</span><span class="n">OrderID</span> <span class="o">=</span> <span class="n">price_data</span><span class="p">.</span><span class="n">FoodID</span>
+<span class="k">GROUP</span> <span class="k">BY</span> <span class="n">Name</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h2 id="creating-variables-using-create-view">Creating variables using <code class="language-plaintext highlighter-rouge">CREATE VIEW</code>
+</h2>
+
+<p>You can create a variable as a specific view of table using <code class="language-plaintext highlighter-rouge">CREATE VIEW</code> command.</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blog/2021/2048-Project-1.html" title="2048 Project (1)">2048 Project (1)</a><a class="next" href="/blog/2021/uniswap3-3.html" title="Uniswap 3 - Always profitable for Liquidity Provider?">Uniswap 3 - Always profitable for...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <!-- <ul>
+        
+        <li><a class="post-link" href="/blog/2022/the-fences.html" title="Uniswap 3 - Always profitable for Liquidity Provider?">The Fences | AR Web Application</a></li><li><a class="post-link" href="/blog/2021/Word-Embedding.html" title="Uniswap 3 - Always profitable for Liquidity Provider?">NLP 101: Word Embedding 词嵌入</a></li><li><a class="post-link" href="/blog/2022/Attention-Mechanism.html" title="Uniswap 3 - Always profitable for Liquidity Provider?">NLP 101: Attention Mechanism</a></li><li><a class="post-link" href="/blog/2021/Seq2Seq.html" title="Uniswap 3 - Always profitable for Liquidity Provider?">NLP 101: Seq2Seq 模型</a></li></ul> -->
+      
+      
+      
+      <ul>
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/Multi-heuristic-Astar.html" title="Uniswap 3 - Always profitable for Liquidity Provider?">A* Search and its Variants</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2022/type-LaTeX-fast.html" title="Uniswap 3 - Always profitable for Liquidity Provider?">How to Type LaTeX Fast &amp; Elegant - A Guide from &amp;...</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+            <li><a class="post-link" href="/blog/2020/Gradient-Descent-Methods.html" title="Uniswap 3 - Always profitable for Liquidity Provider?">深度学习的梯度下降方法</a></li>
+            
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+          
+          
+          
+          
+        
+      </ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">目录</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      if (! h.getAttribute('hide-toc')){
+        menuHTML += (
+          '<li class="h-' + h.tagName.toLowerCase() + '">'
+          + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+        }
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/blog/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+      <div>Copyright © 2019-2022 @Yutian (Mark) Chen</div>
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="http://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/blog/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
