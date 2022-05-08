@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: bypass-security-err
         run: git config --global --add safe.directory /__w/blog/blog
+      - name: bypass-security-err-2
+        run: git config --global --add safe.directory /github/workspace
       - uses: actions/checkout@v2
 
       # Use GitHub Actions' cache to cache dependencies on servers
